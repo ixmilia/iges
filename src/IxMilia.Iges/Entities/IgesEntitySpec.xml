@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Spec xmlns="http://IxMilia.com/Iges/EntitiesSpec">
+  <!--
+  
+  0 - Null
+  
+  -->
+  <Entity Name="IgesNull" EntityType="Null" TypeCode="0" />
+  <!--
+  
+  100 - Circular arc
+  
+  -->
+  <Entity Name="IgesCircularArc" EntityType="CircularArc" TypeCode="100">
+    <Property Name="PlaneDisplacement" Type="double" DefaultValue="0.0" />
+    <Property Name="Center" Type="IgesPoint" DefaultValue="IgesPoint.Origin" />
+    <Property Name="StartPoint" Type="IgesPoint" DefaultValue="IgesPoint.Origin" />
+    <Property Name="EndPoint" Type="IgesPoint" DefaultValue="IgesPoint.Origin" />
+    <CustomProperty Name="ProperCenter" Type="IgesPoint">
+      <Get><![CDATA[return new IgesPoint(Center.X, Center.Y, PlaneDisplacement);]]></Get>
+    </CustomProperty>
+    <CustomProperty Name="ProperStartPoint" Type="IgesPoint">
+      <Get><![CDATA[return new IgesPoint(StartPoint.X, StartPoint.Y, PlaneDisplacement);]]></Get>
+    </CustomProperty>
+    <CustomProperty Name="ProperEndPoint" Type="IgesPoint">
+      <Get><![CDATA[return new IgesPoint(EndPoint.X, EndPoint.Y, PlaneDisplacement);]]></Get>
+    </CustomProperty>
+    <ParameterOrder>
+      <Parameter Value="PlaneDisplacement" Converter="Double" />
+      <Parameter Value="Center.X" Converter="Double" />
+      <Parameter Value="Center.Y" Converter="Double" />
+      <Parameter Value="StartPoint.X" Converter="Double" />
+      <Parameter Value="StartPoint.Y" Converter="Double" />
+      <Parameter Value="EndPoint.X" Converter="Double" />
+      <Parameter Value="EndPoint.Y" Converter="Double" />
+    </ParameterOrder>
+  </Entity>
+  <!--
+  
+  110 - Line
+  
+  -->
+  <Entity Name="IgesLine" EntityType="Line" TypeCode="110">
+    <Property Name="P1" Type="IgesPoint" DefaultValue="IgesPoint.Origin" />
+    <Property Name="P2" Type="IgesPoint" DefaultValue="IgesPoint.Origin" />
+    <ParameterOrder>
+      <Parameter Value="P1.X" Converter="Double" />
+      <Parameter Value="P1.Y" Converter="Double" />
+      <Parameter Value="P1.Z" Converter="Double" />
+      <Parameter Value="P2.X" Converter="Double" />
+      <Parameter Value="P2.Y" Converter="Double" />
+      <Parameter Value="P2.Z" Converter="Double" />
+    </ParameterOrder>
+    <CustomProperty Name="LineCount" Type="int" Overrides="true">
+      <Get><![CDATA[return 1;]]></Get>
+    </CustomProperty>
+    <CustomProperty Name="Bounding" Type="IgesBounding">
+      <Get><![CDATA[return (IgesBounding)FormNumber;]]></Get>
+      <Set><![CDATA[FormNumber = (int)value;]]></Set>
+    </CustomProperty>
+  </Entity>
+  <!--
+  
+  116 - IgesLocation
+  
+  -->
+  <Entity Name="IgesLocation" EntityType="Point" TypeCode="116">
+    <Property Name="Location" Type="IgesPoint" DefaultValue="IgesPoint.Origin" />
+    <ParameterOrder>
+      <Parameter Value="Location.X" Converter="Double" />
+      <Parameter Value="Location.Y" Converter="Double" />
+      <Parameter Value="Location.Z" Converter="Double" />
+    </ParameterOrder>
+  </Entity>
+  <!--
+  
+  123 - Direction
+  
+  -->
+  <Entity Name="IgesDirection" EntityType="Direction" TypeCode="123">
+    <Property Name="Direction" Type="IgesVector" DefaultValue="IgesVector.ZAxis" />
+    <ParameterOrder>
+      <Parameter Value="Direction.X" Converter="Double" />
+      <Parameter Value="Direction.Y" Converter="Double" />
+      <Parameter Value="Direction.Z" Converter="Double" />
+    </ParameterOrder>
+  </Entity>
+  <!--
+  
+  124 - Transformation matrix
+  
+  -->
+  <Entity Name="IgesTransformationMatrix" EntityType="TransformationMatrix" TypeCode="124">
+    <Property Name="R11" Type="double" DefaultValue="0.0" />
+    <Property Name="R12" Type="double" DefaultValue="0.0" />
+    <Property Name="R13" Type="double" DefaultValue="0.0" />
+    <Property Name="T1" Type="double" DefaultValue="0.0" />
+    <Property Name="R21" Type="double" DefaultValue="0.0" />
+    <Property Name="R22" Type="double" DefaultValue="0.0" />
+    <Property Name="R23" Type="double" DefaultValue="0.0" />
+    <Property Name="T2" Type="double" DefaultValue="0.0" />
+    <Property Name="R31" Type="double" DefaultValue="0.0" />
+    <Property Name="R32" Type="double" DefaultValue="0.0" />
+    <Property Name="R33" Type="double" DefaultValue="0.0" />
+    <Property Name="T3" Type="double" DefaultValue="0.0" />
+    <ParameterOrder>
+      <Parameter Value="R11" Converter="Double" />
+      <Parameter Value="R12" Converter="Double" />
+      <Parameter Value="R13" Converter="Double" />
+      <Parameter Value="T1" Converter="Double" />
+      <Parameter Value="R21" Converter="Double" />
+      <Parameter Value="R22" Converter="Double" />
+      <Parameter Value="R23" Converter="Double" />
+      <Parameter Value="T2" Converter="Double" />
+      <Parameter Value="R31" Converter="Double" />
+      <Parameter Value="R32" Converter="Double" />
+      <Parameter Value="R33" Converter="Double" />
+      <Parameter Value="T3" Converter="Double" />
+    </ParameterOrder>
+  </Entity>
+  <!--
+  
+  158 - Sphere
+  
+  -->
+  <Entity Name="IgesSphere" EntityType="Sphere" TypeCode="158">
+    <Property Name="Radius" Type="double" DefaultValue="0.0" />
+    <Property Name="Center" Type="IgesPoint" DefaultValue="IgesPoint.Origin" />
+    <ParameterOrder>
+      <Parameter Value="Radius" Converter="Double" />
+      <!-- TODO: only optional if all values are zero.  e.g., (0,0,1) should not serialize as ,,1.-->
+      <Parameter Value="Center.X" Converter="Double" DefaultValue="0.0" />
+      <Parameter Value="Center.Y" Converter="Double" DefaultValue="0.0" />
+      <Parameter Value="Center.Z" Converter="Double" DefaultValue="0.0" />
+    </ParameterOrder>
+  </Entity>
+  <!--
+  
+  160 - Torus
+  
+  -->
+  <Entity Name="IgesTorus" EntityType="Torus" TypeCode="160">
+    <Property Name="RingRadius" Type="double" DefaultValue="0.0" />
+    <Property Name="DiscRadius" Type="double" DefaultValue="0.0" />
+    <Property Name="Center" Type="IgesPoint" DefaultValue="IgesPoint.Origin" />
+    <Property Name="Normal" Type="IgesVector" DefaultValue="IgesVector.ZAxis" />
+    <ParameterOrder>
+      <Parameter Value="RingRadius" Converter="Double" />
+      <Parameter Value="DiscRadius" Converter="Double" />
+      <!-- TODO: only optional of all values are default -->
+      <Parameter Value="Center.X" Converter="Double" DefaultValue="0.0" />
+      <Parameter Value="Center.Y" Converter="Double" DefaultValue="0.0" />
+      <Parameter Value="Center.Z" Converter="Double" DefaultValue="0.0" />
+      <Parameter Value="Normal.X" Converter="Double" DefaultValue="0.0" />
+      <Parameter Value="Normal.Y" Converter="Double" DefaultValue="0.0" />
+      <Parameter Value="Normal.Z" Converter="Double" DefaultValue="1.0" />
+    </ParameterOrder>
+  </Entity>
+  <!--
+
+  308 - Subfigure definition
+  
+  -->
+  <Entity Name="IgesSubfigureDefinition" EntityType="SubfigureDefinition" TypeCode="308">
+    <Property Name="Depth" Type="int" DefaultValue="0" />
+    <Property Name="Name" Type="string" DefaultValue="null" />
+    <Property Name="EntityCount" Type="int" DefaultValue="0" Accessibility="private" />
+    <CustomProperty Name="Entities" Type="List&lt;IgesEntity&gt;">
+      <Get><![CDATA[return SubEntities;]]></Get>
+    </CustomProperty>
+    <ParameterOrder>
+      <Parameter Value="Depth" Converter="Integer" />
+      <Parameter Value="Name" Converter="String" />
+      <Parameter Value="EntityCount" Converter="Integer" Mode="ReadOnly" />
+      <Parameter Value="Entities.Count" Converter="Integer" Mode="WriteOnly" />
+      <Parameter Value="SubEntityIndices" Converter="Integer" Count="EntityCount" />
+    </ParameterOrder>
+  </Entity>
+  <!--
+  
+  408 - Singular subfigure instance
+  
+  -->
+  <Entity Name="IgesSingularSubfigureInstance" EntityType="SingularSubfigureInstance" TypeCode="408">
+    <Property Name="Offset" Type="IgesVector" DefaultValue="IgesVector.Zero" />
+    <Property Name="Scale" Type="double" DefaultValue="1.0" />
+    <CustomProperty Name="Subfigure" Type="IgesEntity">
+      <Get><![CDATA[return SubEntities.Count == 0 ? null : SubEntities[0];]]></Get>
+      <Set><![CDATA[
+if (SubEntities.Count == 0) SubEntities.Add(value);
+else SubEntities[0] = value;
+      ]]></Set>
+    </CustomProperty>
+    <ParameterOrder>
+      <Parameter Value="SubEntityIndices" Converter="Integer" Count="1" />
+      <Parameter Value="Offset.X" Converter="Double" />
+      <Parameter Value="Offset.Y" Converter="Double" />
+      <Parameter Value="Offset.Z" Converter="Double" />
+      <Parameter Value="Scale" Converter="Double" DefaultValue="1.0" />
+    </ParameterOrder>
+  </Entity>
+</Spec>
