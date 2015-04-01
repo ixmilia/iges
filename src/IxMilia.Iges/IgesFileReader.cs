@@ -264,7 +264,8 @@ namespace IxMilia.Iges
                 throw new IgesException("Unexpected end of input");
 
             // could be empty
-            if (str[index] == IgesFile.DefaultFieldDelimiter)
+            if ((readFieldSeparator && str[index] == IgesFile.DefaultFieldDelimiter) ||
+                (str[index] == IgesFile.DefaultRecordDelimiter))
             {
                 index++;
                 return;
@@ -286,9 +287,18 @@ namespace IxMilia.Iges
                 throw new IgesException("Expected delimiter character");
             var separator = str[index];
             if (readFieldSeparator)
+            {
                 file.FieldDelimiter = separator;
+            }
             else
+            {
+                if (separator == file.FieldDelimiter)
+                {
+                    throw new IgesException("Record delimiter cannot match field delimiter");
+                }
+
                 file.RecordDelimiter = separator;
+            }
             index++;
 
             // verify delimiter
