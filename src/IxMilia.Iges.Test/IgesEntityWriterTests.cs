@@ -170,6 +170,7 @@ namespace IxMilia.Iges.Test
                 T3 = 12.0
             };
             var sub = new IgesSubfigureDefinition();
+            sub.Name = "this is a really long string that should span many lines because it is so huge";
             sub.Entities.Add(new IgesLine() { P1 = new IgesPoint(1, 2, 3), P2 = new IgesPoint(4, 5, 6), TransformationMatrix = trans });
             sub.Entities.Add(new IgesLine() { P1 = new IgesPoint(7, 8, 9), P2 = new IgesPoint(10, 11, 12) });
             var file = new IgesFile();
@@ -186,7 +187,8 @@ namespace IxMilia.Iges.Test
 124,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.;                            1P      1
 110,1.,2.,3.,4.,5.,6.;                                                 3P      2
 110,7.,8.,9.,10.,11.,12.;                                              5P      3
-308,0,,2,3,5;                                                          7P      4
+308,0,78Hthis is a really long string that should span many line       7P      4
+s because it is so huge,2,3,5;                                         7P      5
 ");
         }
     }
