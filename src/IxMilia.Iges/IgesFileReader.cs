@@ -79,59 +79,107 @@ namespace IxMilia.Iges
             return file;
         }
 
+        private enum ParameterParseState
+        {
+            ParsingEntityNumber,
+            ParsingNumber,
+            ParsingString,
+        }
+
         private static Dictionary<int, List<string>> PrepareParameterLines(List<string> parameterLines, char fieldDelimiter, char recordDelimiter)
         {
             var map = new Dictionary<int, List<string>>();
-            var sb = new StringBuilder();
             int parameterStart = 1;
-            bool finishedParameters = true;
+            var fields = new List<string>();
+            var state = ParameterParseState.ParsingEntityNumber;
+            var current = new StringBuilder();
+            int entityNumber = 0;
+            int stringLength = 0;
+
+            // for each line
             for (int i = 0; i < parameterLines.Count; i++)
             {
-                var line = parameterLines[i].TrimEnd(); // TODO: could trim off whitespace in a string
-                if (finishedParameters)
-                {
-                    // if the first line of a new parameter set, strip off the entity number
-                    var startIndex = line.IndexOf(fieldDelimiter) + 1;
-                    line = line.Substring(startIndex);
-                }
+                var line = parameterLines[i];
 
-                Debug.Assert(line.Length > 0);
-                sb.Append(line);
-                if (line[line.Length - 1] == recordDelimiter)
+                // for each character
+                for (int j = 0; j < line.Length; j++)
                 {
-                    var fullLine = sb.ToString();
-                    var fields = SplitFields(fullLine.Substring(0, fullLine.Length - 1), fieldDelimiter);
-                    map[parameterStart] = fields;
-                    parameterStart = i + 2;
-                    sb.Clear();
-                    finishedParameters = true;
-                }
-                else
-                {
-                    finishedParameters = false;
+                    var ch = line[j];
+                    if (state == ParameterParseState.ParsingString)
+                    {
+                        if (current.Length == stringLength)
+                        {
+                            fields.Add(current.ToString());
+                            current.Clear();
+                            if (ch == fieldDelimiter)
+                            {
+                                state = ParameterParseState.ParsingNumber;
+                            }
+                            else if (ch == recordDelimiter)
+                            {
+                                state = ParameterParseState.ParsingEntityNumber;
+                                break;
+                            }
+                            else
+                            {
+                                Debug.Assert(false, "expected field or record delimiter");
+                            }
+                        }
+                        else
+                        {
+                            current.Append(ch);
+                        }
+                    }
+                    else
+                    {
+                        if (ch == fieldDelimiter)
+                        {
+                            if (state == ParameterParseState.ParsingEntityNumber)
+                            {
+                                entityNumber = int.Parse(current.ToString());
+                            }
+                            else
+                            {
+                                fields.Add(current.ToString());
+                            }
+
+                            state = ParameterParseState.ParsingNumber;
+                            current.Clear();
+                        }
+                        else if (ch == recordDelimiter)
+                        {
+                            if (state == ParameterParseState.ParsingEntityNumber)
+                            {
+                                entityNumber = int.Parse(current.ToString());
+                            }
+                            else
+                            {
+                                fields.Add(current.ToString());
+                            }
+
+                            state = ParameterParseState.ParsingEntityNumber;
+                            current.Clear();
+
+                            map[parameterStart] = fields;
+                            parameterStart = i + 2;
+                            fields = new List<string>();
+                            break;
+                        }
+                        else if (ch == IgesFile.StringSentinelCharacter)
+                        {
+                            stringLength = int.Parse(current.ToString());
+                            current.Clear();
+                            state = ParameterParseState.ParsingString;
+                        }
+                        else
+                        {
+                            current.Append(ch);
+                        }
+                    }
                 }
             }
 
             return map;
-        }
-
-        private static List<string> SplitFields(string text, char fieldDelimiter)
-        {
-            var fields = new List<string>();
-            int startIndex = 0;
-            for (int i = 0; i < text.Length; i++)
-            {
-                // TODO: allow for string fields that might contain the delimiter
-                if (text[i] == fieldDelimiter)
-                {
-                    var field = text.Substring(startIndex, i - startIndex);
-                    fields.Add(field);
-                    startIndex = i + 1;
-                }
-            }
-
-            fields.Add(text.Substring(startIndex)); // don't forget the last field
-            return fields;
         }
 
         private static void PopulateEntities(IgesFile file, List<string> directoryLines, Dictionary<int, List<string>> parameterMap)

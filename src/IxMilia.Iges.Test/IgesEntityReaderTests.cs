@@ -258,16 +258,17 @@ namespace IxMilia.Iges.Test
      110       0       0       1       0                               0D      2
      308       2       0       0       0                               0D      3
      308       0       0       1       0                               0D      4
-     110       3       0       0       0                               0D      5
+     110       4       0       0       0                               0D      5
      110       0       0       1       0                               0D      6
 110,1.0,2.0,3.0,4.0,5.0,6.0;                                            P      1
-308,0,21Hthis is the subfigure,2,1,5;                                   P      2
-110,7.0,8.0,9.0,10.0,11.0,12.0;                                         P      3
+308,0,                                           22Hthis,is;the         P      2
+subfigureH,2,1,5;                                                       P      3
+110,7.0,8.0,9.0,10.0,11.0,12.0;                                         P      4
 ");
             Assert.Equal(IgesEntityType.SubfigureDefinition, entity.EntityType);
             var subfigure = (IgesSubfigureDefinition)entity;
             Assert.Equal(0, subfigure.Depth);
-            Assert.Equal("this is the subfigure", subfigure.Name);
+            Assert.Equal("this,is;the subfigureH", subfigure.Name);
             Assert.Equal(2, subfigure.Entities.Count);
             Assert.Equal(IgesEntityType.Line, subfigure.Entities[0].EntityType);
             Assert.Equal(IgesEntityType.Line, subfigure.Entities[1].EntityType);
