@@ -33,13 +33,12 @@ namespace IxMilia.Iges.Entities
 
         protected override void ReadParameters(List<string> parameters)
         {
-            int index = 0;
-            this.Depth = Integer(parameters[index++]);
-            this.Name = String(parameters[index++]);
-            this.EntityCount = Integer(parameters[index++]);
+            this.Depth = Integer(parameters, 0);
+            this.Name = String(parameters, 1);
+            this.EntityCount = Integer(parameters, 2);
             for (int i = 0; i < EntityCount; i++)
             {
-                this.SubEntityIndices.Add(Integer(parameters[index++]));
+                this.SubEntityIndices.Add(Integer(parameters, i + 3));
             }
 
         }

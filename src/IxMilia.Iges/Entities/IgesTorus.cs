@@ -46,15 +46,14 @@ namespace IxMilia.Iges.Entities
 
         protected override void ReadParameters(List<string> parameters)
         {
-            int index = 0;
-            this.RingRadius = Double(parameters[index++]);
-            this.DiscRadius = Double(parameters[index++]);
-            this.Center.X = Double(ReadParameterOrDefault(parameters, index++, "0.0"));
-            this.Center.Y = Double(ReadParameterOrDefault(parameters, index++, "0.0"));
-            this.Center.Z = Double(ReadParameterOrDefault(parameters, index++, "0.0"));
-            this.Normal.X = Double(ReadParameterOrDefault(parameters, index++, "0.0"));
-            this.Normal.Y = Double(ReadParameterOrDefault(parameters, index++, "0.0"));
-            this.Normal.Z = Double(ReadParameterOrDefault(parameters, index++, "1.0"));
+            this.RingRadius = Double(parameters, 0);
+            this.DiscRadius = Double(parameters, 1);
+            this.Center.X = Double(parameters, 2);
+            this.Center.Y = Double(parameters, 3);
+            this.Center.Z = Double(parameters, 4);
+            this.Normal.X = Double(parameters, 5);
+            this.Normal.Y = Double(parameters, 6);
+            this.Normal.Z = DoubleOrDefault(parameters, 7, 1.0);
         }
 
         protected override void WriteParameters(List<object> parameters)

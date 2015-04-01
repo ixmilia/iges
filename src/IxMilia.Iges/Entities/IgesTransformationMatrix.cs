@@ -46,19 +46,18 @@ namespace IxMilia.Iges.Entities
 
         protected override void ReadParameters(List<string> parameters)
         {
-            int index = 0;
-            this.R11 = Double(parameters[index++]);
-            this.R12 = Double(parameters[index++]);
-            this.R13 = Double(parameters[index++]);
-            this.T1 = Double(parameters[index++]);
-            this.R21 = Double(parameters[index++]);
-            this.R22 = Double(parameters[index++]);
-            this.R23 = Double(parameters[index++]);
-            this.T2 = Double(parameters[index++]);
-            this.R31 = Double(parameters[index++]);
-            this.R32 = Double(parameters[index++]);
-            this.R33 = Double(parameters[index++]);
-            this.T3 = Double(parameters[index++]);
+            this.R11 = Double(parameters, 0);
+            this.R12 = Double(parameters, 1);
+            this.R13 = Double(parameters, 2);
+            this.T1 = Double(parameters, 3);
+            this.R21 = Double(parameters, 4);
+            this.R22 = Double(parameters, 5);
+            this.R23 = Double(parameters, 6);
+            this.T2 = Double(parameters, 7);
+            this.R31 = Double(parameters, 8);
+            this.R32 = Double(parameters, 9);
+            this.R33 = Double(parameters, 10);
+            this.T3 = Double(parameters, 11);
         }
 
         protected override void WriteParameters(List<object> parameters)

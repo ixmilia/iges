@@ -74,14 +74,13 @@ namespace IxMilia.Iges.Entities
 
         protected override void ReadParameters(List<string> parameters)
         {
-            int index = 0;
-            this.PlaneDisplacement = Double(parameters[index++]);
-            this.Center.X = Double(parameters[index++]);
-            this.Center.Y = Double(parameters[index++]);
-            this.StartPoint.X = Double(parameters[index++]);
-            this.StartPoint.Y = Double(parameters[index++]);
-            this.EndPoint.X = Double(parameters[index++]);
-            this.EndPoint.Y = Double(parameters[index++]);
+            this.PlaneDisplacement = Double(parameters, 0);
+            this.Center.X = Double(parameters, 1);
+            this.Center.Y = Double(parameters, 2);
+            this.StartPoint.X = Double(parameters, 3);
+            this.StartPoint.Y = Double(parameters, 4);
+            this.EndPoint.X = Double(parameters, 5);
+            this.EndPoint.Y = Double(parameters, 6);
         }
 
         protected override void WriteParameters(List<object> parameters)

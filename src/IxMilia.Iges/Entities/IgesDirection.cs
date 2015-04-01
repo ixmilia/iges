@@ -47,10 +47,9 @@ namespace IxMilia.Iges.Entities
 
         protected override void ReadParameters(List<string> parameters)
         {
-            int index = 0;
-            this.X = Double(parameters[index++]);
-            this.Y = Double(parameters[index++]);
-            this.Z = Double(parameters[index++]);
+            this.X = Double(parameters, 0);
+            this.Y = Double(parameters, 1);
+            this.Z = Double(parameters, 2);
         }
 
         protected override void WriteParameters(List<object> parameters)

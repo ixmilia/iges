@@ -109,19 +109,55 @@ namespace IxMilia.Iges.Entities
             return nextDirectoryIndex;
         }
 
-        protected double Double(string value)
+        protected double Double(List<string> values, int index)
         {
-            return double.Parse(value);
+            return DoubleOrDefault(values, index, 0.0);
         }
 
-        protected int Integer(string value)
+        protected double DoubleOrDefault(List<string> values, int index, double defaultValue)
         {
-            return int.Parse(value);
+            if (index < values.Count)
+            {
+                return double.Parse(values[index]);
+            }
+            else
+            {
+                return defaultValue;
+            }
         }
 
-        protected string String(string value)
+        protected int Integer(List<string> values, int index)
         {
-            return value ?? string.Empty;
+            return IntegerOrDefault(values, index, 0);
+        }
+
+        protected int IntegerOrDefault(List<string> values, int index, int defaultValue)
+        {
+            if (index < values.Count)
+            {
+                return int.Parse(values[index]);
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+
+        protected string String(List<string> values, int index)
+        {
+            return StringOrDefault(values, index, null);
+        }
+
+        protected string StringOrDefault(List<string> values, int index, string defaultValue)
+        {
+            if (index < values.Count)
+            {
+                return values[index];
+            }
+            else
+            {
+                return defaultValue;
+            }
         }
 
         protected static string ReadParameterOrDefault(List<string> parameters, int index, string defaultValue)
