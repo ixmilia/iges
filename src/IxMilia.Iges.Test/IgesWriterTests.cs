@@ -16,7 +16,7 @@ namespace IxMilia.Iges.Test
             file.Save(stream);
             stream.Seek(0, SeekOrigin.Begin);
             var bytes = stream.ToArray();
-            var actual = ASCIIEncoding.ASCII.GetString(bytes);
+            var actual = Encoding.ASCII.GetString(bytes);
             verifier(expected.Trim('\r', '\n'), actual.Trim('\r', '\n'));
         }
 
@@ -30,7 +30,7 @@ namespace IxMilia.Iges.Test
             VerifyFileText(file, expected, (ex, ac) => Assert.True(ac.Contains(ex)));
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteEmptyFileTest()
         {
             var date = new DateTime(2000, 12, 25, 13, 8, 5);
@@ -47,24 +47,7 @@ S      1G      2D      0P      0                                        T      1
 ");
         }
 
-        [Fact]
-        public void WriteLineTest()
-        {
-            var file = new IgesFile();
-            file.Entities.Add(new IgesLine()
-            {
-                P1 = new IgesPoint(1, 2, 3),
-                P2 = new IgesPoint(4, 5, 6),
-                Color = IgesColorNumber.Green
-            });
-            VerifyFileContains(file, @"
-     110       1       0       0       0                               0D      1
-     110       0       3       1       0                                D      2
-110,1.,2.,3.,4.,5.,6.;                                                 1P      1
-");
-        }
-
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteLineWithSpanningParametersTest()
         {
             var file = new IgesFile();
@@ -82,7 +65,7 @@ S      1G      2D      0P      0                                        T      1
 ");
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteLineWithTransformationMatrixTest()
         {
             var file = new IgesFile();
@@ -118,46 +101,7 @@ S      1G      2D      0P      0                                        T      1
 ");
         }
 
-        [Fact]
-        public void WriteSubfigureEntityTest()
-        {
-            var trans = new IgesTransformationMatrix()
-            {
-                R11 = 1.0,
-                R12 = 2.0,
-                R13 = 3.0,
-                T1 = 4.0,
-                R21 = 5.0,
-                R22 = 6.0,
-                R23 = 7.0,
-                T2 = 8.0,
-                R31 = 9.0,
-                R32 = 10.0,
-                R33 = 11.0,
-                T3 = 12.0
-            };
-            var sub = new IgesSubfigureDefinition();
-            sub.Entities.Add(new IgesLine() { P1 = new IgesPoint(1, 2, 3), P2 = new IgesPoint(4, 5, 6), TransformationMatrix = trans });
-            sub.Entities.Add(new IgesLine() { P1 = new IgesPoint(7, 8, 9), P2 = new IgesPoint(10, 11, 12) });
-            var file = new IgesFile();
-            file.Entities.Add(sub);
-            VerifyFileContains(file, @"
-     124       1       0       0       0                               0D      1
-     124       0       0       0       0                                D      2
-     110       2       0       0       0               1               0D      3
-     110       0       0       1       0                                D      4
-     110       3       0       0       0                               0D      5
-     110       0       0       1       0                                D      6
-     308       4       0       0       0                               0D      7
-     308       0       0       0       0                                D      8
-124,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.;                            1P      1
-110,1.,2.,3.,4.,5.,6.;                                                 3P      2
-110,7.,8.,9.,10.,11.,12.;                                              5P      3
-308,0,,2,3,5;                                                          7P      4
-");
-        }
-
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSpecificGlobalValuesTest()
         {
             var file = new IgesFile()

@@ -16,7 +16,7 @@ namespace IxMilia.Iges.Directory
         public int View { get; set; }
         public int TransformationMatrixPointer { get; set; }
         public int LableDisplay { get; set; }
-        public int StatusNumber { get; set; }
+        public string StatusNumber { get; set; }
         public int SequenceNumber { get; set; }
 
         public int LineWeight { get; set; }
@@ -38,7 +38,7 @@ namespace IxMilia.Iges.Directory
                 ToStringOrDefault(View),
                 ToStringOrDefault(TransformationMatrixPointer),
                 ToStringOrDefault(LableDisplay),
-                StatusNumber);
+                StatusNumber ?? "0");
             var line2 = string.Format(
                 "{0,8}{1,8}{2,8}{3,8}{4,8}{5,8}{6,8}",
                 (int)EntityType,
@@ -78,7 +78,7 @@ namespace IxMilia.Iges.Directory
             dir.View = int.Parse(GetField(line1, 6));
             dir.TransformationMatrixPointer = int.Parse(GetField(line1, 7));
             dir.LableDisplay = int.Parse(GetField(line1, 8));
-            dir.StatusNumber = int.Parse(GetField(line1, 9));
+            dir.StatusNumber = GetField(line1, 9);
 
             dir.LineWeight = int.Parse(GetField(line2, 2));
             dir.Color = (IgesColorNumber)int.Parse(GetField(line2, 3)); // TODO: could be a negative pointer

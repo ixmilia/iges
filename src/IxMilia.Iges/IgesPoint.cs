@@ -27,6 +27,32 @@ namespace IxMilia.Iges
         {
             return string.Format("({0},{1},{2})", X, Y, Z);
         }
+
+        public static bool operator ==(IgesPoint a, IgesPoint b)
+        {
+            if (ReferenceEquals(a, b))
+                return true;
+            if (((object)a) == null || ((object)b) == null)
+                return false;
+            return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
+        }
+
+        public static bool operator !=(IgesPoint a, IgesPoint b)
+        {
+            return !(a == b);
+        }
+
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() ^ Y.GetHashCode() & Z.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is IgesPoint)
+                return this == (IgesPoint)obj;
+            return false;
+        }
     }
 
     public class IgesVector : IgesPoint

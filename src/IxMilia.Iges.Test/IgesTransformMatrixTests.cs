@@ -15,7 +15,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(expected.Z, result.Z);
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Entities)]
         public void IdentityTransformTest()
         {
             var point = new IgesPoint(0.0, 0.0, 0.0);

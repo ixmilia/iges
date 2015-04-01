@@ -20,8 +20,8 @@ namespace IxMilia.Iges.Test
 
         #endregion
 
-        [Fact]
-        public void UnsupportedEntityReadTest()
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadUnsupportedEntityTest()
         {
             // entity id 888 is invalid
             var file = IgesReaderTests.CreateFile(@"
@@ -32,8 +32,42 @@ namespace IxMilia.Iges.Test
             Assert.Equal(0, file.Entities.Count);
         }
 
-        [Fact]
-        public void LineReadTest()
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadNullEntityTest()
+        {
+            var file = IgesReaderTests.CreateFile(@"
+       0       1       0       0       0                               0D      1
+       0       0       0       0       0                               0D      2
+0,11,22,33,44,55,66;                                                   1P      1");
+            Assert.Equal(IgesEntityType.Null, file.Entities.Single().EntityType);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadCircularArcTest()
+        {
+            var circle = (IgesCircularArc)ParseSingleEntity(@"
+     100       1       0       0       0                               0D      1
+     100       0       3       1       0                               0D      2
+100,11,22,33,44,55,66,77;                                              1P      1
+");
+            Assert.Equal(11.0, circle.PlaneDisplacement);
+            Assert.Equal(22.0, circle.Center.X);
+            Assert.Equal(33.0, circle.Center.Y);
+            Assert.Equal(0.0, circle.Center.Z);
+            Assert.Equal(44.0, circle.StartPoint.X);
+            Assert.Equal(55.0, circle.StartPoint.Y);
+            Assert.Equal(0.0, circle.StartPoint.Z);
+            Assert.Equal(66.0, circle.EndPoint.X);
+            Assert.Equal(77.0, circle.EndPoint.Y);
+            Assert.Equal(0.0, circle.EndPoint.Z);
+            Assert.Equal(new IgesPoint(22.0, 33.0, 11.0), circle.ProperCenter);
+            Assert.Equal(new IgesPoint(44.0, 55.0, 11.0), circle.ProperStartPoint);
+            Assert.Equal(new IgesPoint(66.0, 77.0, 11.0), circle.ProperEndPoint);
+            Assert.Equal(IgesColorNumber.Green, circle.Color);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadLineTest()
         {
             var line = (IgesLine)ParseSingleEntity(@"
      110       1       0       0       0                               0D      1
@@ -63,8 +97,53 @@ namespace IxMilia.Iges.Test
             Assert.Equal(0.0, line.TransformationMatrix.T3);
         }
 
-        [Fact]
-        public void TransformationMatrixReadTest()
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadLineWithNonStandardDelimitersTest()
+        {
+            var line = (IgesLine)ParseSingleEntity(@"
+1H//1H##                                                                G      1
+     110       1       0       0       0                               0D      1
+     110       0       3       1       0                               0D      2
+110/11/22/33/44/55/66#                                                 1P      1
+");
+            Assert.Equal(11.0, line.P1.X);
+            Assert.Equal(22.0, line.P1.Y);
+            Assert.Equal(33.0, line.P1.Z);
+            Assert.Equal(44.0, line.P2.X);
+            Assert.Equal(55.0, line.P2.Y);
+            Assert.Equal(66.0, line.P2.Z);
+            Assert.Equal(IgesColorNumber.Green, line.Color);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadLocationTest()
+        {
+            var location = (IgesLocation)ParseSingleEntity(@"
+     116       1       0       0       0                               0D      1
+     116       0       0       1       0                                D      2
+116,11.,22.,33.;                                                       1P      1
+");
+            Assert.Equal(11.0, location.X);
+            Assert.Equal(22.0, location.Y);
+            Assert.Equal(33.0, location.Z);
+            Assert.Equal(IgesColorNumber.Default, location.Color);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadDirectionTest()
+        {
+            var direction = (IgesDirection)ParseSingleEntity(@"
+     123       1       0       0       0                        00010200D      1
+     123       0       0       1       0                                D      2
+123,11.,22.,33.;                                                       1P      1
+");
+            Assert.Equal(11.0, direction.X);
+            Assert.Equal(22.0, direction.Y);
+            Assert.Equal(33.0, direction.Z);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadTransformationMatrixTest()
         {
             var matrix = (IgesTransformationMatrix)ParseSingleEntity(@"
      124       1       0       0       0                               0D      1
@@ -85,8 +164,8 @@ namespace IxMilia.Iges.Test
             Assert.Equal(12.0, matrix.T3);
         }
 
-        [Fact]
-        public void TransformationMatrixFromEntityTest()
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadTransformationMatrixFromEntityTest()
         {
             var file = IgesReaderTests.CreateFile(@"
      124       1       0       0       0                               0D      1
@@ -111,28 +190,66 @@ namespace IxMilia.Iges.Test
             Assert.Equal(12.0, matrix.T3);
         }
 
-        [Fact]
-        public void CircleReadTest()
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadSphereTest()
         {
-            var circle = (IgesCircularArc)ParseSingleEntity(@"
-     100       1       0       0       0                               0D      1
-     100       0       3       1       0                               0D      2
-100,11,22,33,44,55,66,77;                                              1P      1
+            // fully-specified values
+            var sphere = (IgesSphere)ParseSingleEntity(@"
+     158       1       0       0       0                            0000D      1
+     158       0       0       1       0                                D      2
+158,11.,22.,33.,44.;                                                   1P      1
 ");
-            Assert.Equal(11.0, circle.PlaneDisplacement);
-            Assert.Equal(22.0, circle.Center.X);
-            Assert.Equal(33.0, circle.Center.Y);
-            Assert.Equal(0.0, circle.Center.Z);
-            Assert.Equal(44.0, circle.StartPoint.X);
-            Assert.Equal(55.0, circle.StartPoint.Y);
-            Assert.Equal(0.0, circle.StartPoint.Z);
-            Assert.Equal(66.0, circle.EndPoint.X);
-            Assert.Equal(77.0, circle.EndPoint.Y);
-            Assert.Equal(0.0, circle.EndPoint.Z);
-            Assert.Equal(IgesColorNumber.Green, circle.Color);
+            Assert.Equal(11.0, sphere.Radius);
+            Assert.Equal(new IgesPoint(22, 33, 44), sphere.Center);
+
+            // default values
+            sphere = (IgesSphere)ParseSingleEntity(@"
+     158       1       0       0       0                            0000D      1
+     158       0       0       1       0                                D      2
+158,1.;                                                                1P      1
+");
+            Assert.Equal(1.0, sphere.Radius);
+            Assert.Equal(IgesPoint.Origin, sphere.Center);
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadTorusTest()
+        {
+            // fully-specified values
+            var torus = (IgesTorus)ParseSingleEntity(@"
+     160       1       0       0       0                        00000000D      1
+     160       0       0       1       0                                D      2
+160,11.,22.,33.,44.,55.,66.,77.,88.;                                   1P      1
+");
+            Assert.Equal(11.0, torus.RingRadius);
+            Assert.Equal(22.0, torus.DiscRadius);
+            Assert.Equal(new IgesPoint(33, 44, 55), torus.Center);
+            Assert.Equal(new IgesVector(66, 77, 88), torus.Normal);
+
+            // default values
+            torus = (IgesTorus)ParseSingleEntity(@"
+     160       1       0       0       0                        00000000D      1
+     160       0       0       1       0                                D      2
+160,1.,2.;                                                             1P      1
+");
+            Assert.Equal(1.0, torus.RingRadius);
+            Assert.Equal(2.0, torus.DiscRadius);
+            Assert.Equal(IgesPoint.Origin, torus.Center);
+            Assert.Equal(IgesVector.ZAxis, torus.Normal);
+
+            // default normal
+            torus = (IgesTorus)ParseSingleEntity(@"
+     160       1       0       0       0                        00000000D      1
+     160       0       0       1       0                                D      2
+160,9.,8.,1.,2.,3.;                                                    1P      1
+");
+            Assert.Equal(9.0, torus.RingRadius);
+            Assert.Equal(8.0, torus.DiscRadius);
+            Assert.Equal(new IgesPoint(1, 2, 3), torus.Center);
+            Assert.Equal(IgesVector.ZAxis, torus.Normal);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSubfigureTest()
         {
             var entity = ParseSingleEntity(@"

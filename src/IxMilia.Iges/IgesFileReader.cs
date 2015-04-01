@@ -91,7 +91,7 @@ namespace IxMilia.Iges
                 if (finishedParameters)
                 {
                     // if the first line of a new parameter set, strip off the entity number
-                    var startIndex = line.IndexOf(',') + 1;
+                    var startIndex = line.IndexOf(fieldDelimiter) + 1;
                     line = line.Substring(startIndex);
                 }
 

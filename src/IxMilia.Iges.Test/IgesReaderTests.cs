@@ -19,7 +19,7 @@ namespace IxMilia.Iges.Test
             return file;
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void GlobalParseTest()
         {
             var file = CreateFile(@"
@@ -57,7 +57,7 @@ S      1G      3D      0P      0                                        T      1
             Assert.Equal("protocol", file.ApplicationProtocol);
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void GlobalParseWithLeadingWhitespaceTest()
         {
             var file = CreateFile(@"
@@ -72,7 +72,7 @@ S      1G      3D      0P      0                                        T      1
             Assert.Equal("protocol", file.ApplicationProtocol); // leading space on string
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void GlobalParseWithMissingStringField()
         {
             var file = CreateFile(@"
@@ -85,7 +85,7 @@ S      1G      3D      0P      0                                        T      1
             Assert.Equal(null, file.ApplicationProtocol);
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void GlobalParseWithMissingIntField()
         {
             var file = CreateFile(@"
@@ -98,7 +98,7 @@ S      1G      3D      0P      0                                        T      1
             Assert.Equal(IgesDraftingStandard.None, file.DraftingStandard);
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void GlobalParseWithMissingDoubleField()
         {
             var file = CreateFile(@"
@@ -111,7 +111,7 @@ S      1G      3D      0P      0                                        T      1
             Assert.Equal(0.0, file.MinimumResolution);
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void FileWithNonStandardDelimitersTest()
         {
             var file = CreateFile(@"
@@ -124,7 +124,7 @@ S      1G      3D      0P      0                                        T      1
             Assert.Equal("filename.igs", file.FullFileName);
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void StringContainingDelimiterValuesTest()
         {
             var file = CreateFile(@"
@@ -134,7 +134,18 @@ S      1G      3D      0P      0                                        T      1
             Assert.Equal(",;,;,;", file.Identification);
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void StringWithLeadingAndTrailingWhitespaceTest()
+        {
+            var file = CreateFile(@"
+                                                                        S      1
+1H,,1H;,                                                        7H  foo G      1
+ ;                                                                      G      2
+");
+            Assert.Equal("  foo  ", file.Identification);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void MissingStartSectionTest()
         {
             var file = CreateFile(@"
@@ -146,7 +157,7 @@ S      0G      3D      0P      0                                        T      1
             Assert.Equal(',', file.FieldDelimiter);
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void MissingGlobalSectionTest()
         {
             var file = CreateFile(@"
@@ -156,7 +167,7 @@ S      1G      0D      0P      0                                        T      1
             Assert.Equal(',', file.FieldDelimiter);
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void OnlyTerminateLineTest()
         {
             var file = CreateFile(@"
@@ -165,7 +176,7 @@ S      0G      0D      0P      0                                        T      1
             Assert.Equal(',', file.FieldDelimiter);
         }
 
-        [Fact]
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void EmptyFileTest()
         {
             var file = CreateFile(string.Empty);

@@ -32,9 +32,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IgesEntityReaderTests.cs" />
+    <Compile Include="IgesEntityWriterTests.cs" />
     <Compile Include="IgesReaderTests.cs" />
     <Compile Include="IgesTransformMatrixTests.cs" />
     <Compile Include="IgesWriterTests.cs" />
+    <Compile Include="Traits.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Targets\IxMilia.Test.targets" />

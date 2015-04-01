@@ -6,7 +6,7 @@ using IxMilia.Iges.Directory;
 
 namespace IxMilia.Iges.Entities
 {
-    public abstract partial class IgesEntity
+    public abstract class IgesEntity
     {
         public abstract IgesEntityType EntityType { get; }
 
@@ -16,7 +16,7 @@ namespace IxMilia.Iges.Entities
         public virtual int View { get; set; }
         internal virtual int TransformationMatrixPointer { get; set; }
         public virtual int LableDisplay { get; set; }
-        public virtual int StatusNumber { get; set; }
+        public virtual string StatusNumber { get; set; }
         public virtual int LineWeight { get; set; }
         public virtual IgesColorNumber Color { get; set; }
         public virtual int LineCount { get; set; }
@@ -36,6 +36,10 @@ namespace IxMilia.Iges.Entities
         protected abstract void ReadParameters(List<string> parameters);
 
         protected abstract void WriteParameters(List<object> parameters);
+
+        internal virtual void OnAfterRead(IgesDirectoryData directoryData)
+        {
+        }
 
         private void PopulateDirectoryData(IgesDirectoryData directoryData)
         {
@@ -138,58 +142,49 @@ namespace IxMilia.Iges.Entities
             else
                 return defaultValue;
         }
-    }
 
-    public partial class IgesTransformationMatrix
-    {
-        public IgesPoint Transform(IgesPoint point)
+        internal static IgesEntity FromData(IgesDirectoryData directoryData, List<string> parameters)
         {
-            return new IgesPoint(
-                (R11 * point.X + R12 * point.Y + R13 * point.Z) + T1,
-                (R21 * point.X + R22 * point.Y + R23 * point.Z) + T2,
-                (R31 * point.X + R32 * point.Y + R33 * point.Z) + T3);
-        }
-
-        public bool IsIdentity
-        {
-            get
+            IgesEntity entity = null;
+            switch (directoryData.EntityType)
             {
-                return
-                    R11 == 1.0 &&
-                    R12 == 0.0 &&
-                    R13 == 0.0 &&
-                    T1 == 0.0 &&
-                    R21 == 0.0 &&
-                    R22 == 1.0 &&
-                    R23 == 0.0 &&
-                    T2 == 0.0 &&
-                    R31 == 0.0 &&
-                    R32 == 0.0 &&
-                    R33 == 1.0 &&
-                    T3 == 0.0;
+                case IgesEntityType.CircularArc:
+                    entity = new IgesCircularArc();
+                    break;
+                case IgesEntityType.Direction:
+                    entity = new IgesDirection();
+                    break;
+                case IgesEntityType.Line:
+                    entity = new IgesLine();
+                    break;
+                case IgesEntityType.Null:
+                    entity = new IgesNull();
+                    break;
+                case IgesEntityType.Point:
+                    entity = new IgesLocation();
+                    break;
+                case IgesEntityType.Sphere:
+                    entity = new IgesSphere();
+                    break;
+                case IgesEntityType.SubfigureDefinition:
+                    entity = new IgesSubfigureDefinition();
+                    break;
+                case IgesEntityType.Torus:
+                    entity = new IgesTorus();
+                    break;
+                case IgesEntityType.TransformationMatrix:
+                    entity = new IgesTransformationMatrix();
+                    break;
             }
-        }
 
-        public static IgesTransformationMatrix Identity
-        {
-            get
+            if (entity != null)
             {
-                return new IgesTransformationMatrix()
-                {
-                    R11 = 1.0,
-                    R12 = 0.0,
-                    R13 = 0.0,
-                    T1 = 0.0,
-                    R21 = 0.0,
-                    R22 = 1.0,
-                    R23 = 0.0,
-                    T2 = 0.0,
-                    R31 = 0.0,
-                    R32 = 0.0,
-                    R33 = 1.0,
-                    T3 = 0.0,
-                };
+                entity.PopulateDirectoryData(directoryData);
+                entity.ReadParameters(parameters);
+                entity.OnAfterRead(directoryData);
             }
+
+            return entity;
         }
     }
 }
