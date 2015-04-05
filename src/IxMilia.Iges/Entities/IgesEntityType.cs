@@ -6,6 +6,7 @@ namespace IxMilia.Iges.Entities
     {
         Null = 0,
         CircularArc = 100,
+        CompositeCurve = 102,
         Line = 110,
         Point = 116,
         Direction = 123,

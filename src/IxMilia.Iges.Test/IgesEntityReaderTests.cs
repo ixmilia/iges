@@ -88,6 +88,54 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadCompositeCurve()
+        {
+            var entity = ParseSingleEntity(@"
+// The curve has two lines; one defined before and one after.           S      1
+     110       1       0       0       0                               0D      1
+     110       0       0       1       0                               0D      2
+     102       2       0       0       0                               0D      3
+     102       0       0       1       0                               0D      4
+     100       3       0       0       0                               0D      5
+     100       0       0       1       0                               0D      6
+110,1.0,2.0,3.0,4.0,5.0,6.0;                                            P      1
+102,2,1,5;                                                              P      2
+100,11,22,33,44,55,66,77;                                               P      3
+");
+            Assert.Equal(IgesEntityType.CompositeCurve, entity.EntityType);
+            var compositeCurve = (IgesCompositeCurve)entity;
+            Assert.Equal(2, compositeCurve.Entities.Count);
+            Assert.Equal(IgesEntityType.Line, compositeCurve.Entities[0].EntityType);
+            Assert.Equal(IgesEntityType.CircularArc, compositeCurve.Entities[1].EntityType);
+            var line = (IgesLine)compositeCurve.Entities[0];
+            Assert.Equal(1.0, line.P1.X);
+            Assert.Equal(2.0, line.P1.Y);
+            Assert.Equal(3.0, line.P1.Z);
+            Assert.Equal(4.0, line.P2.X);
+            Assert.Equal(5.0, line.P2.Y);
+            Assert.Equal(6.0, line.P2.Z);
+            var circle = (IgesCircularArc)compositeCurve.Entities[1];
+            Assert.Equal(11.0, circle.PlaneDisplacement);
+            Assert.Equal(22.0, circle.Center.X);
+            Assert.Equal(33.0, circle.Center.Y);
+            Assert.Equal(0.0, circle.Center.Z);
+            Assert.Equal(44.0, circle.StartPoint.X);
+            Assert.Equal(55.0, circle.StartPoint.Y);
+            Assert.Equal(0.0, circle.StartPoint.Z);
+            Assert.Equal(66.0, circle.EndPoint.X);
+            Assert.Equal(77.0, circle.EndPoint.Y);
+            Assert.Equal(0.0, circle.EndPoint.Z);
+
+            // read type-default values
+            compositeCurve = (IgesCompositeCurve)ParseSingleEntity(@"
+     102       1       0       0       0                               0D      1
+     102       0       0       1       0                               0D      2
+102;                                                                    P      1
+");
+            Assert.Equal(0, compositeCurve.Entities.Count);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadLineTest()
         {
             var line = (IgesLine)ParseSingleEntity(@"

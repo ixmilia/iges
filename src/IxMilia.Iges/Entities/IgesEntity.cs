@@ -176,6 +176,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.CircularArc:
                     entity = new IgesCircularArc();
                     break;
+                case IgesEntityType.CompositeCurve:
+                    entity = new IgesCompositeCurve();
+                    break;
                 case IgesEntityType.Direction:
                     entity = new IgesDirection();
                     break;

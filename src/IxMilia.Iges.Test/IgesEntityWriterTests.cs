@@ -57,6 +57,25 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteCompositeCurveTest()
+        {
+            var curve = new IgesCompositeCurve();
+            curve.Entities.Add(new IgesLine(new IgesPoint(11, 22, 33), new IgesPoint(44, 55, 66)));
+            curve.Entities.Add(new IgesCircularArc(new IgesPoint(11, 22, 33), new IgesPoint(11, 22, 33), new IgesPoint(11, 22, 33)));
+            VerifyEntity(curve, @"
+     110       1       0       0       0                               0D      1
+     110       0       0       1       0                                D      2
+     100       2       0       0       0                               0D      3
+     100       0       0       1       0                                D      4
+     102       3       0       0       0                               0D      5
+     102       0       0       0       0                                D      6
+110,11.,22.,33.,44.,55.,66.;                                           1P      1
+100,33.,11.,22.,11.,22.,11.,22.;                                       3P      2
+102,2,1,3;                                                             5P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteLineTest()
         {
             var line = new IgesLine(new IgesPoint(11, 22, 33), new IgesPoint(44, 55, 66));
