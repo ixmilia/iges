@@ -9,9 +9,6 @@ namespace IxMilia.Iges.Entities
     {
         public override IgesEntityType EntityType { get { return IgesEntityType.CompositeCurve; } }
 
-        // properties
-        private int EntityCount { get; set; }
-
         // custom properties
         public List<IgesEntity> Entities
         {
@@ -24,13 +21,12 @@ namespace IxMilia.Iges.Entities
         public IgesCompositeCurve()
             : base()
         {
-            this.EntityCount = 0;
         }
 
         protected override void ReadParameters(List<string> parameters)
         {
-            this.EntityCount = Integer(parameters, 0);
-            for (int i = 0; i < EntityCount; i++)
+            var entityCount = Integer(parameters, 0);
+            for (int i = 0; i < entityCount; i++)
             {
                 this.SubEntityIndices.Add(Integer(parameters, i + 1));
             }
