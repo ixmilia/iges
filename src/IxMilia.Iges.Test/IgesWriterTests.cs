@@ -58,7 +58,7 @@ S      1G      2D      0P      0                                        T      1
                 Color = IgesColorNumber.Green
             });
             VerifyFileContains(file, @"
-     110       1       0       0       0                               0D      1
+     110       1       0       0       0                        00000000D      1
      110       0       3       1       0                                D      2
 110,1.1234512345,2.1234512345,3.1234512345,4.1234512345,               1P      1
 5.1234512345,6.1234512345;                                             1P      2
@@ -92,12 +92,28 @@ S      1G      2D      0P      0                                        T      1
             };
             file.Entities.Add(line);
             VerifyFileContains(file, @"
-     124       1       0       0       0                               0D      1
+     124       1       0       0       0                        00000000D      1
      124       0       0       0       0                                D      2
-     110       2       0       0       0               1               0D      3
+     110       2       0       0       0               1        00000000D      3
      110       0       0       1       0                                D      4
 124,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.;                            1P      1
 110,1.,2.,3.,4.,5.,6.;                                                 3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteLineWithStructureTest()
+        {
+            var file = new IgesFile();
+            var circle = new IgesCircularArc() { StructureEntity = new IgesLine() };
+            file.Entities.Add(circle);
+            VerifyFileContains(file, @"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     100       2      -1       0       0                        00000000D      3
+     100       0       0       1       0                                D      4
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+100,0.,0.,0.,0.,0.,0.,0.;                                              3P      2
 ");
         }
 

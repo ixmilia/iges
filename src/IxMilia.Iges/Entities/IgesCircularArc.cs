@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -15,14 +14,6 @@ namespace IxMilia.Iges.Entities
         public IgesPoint Center { get; set; }
         public IgesPoint StartPoint { get; set; }
         public IgesPoint EndPoint { get; set; }
-
-        public override int LineCount
-        {
-            get
-            {
-                return 1;
-            }
-        }
 
         // custom properties
         public IgesPoint ProperCenter
@@ -50,12 +41,8 @@ namespace IxMilia.Iges.Entities
         }
 
         public IgesCircularArc()
-            : base()
+            : this(IgesPoint.Origin, IgesPoint.Origin, IgesPoint.Origin)
         {
-            this.PlaneDisplacement = 0.0;
-            this.Center = IgesPoint.Origin;
-            this.StartPoint = IgesPoint.Origin;
-            this.EndPoint = IgesPoint.Origin;
         }
 
         public IgesCircularArc(IgesPoint center, IgesPoint start, IgesPoint end)
@@ -66,6 +53,7 @@ namespace IxMilia.Iges.Entities
                 throw new ArgumentException("All z values must be equal");
             }
 
+            this.LineCount = 1;
             this.PlaneDisplacement = center.Z;
             this.Center = new IgesPoint(center.X, center.Y, 0.0);
             this.StartPoint = new IgesPoint(start.X, start.Y, 0.0);

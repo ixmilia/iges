@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using IxMilia.Iges.Entities;
 
 namespace IxMilia.Iges
 {
@@ -14,28 +15,18 @@ namespace IxMilia.Iges
         {
             var writer = new StreamWriter(stream);
 
-            //// write start section
-            //foreach (var section in new IgesSection[] { startSection, globalSection })
-            //{
-            //    int line = 1;
-            //    foreach (var data in section.GetData())
-            //    {
-            //        writer.WriteLine(string.Format("{0,72}{1,1}{2,7}", data, SectionTypeChar(section.SectionType), line));
-            //        line++;
-            //    }
-            //}
-
             // prepare entities
             var startLines = new List<string>();
             var globalLines = new List<string>();
             var directoryLines = new List<string>();
             var parameterLines = new List<string>();
+            var entityMap = new Dictionary<IgesEntity, int>(); // map from a given entity to it's directory pointer
 
             startLines.Add(new string(' ', IgesFile.MaxDataLength));
 
             foreach (var entity in file.Entities)
             {
-                entity.AddDirectoryAndParameterLines(directoryLines, parameterLines, file.FieldDelimiter, file.RecordDelimiter);
+                entity.AddDirectoryAndParameterLines(entityMap, directoryLines, parameterLines, file.FieldDelimiter, file.RecordDelimiter);
             }
 
             PopulateGlobalLines(file, globalLines);

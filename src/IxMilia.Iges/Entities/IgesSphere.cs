@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using IxMilia.Iges.Directory;
 
 namespace IxMilia.Iges.Entities
@@ -15,22 +14,6 @@ namespace IxMilia.Iges.Entities
         public double Radius { get; set; }
         public IgesPoint Center { get; set; }
 
-        public override int LineCount
-        {
-            get
-            {
-                return 1;
-            }
-        }
-
-        public override string StatusNumber
-        {
-            get
-            {
-                return "0000";
-            }
-        }
-
         public IgesSphere()
             : this(0.0, IgesPoint.Origin)
         {
@@ -39,6 +22,8 @@ namespace IxMilia.Iges.Entities
         public IgesSphere(double radius, IgesPoint center)
             : base()
         {
+            this.LineCount = 1;
+            this.EntityUseFlag = IgesEntityUseFlag.Geometry;
             this.Radius = radius;
             this.Center = center;
         }
@@ -64,8 +49,7 @@ namespace IxMilia.Iges.Entities
 
         internal override void OnAfterRead(IgesDirectoryData directoryData)
         {
-            // status number should match "00**"
-            Debug.Assert(Regex.IsMatch(directoryData.StatusNumber, "^.*00..$"));
+            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Geometry);
         }
     }
 }

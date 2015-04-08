@@ -33,6 +33,25 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadStructureFromEntityTest()
+        {
+            var file = IgesReaderTests.CreateFile(@"
+     110       1      -3       0       0                               0D      1
+     110       0       0       0       0                                D      2
+     110       2       0       0       0                               0D      3
+     110       0       0       0       0                                D      4
+110,11,22,33,44,55,66;                                                 1P      1
+110,77,88,99,10,20,30;                                                 3P      2
+");
+            Assert.Equal(2, file.Entities.Count);
+            var line1 = (IgesLine)file.Entities.First();
+            Assert.Equal(new IgesPoint(11, 22, 33), line1.P1);
+            var structure = (IgesLine)line1.StructureEntity;
+            Assert.Equal(new IgesPoint(77, 88, 99), structure.P1);
+            Assert.Null(structure.StructureEntity);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadNullEntityTest()
         {
             var file = IgesReaderTests.CreateFile(@"
@@ -365,11 +384,11 @@ namespace IxMilia.Iges.Test
             var entity = ParseSingleEntity(@"
 // The subfigure has two lines; one defined before and one after.       S      1
      110       1       0       0       0                               0D      1
-     110       0       0       1       0                               0D      2
-     308       2       0       0       0                               0D      3
-     308       0       0       1       0                               0D      4
+     110       0       0       1       0                                D      2
+     308       2       0       0       0                        00000200D      3
+     308       0       0       1       0                                D      4
      110       4       0       0       0                               0D      5
-     110       0       0       1       0                               0D      6
+     110       0       0       1       0                                D      6
 110,1.0,2.0,3.0,4.0,5.0,6.0;                                            P      1
 308,0,                                           22Hthis,is;the         P      2
 subfigureH,2,1,5;                                                       P      3
@@ -399,8 +418,8 @@ subfigureH,2,1,5;                                                       P      3
 
             // read type-default values
             subfigure = (IgesSubfigureDefinition)ParseSingleEntity(@"
-     308       1       0       0       0                               0D      1
-     308       0       0       1       0                               0D      2
+     308       1       0       0       0                        00000200D      1
+     308       0       0       1       0                                D      2
 308;                                                                    P      1
 ");
             Assert.Equal(0, subfigure.Depth);

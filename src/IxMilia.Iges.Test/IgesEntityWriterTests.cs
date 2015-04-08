@@ -39,7 +39,7 @@ namespace IxMilia.Iges.Test
         public void WriteNullEntityTest()
         {
             VerifyEntity(new IgesNull(), @"
-       0       1       0       0       0                               0D      1
+       0       1       0       0       0                        00000000D      1
        0       0       0       0       0                                D      2
 0;                                                                     1P      1");
         }
@@ -50,7 +50,7 @@ namespace IxMilia.Iges.Test
             var circle = new IgesCircularArc(new IgesPoint(22, 33, 11), new IgesPoint(44, 55, 11), new IgesPoint(66, 77, 11));
             circle.Color = IgesColorNumber.Green;
             VerifyEntity(circle, @"
-     100       1       0       0       0                               0D      1
+     100       1       0       0       0                        00000000D      1
      100       0       3       1       0                                D      2
 100,11.,22.,33.,44.,55.,66.,77.;                                       1P      1
 ");
@@ -63,11 +63,11 @@ namespace IxMilia.Iges.Test
             curve.Entities.Add(new IgesLine(new IgesPoint(11, 22, 33), new IgesPoint(44, 55, 66)));
             curve.Entities.Add(new IgesCircularArc(new IgesPoint(11, 22, 33), new IgesPoint(11, 22, 33), new IgesPoint(11, 22, 33)));
             VerifyEntity(curve, @"
-     110       1       0       0       0                               0D      1
+     110       1       0       0       0                        00000000D      1
      110       0       0       1       0                                D      2
-     100       2       0       0       0                               0D      3
+     100       2       0       0       0                        00000000D      3
      100       0       0       1       0                                D      4
-     102       3       0       0       0                               0D      5
+     102       3       0       0       0                        00000000D      5
      102       0       0       0       0                                D      6
 110,11.,22.,33.,44.,55.,66.;                                           1P      1
 100,33.,11.,22.,11.,22.,11.,22.;                                       3P      2
@@ -81,7 +81,7 @@ namespace IxMilia.Iges.Test
             var line = new IgesLine(new IgesPoint(11, 22, 33), new IgesPoint(44, 55, 66));
             line.Bounding = IgesBounding.Unbound;
             VerifyEntity(line, @"
-     110       1       0       0       0                               0D      1
+     110       1       0       0       0                        00000000D      1
      110       0       0       1       2                                D      2
 110,11.,22.,33.,44.,55.,66.;                                           1P      1
 ");
@@ -91,7 +91,7 @@ namespace IxMilia.Iges.Test
         public void WriteLocationTest()
         {
             VerifyEntity(new IgesLocation(11, 22, 33), @"
-     116       1       0       0       0                               0D      1
+     116       1       0       0       0                        00000000D      1
      116       0       0       1       0                                D      2
 116,11.,22.,33.;                                                       1P      1
 ");
@@ -112,7 +112,7 @@ namespace IxMilia.Iges.Test
         {
             var matrix = new IgesTransformationMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
             VerifyEntity(matrix, @"
-     124       1       0       0       0                               0D      1
+     124       1       0       0       0                        00000000D      1
      124       0       0       0       0                                D      2
 124,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.;                            1P      1
 ");
@@ -124,14 +124,14 @@ namespace IxMilia.Iges.Test
             // regular case
             var sphere = new IgesSphere(11, new IgesPoint(22, 33, 44));
             VerifyEntity(sphere, @"
-     158       1       0       0       0                            0000D      1
+     158       1       0       0       0                        00000000D      1
      158       0       0       1       0                                D      2
 158,11.,22.,33.,44.;                                                   1P      1
 ");
 
             // default center
             VerifyEntity(new IgesSphere() { Radius = 1 }, @"
-     158       1       0       0       0                            0000D      1
+     158       1       0       0       0                        00000000D      1
      158       0       0       1       0                                D      2
 158,1.;                                                                1P      1
 ");
@@ -195,13 +195,13 @@ namespace IxMilia.Iges.Test
             var file = new IgesFile();
             file.Entities.Add(sub);
             VerifyFileContains(file, @"
-     124       1       0       0       0                               0D      1
+     124       1       0       0       0                        00000000D      1
      124       0       0       0       0                                D      2
-     110       2       0       0       0               1               0D      3
+     110       2       0       0       0               1        00000000D      3
      110       0       0       1       0                                D      4
-     110       3       0       0       0                               0D      5
+     110       3       0       0       0                        00000000D      5
      110       0       0       1       0                                D      6
-     308       4       0       0       0                               0D      7
+     308       4       0       0       0                        00000200D      7
      308       0       0       0       0                                D      8
 124,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.;                            1P      1
 110,1.,2.,3.,4.,5.,6.;                                                 3P      2

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Diagnostics;
+using IxMilia.Iges.Directory;
 
 namespace IxMilia.Iges.Entities
 {
@@ -14,22 +16,6 @@ namespace IxMilia.Iges.Entities
         public IgesPoint Center { get; set; }
         public IgesVector Normal { get; set; }
 
-        public override int LineCount
-        {
-            get
-            {
-                return 1;
-            }
-        }
-
-        public override string StatusNumber
-        {
-            get
-            {
-                return "00000000";
-            }
-        }
-
         public IgesTorus()
             : this(0.0, 0.0, IgesPoint.Origin, IgesVector.ZAxis)
         {
@@ -38,6 +24,11 @@ namespace IxMilia.Iges.Entities
         public IgesTorus(double ringRadius, double discRadius, IgesPoint center, IgesVector normal)
             : base()
         {
+            this.LineCount = 1;
+            this.BlankStatus = IgesBlankStatus.Visible;
+            this.SubordinateEntitySwitchType = IgesSubordinateEntitySwitchType.Independent;
+            this.EntityUseFlag = IgesEntityUseFlag.Geometry;
+            this.Hierarchy = IgesHierarchy.GlobalTopDown;
             this.RingRadius = ringRadius;
             this.DiscRadius = discRadius;
             this.Center = center;
@@ -73,6 +64,14 @@ namespace IxMilia.Iges.Entities
                     parameters.Add(this.Normal.Z);
                 }
             }
+        }
+
+        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        {
+            Debug.Assert(BlankStatus == IgesBlankStatus.Visible);
+            Debug.Assert(SubordinateEntitySwitchType == IgesSubordinateEntitySwitchType.Independent);
+            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Geometry);
+            Debug.Assert(Hierarchy == IgesHierarchy.GlobalTopDown);
         }
     }
 }

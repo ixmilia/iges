@@ -19,16 +19,20 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
   <ItemGroup>
     <Compile Include="Directory\IgesDirectoryData.cs" />
+    <Compile Include="Entities\IgesBlankStatus.cs" />
     <Compile Include="Entities\IgesCircularArc.cs" />
     <Compile Include="Entities\IgesCompositeCurve.cs" />
     <Compile Include="Entities\IgesDirection.cs" />
     <Compile Include="Entities\IgesEntity.cs" />
     <Compile Include="Entities\IgesEntityType.cs" />
+    <Compile Include="Entities\IgesEntityUseFlag.cs" />
+    <Compile Include="Entities\IgesHierarchy.cs" />
     <Compile Include="Entities\IgesLine.cs" />
     <Compile Include="Entities\IgesLocation.cs" />
     <Compile Include="Entities\IgesNull.cs" />
     <Compile Include="Entities\IgesSphere.cs" />
     <Compile Include="Entities\IgesSubfigureDefinition.cs" />
+    <Compile Include="Entities\IgesSubordinateEntitySwitchType.cs" />
     <Compile Include="Entities\IgesTorus.cs" />
     <Compile Include="Entities\IgesTransformationMatrix.cs" />
     <Compile Include="IgesFileWriter.cs" />

@@ -13,6 +13,11 @@ namespace IxMilia.Iges.Entities
         TransformationMatrix = 124,
         Sphere = 158,
         Torus = 160,
+        // 304
         SubfigureDefinition = 308
+        // 314
+        // 402 form 3,4,5,19
+        // 406 form 1
+        // 410
     }
 }

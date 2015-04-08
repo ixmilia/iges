@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -14,14 +13,6 @@ namespace IxMilia.Iges.Entities
         public double Y { get; set; }
         public double Z { get; set; }
 
-        public override int LineCount
-        {
-            get
-            {
-                return 1;
-            }
-        }
-
         public IgesLocation()
             : this(0.0, 0.0, 0.0)
         {
@@ -30,6 +21,7 @@ namespace IxMilia.Iges.Entities
         public IgesLocation(double x, double y, double z)
             : base()
         {
+            this.LineCount = 1;
             this.X = x;
             this.Y = y;
             this.Z = z;

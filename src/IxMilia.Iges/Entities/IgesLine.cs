@@ -20,14 +20,6 @@ namespace IxMilia.Iges.Entities
         public IgesPoint P2 { get; set; }
 
         // custom properties
-        public override int LineCount
-        {
-            get
-            {
-                return 1;
-            }
-        }
-
         public IgesBounding Bounding
         {
             get
@@ -48,6 +40,7 @@ namespace IxMilia.Iges.Entities
         public IgesLine(IgesPoint p1, IgesPoint p2)
             : base()
         {
+            this.LineCount = 1;
             this.P1 = p1;
             this.P2 = p2;
         }

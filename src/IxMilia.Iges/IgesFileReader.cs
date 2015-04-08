@@ -200,13 +200,17 @@ namespace IxMilia.Iges
             var toTrim = new HashSet<int>();
             foreach (var entity in file.Entities)
             {
+                // populate transformation matrix
                 if (entity.TransformationMatrixPointer > 0)
                 {
                     entity.TransformationMatrix = entityMap[entity.TransformationMatrixPointer] as IgesTransformationMatrix;
                     toTrim.Add(entity.TransformationMatrixPointer);
                 }
                 else
+                {
                     entity.TransformationMatrix = IgesTransformationMatrix.Identity;
+                }
+
                 foreach (var pointer in entity.SubEntityIndices)
                 {
                     entity.SubEntities.Add(entityMap[pointer]);
@@ -219,6 +223,15 @@ namespace IxMilia.Iges
                 var deIndex = i * 2 + 1;
                 if (toTrim.Contains(deIndex))
                     file.Entities.RemoveAt(i);
+            }
+
+            // link to structure entities.  this must be done last because the pointers could point forwards or backwards
+            foreach (var entity in file.Entities)
+            {
+                if (entity.Structure < 0)
+                {
+                    entity.StructureEntity = entityMap[-entity.Structure];
+                }
             }
         }
 
