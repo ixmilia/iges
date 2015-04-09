@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using IxMilia.Iges.Directory;
 
 namespace IxMilia.Iges.Entities
 {

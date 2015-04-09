@@ -18,7 +18,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
   <ItemGroup>
-    <Compile Include="Directory\IgesDirectoryData.cs" />
     <Compile Include="Entities\IgesBlankStatus.cs" />
     <Compile Include="Entities\IgesCircularArc.cs" />
     <Compile Include="Entities\IgesColorDefinition.cs" />
@@ -36,6 +35,7 @@
     <Compile Include="Entities\IgesSubordinateEntitySwitchType.cs" />
     <Compile Include="Entities\IgesTorus.cs" />
     <Compile Include="Entities\IgesTransformationMatrix.cs" />
+    <Compile Include="IgesDirectoryData.cs" />
     <Compile Include="IgesFileWriter.cs" />
     <Compile Include="IgesPoint.cs" />
     <Compile Include="IgesVersion.cs" />

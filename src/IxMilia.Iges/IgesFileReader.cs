@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using IxMilia.Iges.Directory;
 using IxMilia.Iges.Entities;
 
 namespace IxMilia.Iges

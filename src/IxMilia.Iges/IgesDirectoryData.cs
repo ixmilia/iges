@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using IxMilia.Iges.Entities;
 
-namespace IxMilia.Iges.Directory
+namespace IxMilia.Iges
 {
     internal class IgesDirectoryData
     {
