@@ -1,5 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using IxMilia.Iges.Directory;
 
@@ -9,7 +10,6 @@ namespace IxMilia.Iges.Entities
     {
         public abstract IgesEntityType EntityType { get; }
 
-        public IgesColorNumber Color { get; set; }
         public int LineCount { get; protected set; }
         public int FormNumber { get; protected set; }
         public IgesEntity StructureEntity { get; set; }
@@ -19,6 +19,36 @@ namespace IxMilia.Iges.Entities
         public IgesSubordinateEntitySwitchType SubordinateEntitySwitchType { get; set; }
         public IgesEntityUseFlag EntityUseFlag { get; set; }
         public IgesHierarchy Hierarchy { get; set; }
+
+        private IgesColorDefinition _customColor;
+        private IgesColorNumber _color;
+
+        public IgesColorNumber Color
+        {
+            get { return _color; }
+            set
+            {
+                _color = value;
+                _customColor = null;
+            }
+        }
+
+        public IgesColorDefinition CustomColor
+        {
+            get { return _customColor; }
+            set
+            {
+                if (value == null)
+                {
+                    _color = IgesColorNumber.Default;
+                }
+                else
+                {
+                    _customColor = value;
+                    _color = IgesColorNumber.Custom;
+                }
+            }
+        }
 
         protected string EntityLabel { get; set; }
         internal int Structure { get; set; }
@@ -90,14 +120,22 @@ namespace IxMilia.Iges.Entities
             this.LableDisplay = directoryData.LableDisplay;
             SetStatusNumber(directoryData.StatusNumber);
             this.LineWeight = directoryData.LineWeight;
-            this.Color = directoryData.Color;
+            if (directoryData.Color < 0)
+            {
+                this.Color = IgesColorNumber.Custom;
+            }
+            else
+            {
+                this.Color = (IgesColorNumber)directoryData.Color;
+            }
+
             this.LineCount = directoryData.LineCount;
             this.FormNumber = directoryData.FormNumber;
             this.EntityLabel = directoryData.EntityLabel;
             this.EntitySubscript = directoryData.EntitySubscript;
         }
 
-        private IgesDirectoryData GetDirectoryData()
+        private IgesDirectoryData GetDirectoryData(int color)
         {
             var dir = new IgesDirectoryData();
             dir.EntityType = EntityType;
@@ -109,7 +147,7 @@ namespace IxMilia.Iges.Entities
             dir.LableDisplay = this.LableDisplay;
             dir.StatusNumber = this.GetStatusNumber();
             dir.LineWeight = this.LineWeight;
-            dir.Color = this.Color;
+            dir.Color = color;
             dir.LineCount = this.LineCount;
             dir.FormNumber = this.FormNumber;
             dir.EntityLabel = this.EntityLabel;
@@ -140,6 +178,24 @@ namespace IxMilia.Iges.Entities
                 }
             }
 
+            // write custom color entity
+            int color = 0;
+            if (CustomColor != null)
+            {
+                if (!entityMap.ContainsKey(CustomColor))
+                {
+                    color = -CustomColor.AddDirectoryAndParameterLines(entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                }
+                else
+                {
+                    color = -entityMap[CustomColor];
+                }
+            }
+            else
+            {
+                color = (int)Color;
+            }
+
             // write sub-entities
             SubEntityIndices.Clear();
             foreach (var subEntity in SubEntities)
@@ -150,7 +206,7 @@ namespace IxMilia.Iges.Entities
 
             var nextDirectoryIndex = directoryLines.Count + 1;
             var nextParameterIndex = parameterLines.Count + 1;
-            var dir = GetDirectoryData();
+            var dir = GetDirectoryData(color);
             dir.ParameterPointer = nextParameterIndex;
             dir.ToString(directoryLines);
             var parameters = new List<object>();
@@ -230,6 +286,9 @@ namespace IxMilia.Iges.Entities
             {
                 case IgesEntityType.CircularArc:
                     entity = new IgesCircularArc();
+                    break;
+                case IgesEntityType.ColorDefinition:
+                    entity = new IgesColorDefinition();
                     break;
                 case IgesEntityType.CompositeCurve:
                     entity = new IgesCompositeCurve();

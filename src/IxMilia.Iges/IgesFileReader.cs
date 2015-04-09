@@ -118,6 +118,9 @@ namespace IxMilia.Iges
                             else if (ch == recordDelimiter)
                             {
                                 state = ParameterParseState.ParsingEntityNumber;
+                                map[parameterStart] = fields;
+                                parameterStart = i + 2;
+                                fields = new List<string>();
                                 break;
                             }
                             else
@@ -184,10 +187,11 @@ namespace IxMilia.Iges
 
         private static void PopulateEntities(IgesFile file, List<string> directoryLines, Dictionary<int, List<string>> parameterMap)
         {
+            IgesDirectoryData dir = null;
             var entityMap = new Dictionary<int, IgesEntity>();
             for (int i = 0; i < directoryLines.Count; i += 2)
             {
-                var dir = IgesDirectoryData.FromRawLines(directoryLines[i], directoryLines[i + 1]);
+                dir = IgesDirectoryData.FromRawLines(directoryLines[i], directoryLines[i + 1]);
                 var entity = IgesEntity.FromData(dir, parameterMap[dir.ParameterPointer]);
                 if (entity != null)
                 {
@@ -225,12 +229,26 @@ namespace IxMilia.Iges
                     file.Entities.RemoveAt(i);
             }
 
-            // link to structure entities.  this must be done last because the pointers could point forwards or backwards
+            // link to structure entities and custom colors.  this must be done last because the pointers could point forwards or backwards
             foreach (var entity in file.Entities)
             {
                 if (entity.Structure < 0)
                 {
                     entity.StructureEntity = entityMap[-entity.Structure];
+                }
+
+                if (dir.Color < 0)
+                {
+                    var custom = entityMap[-dir.Color] as IgesColorDefinition;
+                    if (custom != null)
+                    {
+                        entity.CustomColor = custom;
+                    }
+                    else
+                    {
+                        Debug.Assert(false, "color pointer was not an IgesColorDefinition");
+                        entity.Color = IgesColorNumber.Default;
+                    }
                 }
             }
         }

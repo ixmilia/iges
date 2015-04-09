@@ -20,7 +20,7 @@ namespace IxMilia.Iges.Directory
         public int SequenceNumber { get; set; }
 
         public int LineWeight { get; set; }
-        public IgesColorNumber Color { get; set; }
+        public int Color { get; set; }
         public int LineCount { get; set; }
         public int FormNumber { get; set; }
         public string EntityLabel { get; set; }
@@ -43,7 +43,7 @@ namespace IxMilia.Iges.Directory
                 "{0,8}{1,8}{2,8}{3,8}{4,8}{5,8}{6,8}",
                 (int)EntityType,
                 LineWeight,
-                (int)Color,
+                Color,
                 LineCount,
                 FormNumber,
                 ToStringOrDefault(EntityLabel),
@@ -81,7 +81,7 @@ namespace IxMilia.Iges.Directory
             dir.StatusNumber = GetField(line1, 9);
 
             dir.LineWeight = int.Parse(GetField(line2, 2));
-            dir.Color = (IgesColorNumber)int.Parse(GetField(line2, 3)); // TODO: could be a negative pointer
+            dir.Color = int.Parse(GetField(line2, 3));
             dir.LineCount = int.Parse(GetField(line2, 4));
             dir.FormNumber = int.Parse(GetField(line2, 5));
             dir.EntityLabel = GetField(line2, 8, null);

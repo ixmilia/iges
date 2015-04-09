@@ -13,7 +13,7 @@ namespace IxMilia.Iges.Test
 
         private static IgesEntity ParseSingleEntity(string content)
         {
-            var file = IgesReaderTests.CreateFile(content.Trim('\r', '\n'));
+            var file = IgesReaderTests.CreateFile(content);
             Assert.Equal(1, file.Entities.Count);
             return file.Entities[0];
         }
@@ -425,6 +425,49 @@ subfigureH,2,1,5;                                                       P      3
             Assert.Equal(0, subfigure.Depth);
             Assert.Equal(null, subfigure.Name);
             Assert.Equal(0, subfigure.Entities.Count);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadColorDefinitionTest()
+        {
+            // fully-specified values
+            var color = (IgesColorDefinition)ParseSingleEntity(@"
+     314       1       0       0       0                        00000200D      1
+     314       0       0       1       0                                D      2
+314,11.,22.,33.,4Hname;                                                1P      1
+");
+            Assert.Equal(11.0, color.RedIntensity);
+            Assert.Equal(22.0, color.GreenIntensity);
+            Assert.Equal(33.0, color.BlueIntensity);
+            Assert.Equal("name", color.Name);
+
+            // read type-default values
+            color = (IgesColorDefinition)ParseSingleEntity(@"
+     314       1       0       0       0                        00000200D      1
+     314       0       0       1       0                                D      2
+314;                                                                   1P      1
+");
+            Assert.Equal(0.0, color.RedIntensity);
+            Assert.Equal(0.0, color.GreenIntensity);
+            Assert.Equal(0.0, color.BlueIntensity);
+            Assert.Null(color.Name);
+
+            // read line with custom color
+            var file = IgesReaderTests.CreateFile(@"
+     314       1       0       0       0                        00000200D      1
+     314       0       0       1       0                               0D      2
+     110       2       0       0       0                               0D      3
+     110       0      -1       1       0                               0D      4
+314,77,88,99,4Hname;                                                   1P      1
+110,11,22,33,44,55,66;                                                 3P      2
+");
+            Assert.Equal(2, file.Entities.Count);
+            var line = file.Entities.OfType<IgesLine>().Single();
+            Assert.Equal(IgesColorNumber.Custom, line.Color);
+            Assert.Equal(77.0, line.CustomColor.RedIntensity);
+            Assert.Equal(88.0, line.CustomColor.GreenIntensity);
+            Assert.Equal(99.0, line.CustomColor.BlueIntensity);
+            Assert.Equal("name", line.CustomColor.Name);
         }
     }
 }

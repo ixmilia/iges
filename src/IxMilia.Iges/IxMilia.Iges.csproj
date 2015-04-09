@@ -21,6 +21,7 @@
     <Compile Include="Directory\IgesDirectoryData.cs" />
     <Compile Include="Entities\IgesBlankStatus.cs" />
     <Compile Include="Entities\IgesCircularArc.cs" />
+    <Compile Include="Entities\IgesColorDefinition.cs" />
     <Compile Include="Entities\IgesCompositeCurve.cs" />
     <Compile Include="Entities\IgesDirection.cs" />
     <Compile Include="Entities\IgesEntity.cs" />

@@ -210,5 +210,36 @@ namespace IxMilia.Iges.Test
 s because it is so huge,2,3,5;                                         7P      5
 ");
         }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteColorDefinitionTest()
+        {
+            // regular case
+            var color = new IgesColorDefinition(11, 22, 33, "name");
+            VerifyEntity(color, @"
+     314       1       0       0       0                        00000200D      1
+     314       0       0       1       0                                D      2
+314,11.,22.,33.,4Hname;                                                1P      1
+");
+
+            // default values
+            color = new IgesColorDefinition();
+            VerifyEntity(color, @"
+     314       1       0       0       0                        00000200D      1
+     314       0       0       1       0                                D      2
+314,1.,1.,1.,;                                                         1P      1
+");
+
+            // line with custom color
+            var line = new IgesLine() { CustomColor = new IgesColorDefinition(11, 22, 33, "name") };
+            VerifyEntity(line, @"
+     314       1       0       0       0                        00000200D      1
+     314       0       0       1       0                                D      2
+     110       2       0       0       0                        00000000D      3
+     110       0      -1       1       0                                D      4
+314,11.,22.,33.,4Hname;                                                1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+");
+        }
     }
 }
