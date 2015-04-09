@@ -215,28 +215,13 @@ namespace IxMilia.Iges
                     entity.TransformationMatrix = IgesTransformationMatrix.Identity;
                 }
 
-                foreach (var pointer in entity.SubEntityIndices)
-                {
-                    entity.SubEntities.Add(entityMap[pointer]);
-                    toTrim.Add(pointer);
-                }
-            }
-
-            for (int i = file.Entities.Count - 1; i >= 0; i--)
-            {
-                var deIndex = i * 2 + 1;
-                if (toTrim.Contains(deIndex))
-                    file.Entities.RemoveAt(i);
-            }
-
-            // link to structure entities and custom colors.  this must be done last because the pointers could point forwards or backwards
-            foreach (var entity in file.Entities)
-            {
+                // link to structure entities
                 if (entity.Structure < 0)
                 {
                     entity.StructureEntity = entityMap[-entity.Structure];
                 }
 
+                // link to custom colors
                 if (dir.Color < 0)
                 {
                     var custom = entityMap[-dir.Color] as IgesColorDefinition;
@@ -250,6 +235,19 @@ namespace IxMilia.Iges
                         entity.Color = IgesColorNumber.Default;
                     }
                 }
+
+                foreach (var pointer in entity.SubEntityIndices)
+                {
+                    entity.SubEntities.Add(entityMap[pointer]);
+                    toTrim.Add(pointer);
+                }
+            }
+
+            for (int i = file.Entities.Count - 1; i >= 0; i--)
+            {
+                var deIndex = i * 2 + 1;
+                if (toTrim.Contains(deIndex))
+                    file.Entities.RemoveAt(i);
             }
         }
 
