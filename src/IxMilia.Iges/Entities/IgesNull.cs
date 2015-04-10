@@ -13,8 +13,9 @@ namespace IxMilia.Iges.Entities
         {
         }
 
-        protected override void ReadParameters(List<string> parameters)
+        protected override int ReadParameters(List<string> parameters)
         {
+            return 0;
         }
 
         protected override void WriteParameters(List<object> parameters)

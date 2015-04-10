@@ -155,6 +155,58 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadPlaneTest()
+        {
+            // unbounded
+            var plane = (IgesPlane)ParseSingleEntity(@"
+     108       1       0       0       0                        00000000D      1
+     108       0       0       0       0                                D      2
+108,11.,22.,33.,44.,0,55.,66.,77.,88.;                                 1P      1
+");
+            Assert.Equal(11, plane.PlaneCoefficientA);
+            Assert.Equal(22, plane.PlaneCoefficientB);
+            Assert.Equal(33, plane.PlaneCoefficientC);
+            Assert.Equal(44, plane.PlaneCoefficientD);
+            Assert.Null(plane.ClosedCurveBoundingEntity);
+            Assert.Equal(IgesPlaneBounding.Unbounded, plane.Bounding);
+            Assert.Equal(new IgesPoint(55, 66, 77), plane.DisplaySymbolLocation);
+            Assert.Equal(88, plane.DisplaySymbolSize);
+
+            // bounded
+            plane = (IgesPlane)ParseSingleEntity(@"
+     100       1       0       0       0                        00000000D      1
+     100       0       0       1       0                                D      2
+     108       2       0       0       0                        00000000D      3
+     108       0       0       0       1                                D      4
+100,0.,0.,0.,0.,0.,0.,0.;                                              1P      1
+108,11.,22.,33.,44.,1,55.,66.,77.,88.;                                 3P      2
+");
+            Assert.Equal(11, plane.PlaneCoefficientA);
+            Assert.Equal(22, plane.PlaneCoefficientB);
+            Assert.Equal(33, plane.PlaneCoefficientC);
+            Assert.Equal(44, plane.PlaneCoefficientD);
+            Assert.NotNull(plane.ClosedCurveBoundingEntity as IgesCircularArc);
+            Assert.Equal(IgesPlaneBounding.BoundedPositive, plane.Bounding);
+            Assert.Equal(new IgesPoint(55, 66, 77), plane.DisplaySymbolLocation);
+            Assert.Equal(88, plane.DisplaySymbolSize);
+
+            // default values
+            plane = (IgesPlane)ParseSingleEntity(@"
+     108       1       0       0       0                        00000000D      1
+     108       0       0       0       0                                D      2
+108;                                                                   1P      1
+");
+            Assert.Equal(0, plane.PlaneCoefficientA);
+            Assert.Equal(0, plane.PlaneCoefficientB);
+            Assert.Equal(0, plane.PlaneCoefficientC);
+            Assert.Equal(0, plane.PlaneCoefficientD);
+            Assert.Null(plane.ClosedCurveBoundingEntity);
+            Assert.Equal(IgesPlaneBounding.Unbounded, plane.Bounding);
+            Assert.Equal(IgesPoint.Origin, plane.DisplaySymbolLocation);
+            Assert.Equal(0, plane.DisplaySymbolSize);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadLineTest()
         {
             var line = (IgesLine)ParseSingleEntity(@"
@@ -468,6 +520,118 @@ subfigureH,2,1,5;                                                       P      3
             Assert.Equal(88.0, line.CustomColor.GreenIntensity);
             Assert.Equal(99.0, line.CustomColor.BlueIntensity);
             Assert.Equal("name", line.CustomColor.Name);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadViewTest()
+        {
+            // fully-specified values
+            var view = (IgesView)ParseSingleEntity(@"
+     108       1       0       0       0                        00000000D      1
+     108       0       0       0       0                                D      2
+     108       2       0       0       0                        00000000D      3
+     108       0       0       0       0                                D      4
+     108       3       0       0       0                        00000000D      5
+     108       0       0       0       0                                D      6
+     108       4       0       0       0                        00000000D      7
+     108       0       0       0       0                                D      8
+     108       5       0       0       0                        00000000D      9
+     108       0       0       0       0                                D     10
+     108       6       0       0       0                        00000000D     11
+     108       0       0       0       0                                D     12
+     410       7       0       0       0                        00000100D     13
+     410       0       0       1       0                                D     14
+108,3.,0.,0.,0.,0,0.,0.,0.,0.;                                         1P      1
+108,4.,0.,0.,0.,0,0.,0.,0.,0.;                                         3P      2
+108,5.,0.,0.,0.,0,0.,0.,0.,0.;                                         5P      3
+108,6.,0.,0.,0.,0,0.,0.,0.,0.;                                         7P      4
+108,7.,0.,0.,0.,0,0.,0.,0.,0.;                                         9P      5
+108,8.,0.,0.,0.,0,0.,0.,0.,0.;                                        11P      6
+410,1,2.,1,3,5,7,9,11;                                                13P      7
+");
+            Assert.Equal(1, view.ViewNumber);
+            Assert.Equal(2.0, view.ScaleFactor);
+            Assert.Equal(3.0, view.ViewVolumeLeft.PlaneCoefficientA);
+            Assert.Equal(4.0, view.ViewVolumeTop.PlaneCoefficientA);
+            Assert.Equal(5.0, view.ViewVolumeRight.PlaneCoefficientA);
+            Assert.Equal(6.0, view.ViewVolumeBottom.PlaneCoefficientA);
+            Assert.Equal(7.0, view.ViewVolumeBack.PlaneCoefficientA);
+            Assert.Equal(8.0, view.ViewVolumeFront.PlaneCoefficientA);
+
+            // null pointers
+            view = (IgesView)ParseSingleEntity(@"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       1       0                                D      2
+410,0,0.,0,0,0,0,0,0;                                                  1P      1
+");
+            Assert.Null(view.ViewVolumeLeft);
+            Assert.Null(view.ViewVolumeTop);
+            Assert.Null(view.ViewVolumeRight);
+            Assert.Null(view.ViewVolumeBottom);
+            Assert.Null(view.ViewVolumeBack);
+            Assert.Null(view.ViewVolumeFront);
+
+            // type-default values
+            view = (IgesView)ParseSingleEntity(@"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       1       0                                D      2
+410;                                                                   1P      1
+");
+            Assert.Equal(0, view.ViewNumber);
+            Assert.Equal(0.0, view.ScaleFactor);
+            Assert.Null(view.ViewVolumeLeft);
+            Assert.Null(view.ViewVolumeTop);
+            Assert.Null(view.ViewVolumeRight);
+            Assert.Null(view.ViewVolumeBottom);
+            Assert.Null(view.ViewVolumeBack);
+            Assert.Null(view.ViewVolumeFront);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadPerspectiveViewTest()
+        {
+            // fully-specified values
+            var view = (IgesPerspectiveView)ParseSingleEntity(@"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       1       1                                D      2
+410,1,2.,3.,0.,0.,4.,0.,0.,5.,0.,0.,6.,0.,0.,7.,8.,9.,10.,11.,1,       1P      1
+12.,13.;                                                               1P      2
+");
+            Assert.Equal(1, view.ViewNumber);
+            Assert.Equal(2.0, view.ScaleFactor);
+            Assert.Equal(new IgesVector(3, 0, 0), view.ViewPlaneNormal);
+            Assert.Equal(new IgesPoint(4, 0, 0), view.ViewReferencePoint);
+            Assert.Equal(new IgesPoint(5, 0, 0), view.CenterOfProjection);
+            Assert.Equal(new IgesVector(6, 0, 0), view.ViewUpVector);
+            Assert.Equal(7.0, view.ViewPlaneDistance);
+            Assert.Equal(8.0, view.ClippingWindowLeftCoordinate);
+            Assert.Equal(9.0, view.ClippingWindowRightCoordinate);
+            Assert.Equal(10.0, view.ClippingWindowBottomCoordinate);
+            Assert.Equal(11.0, view.ClippingWindowTopCoordinate);
+            Assert.Equal(IgesDepthClipping.BackClipping, view.DepthClipping);
+            Assert.Equal(12.0, view.ClippingWindowBackCoordinate);
+            Assert.Equal(13.0, view.ClippingWindowFrontCoordinate);
+
+            // type-default values
+            view = (IgesPerspectiveView)ParseSingleEntity(@"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       1       1                                D      2
+410;                                                                   1P      1
+");
+            Assert.Equal(0, view.ViewNumber);
+            Assert.Equal(0.0, view.ScaleFactor);
+            Assert.Equal(IgesVector.Zero, view.ViewPlaneNormal);
+            Assert.Equal(IgesPoint.Origin, view.ViewReferencePoint);
+            Assert.Equal(IgesPoint.Origin, view.CenterOfProjection);
+            Assert.Equal(IgesVector.Zero, view.ViewUpVector);
+            Assert.Equal(0.0, view.ViewPlaneDistance);
+            Assert.Equal(0.0, view.ClippingWindowLeftCoordinate);
+            Assert.Equal(0.0, view.ClippingWindowRightCoordinate);
+            Assert.Equal(0.0, view.ClippingWindowBottomCoordinate);
+            Assert.Equal(0.0, view.ClippingWindowTopCoordinate);
+            Assert.Equal(IgesDepthClipping.None, view.DepthClipping);
+            Assert.Equal(0.0, view.ClippingWindowBackCoordinate);
+            Assert.Equal(0.0, view.ClippingWindowFrontCoordinate);
         }
     }
 }

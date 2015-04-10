@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace IxMilia.Iges.Entities
 {
-    public enum IgesBounding
+    public enum IgesLineBounding
     {
         BoundOnBothSides = 0,
         BoundOnStart = 1,
-        Unbound = 2
+        Unbounded = 2
     }
 
     public class IgesLine : IgesEntity
@@ -20,11 +20,11 @@ namespace IxMilia.Iges.Entities
         public IgesPoint P2 { get; set; }
 
         // custom properties
-        public IgesBounding Bounding
+        public IgesLineBounding Bounding
         {
             get
             {
-                return (IgesBounding)FormNumber;
+                return (IgesLineBounding)FormNumber;
             }
             set
             {
@@ -45,7 +45,7 @@ namespace IxMilia.Iges.Entities
             this.P2 = p2;
         }
 
-        protected override void ReadParameters(List<string> parameters)
+        protected override int ReadParameters(List<string> parameters)
         {
             this.P1.X = Double(parameters, 0);
             this.P1.Y = Double(parameters, 1);
@@ -53,6 +53,7 @@ namespace IxMilia.Iges.Entities
             this.P2.X = Double(parameters, 3);
             this.P2.Y = Double(parameters, 4);
             this.P2.Z = Double(parameters, 5);
+            return 6;
         }
 
         protected override void WriteParameters(List<object> parameters)

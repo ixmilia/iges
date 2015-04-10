@@ -203,43 +203,7 @@ namespace IxMilia.Iges
             var toTrim = new HashSet<int>();
             foreach (var entity in file.Entities)
             {
-                // populate transformation matrix
-                if (entity.TransformationMatrixPointer > 0)
-                {
-                    entity.TransformationMatrix = entityMap[entity.TransformationMatrixPointer] as IgesTransformationMatrix;
-                    toTrim.Add(entity.TransformationMatrixPointer);
-                }
-                else
-                {
-                    entity.TransformationMatrix = IgesTransformationMatrix.Identity;
-                }
-
-                // link to structure entities
-                if (entity.Structure < 0)
-                {
-                    entity.StructureEntity = entityMap[-entity.Structure];
-                }
-
-                // link to custom colors
-                if (dir.Color < 0)
-                {
-                    var custom = entityMap[-dir.Color] as IgesColorDefinition;
-                    if (custom != null)
-                    {
-                        entity.CustomColor = custom;
-                    }
-                    else
-                    {
-                        Debug.Assert(false, "color pointer was not an IgesColorDefinition");
-                        entity.Color = IgesColorNumber.Default;
-                    }
-                }
-
-                foreach (var pointer in entity.SubEntityIndices)
-                {
-                    entity.SubEntities.Add(entityMap[pointer]);
-                    toTrim.Add(pointer);
-                }
+                entity.BindPointers(dir, entityMap, toTrim);
             }
 
             for (int i = file.Entities.Count - 1; i >= 0; i--)

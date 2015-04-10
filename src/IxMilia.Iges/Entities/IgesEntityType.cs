@@ -7,6 +7,7 @@ namespace IxMilia.Iges.Entities
         Null = 0,
         CircularArc = 100,
         CompositeCurve = 102,
+        Plane = 108,
         Line = 110,
         Point = 116,
         Direction = 123,
@@ -15,9 +16,9 @@ namespace IxMilia.Iges.Entities
         Torus = 160,
         // 304
         SubfigureDefinition = 308,
-        ColorDefinition = 314
+        ColorDefinition = 314,
         // 402 form 3,4,5,19
         // 406 form 1
-        // 410
+        View = 410
     }
 }

@@ -26,7 +26,10 @@ namespace IxMilia.Iges
 
             foreach (var entity in file.Entities)
             {
-                entity.AddDirectoryAndParameterLines(entityMap, directoryLines, parameterLines, file.FieldDelimiter, file.RecordDelimiter);
+                if (!entityMap.ContainsKey(entity))
+                {
+                    entity.AddDirectoryAndParameterLines(entityMap, directoryLines, parameterLines, file.FieldDelimiter, file.RecordDelimiter);
+                }
             }
 
             PopulateGlobalLines(file, globalLines);

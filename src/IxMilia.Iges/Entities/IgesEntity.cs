@@ -1,7 +1,8 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace IxMilia.Iges.Entities
 {
@@ -50,7 +51,7 @@ namespace IxMilia.Iges.Entities
         }
 
         protected string EntityLabel { get; set; }
-        internal int Structure { get; set; }
+        protected int Structure { get; set; }
         protected int LineFontPattern { get; set; }
         protected int Level { get; set; }
         protected int View { get; set; }
@@ -60,8 +61,8 @@ namespace IxMilia.Iges.Entities
         protected int EntitySubscript { get; set; }
         protected internal List<int> SubEntityIndices { get; private set; }
 
-        internal int TransformationMatrixPointer { get; set; }
-        internal List<IgesEntity> SubEntities { get; private set; }
+        protected int TransformationMatrixPointer { get; set; }
+        protected List<IgesEntity> SubEntities { get; private set; }
 
         protected IgesEntity()
         {
@@ -69,12 +70,61 @@ namespace IxMilia.Iges.Entities
             SubEntityIndices = new List<int>();
         }
 
-        protected abstract void ReadParameters(List<string> parameters);
+        protected abstract int ReadParameters(List<string> parameters);
 
         protected abstract void WriteParameters(List<object> parameters);
 
         internal virtual void OnAfterRead(IgesDirectoryData directoryData)
         {
+        }
+
+        internal void BindPointers(IgesDirectoryData dir, Dictionary<int, IgesEntity> entityMap, HashSet<int> entitiesToTrim)
+        {
+            // populate transformation matrix
+            if (TransformationMatrixPointer > 0)
+            {
+                TransformationMatrix = entityMap[TransformationMatrixPointer] as IgesTransformationMatrix;
+                entitiesToTrim.Add(TransformationMatrixPointer);
+            }
+            else
+            {
+                TransformationMatrix = IgesTransformationMatrix.Identity;
+            }
+
+            // link to structure entities
+            if (Structure < 0)
+            {
+                StructureEntity = entityMap[-Structure];
+            }
+
+            // link to custom colors
+            if (dir.Color < 0)
+            {
+                var custom = entityMap[-dir.Color] as IgesColorDefinition;
+                if (custom != null)
+                {
+                    CustomColor = custom;
+                }
+                else
+                {
+                    Debug.Assert(false, "color pointer was not an IgesColorDefinition");
+                    Color = IgesColorNumber.Default;
+                }
+            }
+
+            SubEntities.Clear();
+            foreach (var pointer in SubEntityIndices)
+            {
+                if (entityMap.ContainsKey(pointer))
+                {
+                    SubEntities.Add(entityMap[pointer]);
+                    entitiesToTrim.Add(pointer);
+                }
+                else
+                {
+                    SubEntities.Add(null);
+                }
+            }
         }
 
         private string GetStatusNumber()
@@ -154,41 +204,38 @@ namespace IxMilia.Iges.Entities
             return dir;
         }
 
+        private int GetOrWriteEntityIndex(IgesEntity entity, Dictionary<IgesEntity, int> entityMap, List<string> directoryLines, List<string> parameterLines, char fieldDelimiter, char recordDelimiter)
+        {
+            if (!entityMap.ContainsKey(entity))
+            {
+                return entity.AddDirectoryAndParameterLines(entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+            }
+            else
+            {
+                return entityMap[entity];
+            }
+        }
+
         internal int AddDirectoryAndParameterLines(Dictionary<IgesEntity, int> entityMap, List<string> directoryLines, List<string> parameterLines, char fieldDelimiter, char recordDelimiter)
         {
             // write transformation matrix if applicable
             if (TransformationMatrix != null && !TransformationMatrix.IsIdentity)
             {
-                var matrixPointer = TransformationMatrix.AddDirectoryAndParameterLines(entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
-                TransformationMatrixPointer = matrixPointer;
+                TransformationMatrixPointer = GetOrWriteEntityIndex(TransformationMatrix, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
             }
 
             // write structure entity
             Structure = 0;
             if (StructureEntity != null)
             {
-                if (!entityMap.ContainsKey(StructureEntity))
-                {
-                    Structure = -StructureEntity.AddDirectoryAndParameterLines(entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
-                }
-                else
-                {
-                    Structure = -entityMap[StructureEntity];
-                }
+                Structure = -GetOrWriteEntityIndex(StructureEntity, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
             }
 
             // write custom color entity
             int color = 0;
             if (CustomColor != null)
             {
-                if (!entityMap.ContainsKey(CustomColor))
-                {
-                    color = -CustomColor.AddDirectoryAndParameterLines(entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
-                }
-                else
-                {
-                    color = -entityMap[CustomColor];
-                }
+                color = -GetOrWriteEntityIndex(CustomColor, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
             }
             else
             {
@@ -199,7 +246,9 @@ namespace IxMilia.Iges.Entities
             SubEntityIndices.Clear();
             foreach (var subEntity in SubEntities)
             {
-                var index = subEntity.AddDirectoryAndParameterLines(entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                var index = subEntity == null
+                    ? 0
+                    : GetOrWriteEntityIndex(subEntity, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
                 SubEntityIndices.Add(index);
             }
 
@@ -301,6 +350,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.Null:
                     entity = new IgesNull();
                     break;
+                case IgesEntityType.Plane:
+                    entity = new IgesPlane();
+                    break;
                 case IgesEntityType.Point:
                     entity = new IgesLocation();
                     break;
@@ -315,6 +367,17 @@ namespace IxMilia.Iges.Entities
                     break;
                 case IgesEntityType.TransformationMatrix:
                     entity = new IgesTransformationMatrix();
+                    break;
+                case IgesEntityType.View:
+                    switch (directoryData.FormNumber)
+                    {
+                        case 0:
+                            entity = new IgesView();
+                            break;
+                        case 1:
+                            entity = new IgesPerspectiveView();
+                            break;
+                    }
                     break;
             }
 

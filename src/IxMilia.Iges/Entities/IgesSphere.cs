@@ -27,12 +27,13 @@ namespace IxMilia.Iges.Entities
             this.Center = center;
         }
 
-        protected override void ReadParameters(List<string> parameters)
+        protected override int ReadParameters(List<string> parameters)
         {
             this.Radius = Double(parameters, 0);
             this.Center.X = Double(parameters, 1);
             this.Center.Y = Double(parameters, 2);
             this.Center.Z = Double(parameters, 3);
+            return 4;
         }
 
         protected override void WriteParameters(List<object> parameters)

@@ -76,10 +76,43 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WritePlaneTest()
+        {
+            // unbounded
+            var plane = new IgesPlane()
+            {
+                PlaneCoefficientA = 11,
+                PlaneCoefficientB = 22,
+                PlaneCoefficientC = 33,
+                PlaneCoefficientD = 44,
+                DisplaySymbolLocation = new IgesPoint(55, 66, 77),
+                DisplaySymbolSize = 88,
+                Bounding = IgesPlaneBounding.Unbounded
+            };
+            VerifyEntity(plane, @"
+     108       1       0       0       0                        00000000D      1
+     108       0       0       0       0                                D      2
+108,11.,22.,33.,44.,0,55.,66.,77.,88.;                                 1P      1
+");
+
+            // bounded
+            plane.Bounding = IgesPlaneBounding.BoundedPositive;
+            plane.ClosedCurveBoundingEntity = new IgesCircularArc();
+            VerifyEntity(plane, @"
+     100       1       0       0       0                        00000000D      1
+     100       0       0       1       0                                D      2
+     108       2       0       0       0                        00000000D      3
+     108       0       0       0       1                                D      4
+100,0.,0.,0.,0.,0.,0.,0.;                                              1P      1
+108,11.,22.,33.,44.,1,55.,66.,77.,88.;                                 3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteLineTest()
         {
             var line = new IgesLine(new IgesPoint(11, 22, 33), new IgesPoint(44, 55, 66));
-            line.Bounding = IgesBounding.Unbound;
+            line.Bounding = IgesLineBounding.Unbounded;
             VerifyEntity(line, @"
      110       1       0       0       0                        00000000D      1
      110       0       0       1       2                                D      2
@@ -239,6 +272,88 @@ s because it is so huge,2,3,5;                                         7P      5
      110       0      -1       1       0                                D      4
 314,11.,22.,33.,4Hname;                                                1P      1
 110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteViewTest()
+        {
+            // regular values
+            var view = new IgesView(
+                1,
+                2,
+                new IgesPlane() { PlaneCoefficientA = 3 },
+                new IgesPlane() { PlaneCoefficientA = 4 },
+                new IgesPlane() { PlaneCoefficientA = 5 },
+                new IgesPlane() { PlaneCoefficientA = 6 },
+                new IgesPlane() { PlaneCoefficientA = 7 },
+                new IgesPlane() { PlaneCoefficientA = 8 });
+            VerifyEntity(view, @"
+     108       1       0       0       0                        00000000D      1
+     108       0       0       0       0                                D      2
+     108       2       0       0       0                        00000000D      3
+     108       0       0       0       0                                D      4
+     108       3       0       0       0                        00000000D      5
+     108       0       0       0       0                                D      6
+     108       4       0       0       0                        00000000D      7
+     108       0       0       0       0                                D      8
+     108       5       0       0       0                        00000000D      9
+     108       0       0       0       0                                D     10
+     108       6       0       0       0                        00000000D     11
+     108       0       0       0       0                                D     12
+     410       7       0       0       0                        00000100D     13
+     410       0       0       1       0                                D     14
+108,3.,0.,0.,0.,0,0.,0.,0.,0.;                                         1P      1
+108,4.,0.,0.,0.,0,0.,0.,0.,0.;                                         3P      2
+108,5.,0.,0.,0.,0,0.,0.,0.,0.;                                         5P      3
+108,6.,0.,0.,0.,0,0.,0.,0.,0.;                                         7P      4
+108,7.,0.,0.,0.,0,0.,0.,0.,0.;                                         9P      5
+108,8.,0.,0.,0.,0,0.,0.,0.,0.;                                        11P      6
+410,1,2.,1,3,5,7,9,11;                                                13P      7
+");
+
+            // default values
+            view = new IgesView();
+            VerifyEntity(view, @"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       1       0                                D      2
+410,0,0.,0,0,0,0,0,0;                                                  1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WritePerspectiveViewTest()
+        {
+            // regular values
+            var view = new IgesPerspectiveView(
+                1,
+                2,
+                new IgesVector(3, 0, 0),
+                new IgesPoint(4, 0, 0),
+                new IgesPoint(5, 0, 0),
+                new IgesVector(6, 0, 0),
+                7,
+                8,
+                9,
+                10,
+                11,
+                IgesDepthClipping.BackClipping,
+                12,
+                13);
+            VerifyEntity(view, @"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       1       1                                D      2
+410,1,2.,3.,0.,0.,4.,0.,0.,5.,0.,0.,6.,0.,0.,7.,8.,9.,10.,11.,1,       1P      1
+12.,13.;                                                               1P      2
+");
+
+            // default values
+            view = new IgesPerspectiveView();
+            VerifyEntity(view, @"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       1       1                                D      2
+410,0,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0,         1P      1
+0.,0.;                                                                 1P      2
 ");
         }
     }

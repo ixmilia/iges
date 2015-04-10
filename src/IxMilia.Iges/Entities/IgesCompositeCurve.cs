@@ -23,13 +23,15 @@ namespace IxMilia.Iges.Entities
         {
         }
 
-        protected override void ReadParameters(List<string> parameters)
+        protected override int ReadParameters(List<string> parameters)
         {
             var entityCount = Integer(parameters, 0);
             for (int i = 0; i < entityCount; i++)
             {
                 this.SubEntityIndices.Add(Integer(parameters, i + 1));
             }
+
+            return entityCount + 1;
         }
 
         protected override void WriteParameters(List<object> parameters)

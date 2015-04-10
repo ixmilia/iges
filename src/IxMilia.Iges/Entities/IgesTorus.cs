@@ -34,7 +34,7 @@ namespace IxMilia.Iges.Entities
             this.Normal = normal;
         }
 
-        protected override void ReadParameters(List<string> parameters)
+        protected override int ReadParameters(List<string> parameters)
         {
             this.RingRadius = Double(parameters, 0);
             this.DiscRadius = Double(parameters, 1);
@@ -44,6 +44,7 @@ namespace IxMilia.Iges.Entities
             this.Normal.X = Double(parameters, 5);
             this.Normal.Y = Double(parameters, 6);
             this.Normal.Z = DoubleOrDefault(parameters, 7, 1.0);
+            return 8;
         }
 
         protected override void WriteParameters(List<object> parameters)

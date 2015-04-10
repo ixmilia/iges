@@ -31,7 +31,7 @@ namespace IxMilia.Iges.Entities
             this.EntityUseFlag = IgesEntityUseFlag.Definition;
         }
 
-        protected override void ReadParameters(List<string> parameters)
+        protected override int ReadParameters(List<string> parameters)
         {
             this.Depth = Integer(parameters, 0);
             this.Name = String(parameters, 1);
@@ -40,6 +40,8 @@ namespace IxMilia.Iges.Entities
             {
                 this.SubEntityIndices.Add(Integer(parameters, i + 3));
             }
+
+            return entityCount + 3;
         }
 
         protected override void WriteParameters(List<object> parameters)

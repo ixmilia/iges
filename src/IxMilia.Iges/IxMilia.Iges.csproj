@@ -30,11 +30,15 @@
     <Compile Include="Entities\IgesLine.cs" />
     <Compile Include="Entities\IgesLocation.cs" />
     <Compile Include="Entities\IgesNull.cs" />
+    <Compile Include="Entities\IgesPerspectiveView.cs" />
+    <Compile Include="Entities\IgesPlane.cs" />
     <Compile Include="Entities\IgesSphere.cs" />
     <Compile Include="Entities\IgesSubfigureDefinition.cs" />
     <Compile Include="Entities\IgesSubordinateEntitySwitchType.cs" />
     <Compile Include="Entities\IgesTorus.cs" />
     <Compile Include="Entities\IgesTransformationMatrix.cs" />
+    <Compile Include="Entities\IgesView.cs" />
+    <Compile Include="Entities\IgesViewBase.cs" />
     <Compile Include="IgesDirectoryData.cs" />
     <Compile Include="IgesFileWriter.cs" />
     <Compile Include="IgesPoint.cs" />

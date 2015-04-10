@@ -27,11 +27,12 @@ namespace IxMilia.Iges.Entities
             this.Z = z;
         }
 
-        protected override void ReadParameters(List<string> parameters)
+        protected override int ReadParameters(List<string> parameters)
         {
             this.X = Double(parameters, 0);
             this.Y = Double(parameters, 1);
             this.Z = Double(parameters, 2);
+            return 3;
         }
 
         protected override void WriteParameters(List<object> parameters)

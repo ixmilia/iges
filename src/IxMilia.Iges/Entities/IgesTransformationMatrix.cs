@@ -44,7 +44,7 @@ namespace IxMilia.Iges.Entities
             this.T3 = t3;
         }
 
-        protected override void ReadParameters(List<string> parameters)
+        protected override int ReadParameters(List<string> parameters)
         {
             this.R11 = Double(parameters, 0);
             this.R12 = Double(parameters, 1);
@@ -58,6 +58,7 @@ namespace IxMilia.Iges.Entities
             this.R32 = Double(parameters, 9);
             this.R33 = Double(parameters, 10);
             this.T3 = Double(parameters, 11);
+            return 12;
         }
 
         protected override void WriteParameters(List<object> parameters)

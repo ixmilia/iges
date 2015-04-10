@@ -32,12 +32,13 @@ namespace IxMilia.Iges.Entities
             this.Name = name;
         }
 
-        protected override void ReadParameters(List<string> parameters)
+        protected override int ReadParameters(List<string> parameters)
         {
             this.RedIntensity = Double(parameters, 0);
             this.GreenIntensity = Double(parameters, 1);
             this.BlueIntensity = Double(parameters, 2);
             this.Name = String(parameters, 3);
+            return 4;
         }
 
         protected override void WriteParameters(List<object> parameters)
