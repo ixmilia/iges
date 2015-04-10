@@ -13,6 +13,7 @@ namespace IxMilia.Iges.Entities
         public int LineCount { get; protected set; }
         public int FormNumber { get; protected set; }
         public IgesEntity StructureEntity { get; set; }
+        public IgesViewBase View { get; set; }
         public IgesTransformationMatrix TransformationMatrix { get; set; }
 
         public IgesBlankStatus BlankStatus { get; set; }
@@ -51,17 +52,17 @@ namespace IxMilia.Iges.Entities
         }
 
         protected string EntityLabel { get; set; }
-        protected int Structure { get; set; }
+        private int StructurePointer { get; set; }
         protected int LineFontPattern { get; set; }
         protected int Level { get; set; }
-        protected int View { get; set; }
         
         protected int LableDisplay { get; set; }
         protected int LineWeight { get; set; }
         protected int EntitySubscript { get; set; }
         protected internal List<int> SubEntityIndices { get; private set; }
 
-        protected int TransformationMatrixPointer { get; set; }
+        private int ViewPointer { get; set; }
+        private int TransformationMatrixPointer { get; set; }
         protected List<IgesEntity> SubEntities { get; private set; }
 
         protected IgesEntity()
@@ -80,6 +81,13 @@ namespace IxMilia.Iges.Entities
 
         internal void BindPointers(IgesDirectoryData dir, Dictionary<int, IgesEntity> entityMap, HashSet<int> entitiesToTrim)
         {
+            // populate view
+            if (ViewPointer > 0)
+            {
+                View = entityMap[ViewPointer] as IgesViewBase;
+                entitiesToTrim.Add(ViewPointer);
+            }
+
             // populate transformation matrix
             if (TransformationMatrixPointer > 0)
             {
@@ -92,9 +100,9 @@ namespace IxMilia.Iges.Entities
             }
 
             // link to structure entities
-            if (Structure < 0)
+            if (StructurePointer < 0)
             {
-                StructureEntity = entityMap[-Structure];
+                StructureEntity = entityMap[-StructurePointer];
             }
 
             // link to custom colors
@@ -161,10 +169,10 @@ namespace IxMilia.Iges.Entities
 
         private void PopulateDirectoryData(IgesDirectoryData directoryData)
         {
-            this.Structure = directoryData.Structure;
+            this.StructurePointer = directoryData.Structure;
             this.LineFontPattern = directoryData.LineFontPattern;
             this.Level = directoryData.Level;
-            this.View = directoryData.View;
+            this.ViewPointer = directoryData.View;
             this.TransformationMatrixPointer = directoryData.TransformationMatrixPointer;
             this.LableDisplay = directoryData.LableDisplay;
             SetStatusNumber(directoryData.StatusNumber);
@@ -188,10 +196,10 @@ namespace IxMilia.Iges.Entities
         {
             var dir = new IgesDirectoryData();
             dir.EntityType = EntityType;
-            dir.Structure = this.Structure;
+            dir.Structure = this.StructurePointer;
             dir.LineFontPattern = this.LineFontPattern;
             dir.Level = this.Level;
-            dir.View = this.View;
+            dir.View = this.ViewPointer;
             dir.TransformationMatrixPointer = this.TransformationMatrixPointer;
             dir.LableDisplay = this.LableDisplay;
             dir.StatusNumber = this.GetStatusNumber();
@@ -218,6 +226,12 @@ namespace IxMilia.Iges.Entities
 
         internal int AddDirectoryAndParameterLines(Dictionary<IgesEntity, int> entityMap, List<string> directoryLines, List<string> parameterLines, char fieldDelimiter, char recordDelimiter)
         {
+            // write view
+            if (View != null)
+            {
+                ViewPointer = GetOrWriteEntityIndex(View, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+            }
+
             // write transformation matrix if applicable
             if (TransformationMatrix != null && !TransformationMatrix.IsIdentity)
             {
@@ -225,10 +239,10 @@ namespace IxMilia.Iges.Entities
             }
 
             // write structure entity
-            Structure = 0;
+            StructurePointer = 0;
             if (StructureEntity != null)
             {
-                Structure = -GetOrWriteEntityIndex(StructureEntity, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                StructurePointer = -GetOrWriteEntityIndex(StructureEntity, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
             }
 
             // write custom color entity

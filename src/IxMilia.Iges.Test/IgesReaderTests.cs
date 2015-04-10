@@ -2,6 +2,8 @@
 
 using System;
 using System.IO;
+using System.Linq;
+using IxMilia.Iges.Entities;
 using Xunit;
 
 namespace IxMilia.Iges.Test
@@ -191,6 +193,76 @@ S      0G      0D      0P      0                                        T      1
         {
             var file = CreateFile(string.Empty);
             Assert.Equal(',', file.FieldDelimiter);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadStructureFromEntityTest()
+        {
+            var file = CreateFile(@"
+     110       1      -3       0       0                               0D      1
+     110       0       0       0       0                                D      2
+     110       2       0       0       0                               0D      3
+     110       0       0       0       0                                D      4
+110,11,22,33,44,55,66;                                                 1P      1
+110,77,88,99,10,20,30;                                                 3P      2
+");
+            Assert.Equal(2, file.Entities.Count);
+            var line1 = (IgesLine)file.Entities.First();
+            Assert.Equal(new IgesPoint(11, 22, 33), line1.P1);
+            var structure = (IgesLine)line1.StructureEntity;
+            Assert.Equal(new IgesPoint(77, 88, 99), structure.P1);
+            Assert.Null(structure.StructureEntity);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadViewFromEntityTest()
+        {
+            // read view
+            var file = CreateFile(@"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       1       0                                D      2
+     110       2       0       0       0       1                00000000D      3
+     110       0       0       1       0                                D      4
+410,0,2.,0,0,0,0,0,0;                                                  1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+");
+            var line = file.Entities.Single();
+            Assert.Equal(2.0, line.View.ScaleFactor);
+
+            // ensure null view if not specified
+            file = CreateFile(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+");
+            line = file.Entities.Single();
+            Assert.Null(line.View);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadTransformationMatrixFromEntityTest()
+        {
+            var file = CreateFile(@"
+     124       1       0       0       0                               0D      1
+     124       0       0       4       0                               0D      2
+     110       2       0       0       0               1               0D      3
+     110       0       3       1       0                               0D      4
+124,1,2,3,4,5,6,7,8,9,10,11,12;                                        1P      1
+110,11,22,33,44,55,66;                                                 3P      2
+".Trim('\r', '\n'));
+            var matrix = file.Entities.Single(e => e.EntityType == IgesEntityType.Line).TransformationMatrix;
+            Assert.Equal(1.0, matrix.R11);
+            Assert.Equal(2.0, matrix.R12);
+            Assert.Equal(3.0, matrix.R13);
+            Assert.Equal(4.0, matrix.T1);
+            Assert.Equal(5.0, matrix.R21);
+            Assert.Equal(6.0, matrix.R22);
+            Assert.Equal(7.0, matrix.R23);
+            Assert.Equal(8.0, matrix.T2);
+            Assert.Equal(9.0, matrix.R31);
+            Assert.Equal(10.0, matrix.R32);
+            Assert.Equal(11.0, matrix.R33);
+            Assert.Equal(12.0, matrix.T3);
         }
     }
 }

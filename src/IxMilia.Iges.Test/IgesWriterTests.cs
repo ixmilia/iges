@@ -66,6 +66,22 @@ S      1G      2D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteLineWithViewTest()
+        {
+            var file = new IgesFile();
+            var line = new IgesLine() { View = new IgesView() };
+            file.Entities.Add(line);
+            VerifyFileContains(file, @"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       1       0                                D      2
+     110       2       0       0       0       1                00000000D      3
+     110       0       0       1       0                                D      4
+410,0,0.,0,0,0,0,0,0;                                                  1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteLineWithTransformationMatrixTest()
         {
             var file = new IgesFile();
