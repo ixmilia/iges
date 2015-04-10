@@ -53,7 +53,6 @@ namespace IxMilia.Iges.Entities
                 throw new ArgumentException("All z values must be equal");
             }
 
-            this.LineCount = 1;
             this.PlaneDisplacement = center.Z;
             this.Center = new IgesPoint(center.X, center.Y, 0.0);
             this.StartPoint = new IgesPoint(start.X, start.Y, 0.0);

@@ -23,7 +23,6 @@ namespace IxMilia.Iges.Entities
         public IgesTorus(double ringRadius, double discRadius, IgesPoint center, IgesVector normal)
             : base()
         {
-            this.LineCount = 1;
             this.BlankStatus = IgesBlankStatus.Visible;
             this.SubordinateEntitySwitchType = IgesSubordinateEntitySwitchType.Independent;
             this.EntityUseFlag = IgesEntityUseFlag.Geometry;

@@ -95,10 +95,11 @@ namespace IxMilia.Iges
             AddParametersToStringList(fields, globalLines, file.FieldDelimiter, file.RecordDelimiter);
         }
 
-        internal static void AddParametersToStringList(object[] parameters, List<string> stringList, char fieldDelimiter, char recordDelimiter, int maxLength = IgesFile.MaxDataLength, string lineSuffix = null)
+        internal static int AddParametersToStringList(object[] parameters, List<string> stringList, char fieldDelimiter, char recordDelimiter, int maxLength = IgesFile.MaxDataLength, string lineSuffix = null)
         {
             int suffixLength = lineSuffix == null ? 0 : lineSuffix.Length;
             var sb = new StringBuilder();
+            int addedLines = 0;
             Action addLine = () =>
             {
                 // ensure proper length
@@ -108,6 +109,7 @@ namespace IxMilia.Iges
                 sb.Append(lineSuffix);
                 stringList.Add(sb.ToString());
                 sb.Clear();
+                addedLines++;
             };
             for (int i = 0; i < parameters.Length; i++)
             {
@@ -154,6 +156,8 @@ namespace IxMilia.Iges
             // commit any remaining text
             if (sb.Length > 0)
                 addLine();
+
+            return addedLines;
         }
 
         private static string ParameterToString(object parameter)

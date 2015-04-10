@@ -22,7 +22,6 @@ namespace IxMilia.Iges.Entities
         public IgesDirection(double x, double y, double z)
             : base()
         {
-            this.LineCount = 1;
             this.SubordinateEntitySwitchType = IgesSubordinateEntitySwitchType.PhysicallyDependent;
             this.EntityUseFlag = IgesEntityUseFlag.Definition;
             this.X = x;

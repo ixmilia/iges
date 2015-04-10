@@ -21,7 +21,6 @@ namespace IxMilia.Iges.Entities
         public IgesLocation(double x, double y, double z)
             : base()
         {
-            this.LineCount = 1;
             this.X = x;
             this.Y = y;
             this.Z = z;

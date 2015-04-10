@@ -26,7 +26,7 @@ namespace IxMilia.Iges.Test
             // entity id 888 is invalid
             var file = IgesReaderTests.CreateFile(@"
      888       1       0       0       0                               0D      1
-     888       0       0       0       0                               0D      2
+     888       0       0       1       0                               0D      2
 888,11,22,33,44,55,66;                                                 1P      1
 ".Trim('\r', '\n'));
             Assert.Equal(0, file.Entities.Count);
@@ -37,7 +37,7 @@ namespace IxMilia.Iges.Test
         {
             var file = IgesReaderTests.CreateFile(@"
        0       1       0       0       0                               0D      1
-       0       0       0       0       0                               0D      2
+       0       0       0       1       0                               0D      2
 0,11,22,33,44,55,66;                                                   1P      1");
             Assert.Equal(IgesEntityType.Null, file.Entities.Single().EntityType);
         }
@@ -141,7 +141,7 @@ namespace IxMilia.Iges.Test
             // unbounded
             var plane = (IgesPlane)ParseSingleEntity(@"
      108       1       0       0       0                        00000000D      1
-     108       0       0       0       0                                D      2
+     108       0       0       1       0                                D      2
 108,11.,22.,33.,44.,0,55.,66.,77.,88.;                                 1P      1
 ");
             Assert.Equal(11, plane.PlaneCoefficientA);
@@ -158,7 +158,7 @@ namespace IxMilia.Iges.Test
      100       1       0       0       0                        00000000D      1
      100       0       0       1       0                                D      2
      108       2       0       0       0                        00000000D      3
-     108       0       0       0       1                                D      4
+     108       0       0       1       1                                D      4
 100,0.,0.,0.,0.,0.,0.,0.;                                              1P      1
 108,11.,22.,33.,44.,1,55.,66.,77.,88.;                                 3P      2
 ");
@@ -174,7 +174,7 @@ namespace IxMilia.Iges.Test
             // default values
             plane = (IgesPlane)ParseSingleEntity(@"
      108       1       0       0       0                        00000000D      1
-     108       0       0       0       0                                D      2
+     108       0       0       1       0                                D      2
 108;                                                                   1P      1
 ");
             Assert.Equal(0, plane.PlaneCoefficientA);
@@ -301,7 +301,7 @@ namespace IxMilia.Iges.Test
         {
             var matrix = (IgesTransformationMatrix)ParseSingleEntity(@"
      124       1       0       0       0                               0D      1
-     124       0       0       4       0                               0D      2
+     124       0       0       1       0                               0D      2
 124,1,2,3,4,5,6,7,8,9,10,11,12;                                        1P      1
 ");
             Assert.Equal(1.0, matrix.R11);
@@ -320,7 +320,7 @@ namespace IxMilia.Iges.Test
             // read type-default values
             matrix = (IgesTransformationMatrix)ParseSingleEntity(@"
      124       1       0       0       0                               0D      1
-     124       0       0       4       0                               0D      2
+     124       0       0       1       0                               0D      2
 124;                                                                   1P      1
 ");
             Assert.Equal(0.0, matrix.R11);
@@ -393,7 +393,7 @@ namespace IxMilia.Iges.Test
      110       1       0       0       0                               0D      1
      110       0       0       1       0                                D      2
      308       2       0       0       0                        00000200D      3
-     308       0       0       1       0                                D      4
+     308       0       0       2       0                                D      4
      110       4       0       0       0                               0D      5
      110       0       0       1       0                                D      6
 110,1.0,2.0,3.0,4.0,5.0,6.0;                                            P      1
@@ -483,17 +483,17 @@ subfigureH,2,1,5;                                                       P      3
             // fully-specified values
             var view = (IgesView)ParseSingleEntity(@"
      108       1       0       0       0                        00000000D      1
-     108       0       0       0       0                                D      2
+     108       0       0       1       0                                D      2
      108       2       0       0       0                        00000000D      3
-     108       0       0       0       0                                D      4
+     108       0       0       1       0                                D      4
      108       3       0       0       0                        00000000D      5
-     108       0       0       0       0                                D      6
+     108       0       0       1       0                                D      6
      108       4       0       0       0                        00000000D      7
-     108       0       0       0       0                                D      8
+     108       0       0       1       0                                D      8
      108       5       0       0       0                        00000000D      9
-     108       0       0       0       0                                D     10
+     108       0       0       1       0                                D     10
      108       6       0       0       0                        00000000D     11
-     108       0       0       0       0                                D     12
+     108       0       0       1       0                                D     12
      410       7       0       0       0                        00000100D     13
      410       0       0       1       0                                D     14
 108,3.,0.,0.,0.,0,0.,0.,0.,0.;                                         1P      1
@@ -548,7 +548,7 @@ subfigureH,2,1,5;                                                       P      3
             // fully-specified values
             var view = (IgesPerspectiveView)ParseSingleEntity(@"
      410       1       0       0       0                        00000100D      1
-     410       0       0       1       1                                D      2
+     410       0       0       2       1                                D      2
 410,1,2.,3.,0.,0.,4.,0.,0.,5.,0.,0.,6.,0.,0.,7.,8.,9.,10.,11.,1,       1P      1
 12.,13.;                                                               1P      2
 ");

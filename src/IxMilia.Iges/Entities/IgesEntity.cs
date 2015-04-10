@@ -10,7 +10,7 @@ namespace IxMilia.Iges.Entities
     {
         public abstract IgesEntityType EntityType { get; }
 
-        public int LineCount { get; protected set; }
+        private int _lineCount { get; set; }
         public int FormNumber { get; protected set; }
         public IgesEntity StructureEntity { get; set; }
         public IgesViewBase View { get; set; }
@@ -52,7 +52,7 @@ namespace IxMilia.Iges.Entities
         }
 
         protected string EntityLabel { get; set; }
-        private int StructurePointer { get; set; }
+        private int _structurePointer { get; set; }
         protected int LineFontPattern { get; set; }
         protected int Level { get; set; }
         
@@ -65,10 +65,20 @@ namespace IxMilia.Iges.Entities
         private int TransformationMatrixPointer { get; set; }
         protected List<IgesEntity> SubEntities { get; private set; }
 
+        private List<int> _associatedEntityIndices;
+        public List<IgesEntity> AssociatedEntities { get; private set; }
+
+        private List<int> _propertyIndices;
+        public List<IgesEntity> Properties { get; private set; }
+
         protected IgesEntity()
         {
             SubEntities = new List<IgesEntity>();
             SubEntityIndices = new List<int>();
+            AssociatedEntities = new List<IgesEntity>();
+            _associatedEntityIndices = new List<int>();
+            Properties = new List<IgesEntity>();
+            _propertyIndices = new List<int>();
         }
 
         protected abstract int ReadParameters(List<string> parameters);
@@ -79,8 +89,29 @@ namespace IxMilia.Iges.Entities
         {
         }
 
+        internal void ReadCommonPointers(List<string>parameters, int nextIndex)
+        {
+            var associatedPointerCount = Integer(parameters, nextIndex++);
+            for (int i = 0; i < associatedPointerCount; i++)
+            {
+                _associatedEntityIndices.Add(Integer(parameters, nextIndex++));
+            }
+
+            var propertyPointerCount = Integer(parameters, nextIndex++);
+            for (int i = 0; i < propertyPointerCount; i++)
+            {
+                _propertyIndices.Add(Integer(parameters, nextIndex++));
+            }
+        }
+
         internal void BindPointers(IgesDirectoryData dir, Dictionary<int, IgesEntity> entityMap, HashSet<int> entitiesToTrim)
         {
+            if (EntityType == IgesEntityType.Null)
+            {
+                // null entities don't parse anything
+                return;
+            }
+
             // populate view
             if (ViewPointer > 0)
             {
@@ -100,9 +131,9 @@ namespace IxMilia.Iges.Entities
             }
 
             // link to structure entities
-            if (StructurePointer < 0)
+            if (_structurePointer < 0)
             {
-                StructureEntity = entityMap[-StructurePointer];
+                StructureEntity = entityMap[-_structurePointer];
             }
 
             // link to custom colors
@@ -120,6 +151,7 @@ namespace IxMilia.Iges.Entities
                 }
             }
 
+            // link sub entities
             SubEntities.Clear();
             foreach (var pointer in SubEntityIndices)
             {
@@ -133,6 +165,17 @@ namespace IxMilia.Iges.Entities
                     SubEntities.Add(null);
                 }
             }
+
+            // link common pointers
+            AssociatedEntities.Clear();
+            foreach (var pointer in _associatedEntityIndices)
+            {
+                var entity = entityMap[pointer];
+                Debug.Assert(entity.EntityType == IgesEntityType.AssociativityInstance || entity.EntityType == IgesEntityType.GeneralNote || entity.EntityType == IgesEntityType.TextDisplayTemplate);
+                AssociatedEntities.Add(entity);
+            }
+
+            Properties = _propertyIndices.Select(pointer => entityMap[pointer]).ToList();
         }
 
         private string GetStatusNumber()
@@ -169,7 +212,7 @@ namespace IxMilia.Iges.Entities
 
         private void PopulateDirectoryData(IgesDirectoryData directoryData)
         {
-            this.StructurePointer = directoryData.Structure;
+            this._structurePointer = directoryData.Structure;
             this.LineFontPattern = directoryData.LineFontPattern;
             this.Level = directoryData.Level;
             this.ViewPointer = directoryData.View;
@@ -186,7 +229,7 @@ namespace IxMilia.Iges.Entities
                 this.Color = (IgesColorNumber)directoryData.Color;
             }
 
-            this.LineCount = directoryData.LineCount;
+            this._lineCount = directoryData.LineCount;
             this.FormNumber = directoryData.FormNumber;
             this.EntityLabel = directoryData.EntityLabel;
             this.EntitySubscript = directoryData.EntitySubscript;
@@ -196,7 +239,7 @@ namespace IxMilia.Iges.Entities
         {
             var dir = new IgesDirectoryData();
             dir.EntityType = EntityType;
-            dir.Structure = this.StructurePointer;
+            dir.Structure = this._structurePointer;
             dir.LineFontPattern = this.LineFontPattern;
             dir.Level = this.Level;
             dir.View = this.ViewPointer;
@@ -205,7 +248,7 @@ namespace IxMilia.Iges.Entities
             dir.StatusNumber = this.GetStatusNumber();
             dir.LineWeight = this.LineWeight;
             dir.Color = color;
-            dir.LineCount = this.LineCount;
+            dir.LineCount = this._lineCount;
             dir.FormNumber = this.FormNumber;
             dir.EntityLabel = this.EntityLabel;
             dir.EntitySubscript = this.EntitySubscript;
@@ -239,10 +282,10 @@ namespace IxMilia.Iges.Entities
             }
 
             // write structure entity
-            StructurePointer = 0;
+            _structurePointer = 0;
             if (StructureEntity != null)
             {
-                StructurePointer = -GetOrWriteEntityIndex(StructureEntity, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                _structurePointer = -GetOrWriteEntityIndex(StructureEntity, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
             }
 
             // write custom color entity
@@ -266,16 +309,44 @@ namespace IxMilia.Iges.Entities
                 SubEntityIndices.Add(index);
             }
 
+            // write common pointers
+            _associatedEntityIndices.Clear();
+            foreach (var assoc in AssociatedEntities)
+            {
+                var index = GetOrWriteEntityIndex(assoc, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                _associatedEntityIndices.Add(index);
+            }
+
+            _propertyIndices.Clear();
+            foreach (var prop in Properties)
+            {
+                var index = GetOrWriteEntityIndex(prop, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                _propertyIndices.Add(index);
+            }
+
             var nextDirectoryIndex = directoryLines.Count + 1;
             var nextParameterIndex = parameterLines.Count + 1;
-            var dir = GetDirectoryData(color);
-            dir.ParameterPointer = nextParameterIndex;
-            dir.ToString(directoryLines);
             var parameters = new List<object>();
             parameters.Add((int)EntityType);
             this.WriteParameters(parameters);
-            IgesFileWriter.AddParametersToStringList(parameters.ToArray(), parameterLines, fieldDelimiter, recordDelimiter,
+
+            if (_associatedEntityIndices.Any())
+            {
+                parameters.Add(_associatedEntityIndices.Count);
+                parameters.AddRange(_associatedEntityIndices.Cast<object>());
+            }
+
+            if (_propertyIndices.Any())
+            {
+                parameters.Add(_propertyIndices.Count);
+                parameters.AddRange(_propertyIndices.Cast<object>());
+            }
+
+            this._lineCount = IgesFileWriter.AddParametersToStringList(parameters.ToArray(), parameterLines, fieldDelimiter, recordDelimiter,
                 lineSuffix: string.Format(" {0,7}", nextDirectoryIndex));
+            var dir = GetDirectoryData(color);
+            dir.ParameterPointer = nextParameterIndex;
+            dir.ToString(directoryLines);
 
             entityMap[this] = nextDirectoryIndex;
 
@@ -398,7 +469,8 @@ namespace IxMilia.Iges.Entities
             if (entity != null)
             {
                 entity.PopulateDirectoryData(directoryData);
-                entity.ReadParameters(parameters);
+                int nextIndex = entity.ReadParameters(parameters);
+                entity.ReadCommonPointers(parameters, nextIndex);
                 entity.OnAfterRead(directoryData);
             }
 

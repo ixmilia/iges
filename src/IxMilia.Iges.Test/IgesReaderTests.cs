@@ -12,13 +12,15 @@ namespace IxMilia.Iges.Test
     {
         internal static IgesFile CreateFile(string content)
         {
-            var stream = new MemoryStream();
-            var writer = new StreamWriter(stream);
-            writer.Write(content.Trim('\r', '\n'));
-            writer.Flush();
-            stream.Seek(0, SeekOrigin.Begin);
-            var file = IgesFile.Load(stream);
-            return file;
+            using (var stream = new MemoryStream())
+            using (var writer = new StreamWriter(stream))
+            {
+                writer.Write(content.Trim('\r', '\n'));
+                writer.Flush();
+                stream.Seek(0, SeekOrigin.Begin);
+                var file = IgesFile.Load(stream);
+                return file;
+            }
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
@@ -200,9 +202,9 @@ S      0G      0D      0P      0                                        T      1
         {
             var file = CreateFile(@"
      110       1      -3       0       0                               0D      1
-     110       0       0       0       0                                D      2
+     110       0       0       1       0                                D      2
      110       2       0       0       0                               0D      3
-     110       0       0       0       0                                D      4
+     110       0       0       1       0                                D      4
 110,11,22,33,44,55,66;                                                 1P      1
 110,77,88,99,10,20,30;                                                 3P      2
 ");
@@ -244,7 +246,7 @@ S      0G      0D      0P      0                                        T      1
         {
             var file = CreateFile(@"
      124       1       0       0       0                               0D      1
-     124       0       0       4       0                               0D      2
+     124       0       0       1       0                               0D      2
      110       2       0       0       0               1               0D      3
      110       0       3       1       0                               0D      4
 124,1,2,3,4,5,6,7,8,9,10,11,12;                                        1P      1
@@ -263,6 +265,12 @@ S      0G      0D      0P      0                                        T      1
             Assert.Equal(10.0, matrix.R32);
             Assert.Equal(11.0, matrix.R33);
             Assert.Equal(12.0, matrix.T3);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadCommonPointersTest()
+        {
+            // TODO: implement this once type (402, 212, or 312) is implemented
         }
     }
 }

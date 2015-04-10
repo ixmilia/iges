@@ -21,7 +21,6 @@ namespace IxMilia.Iges.Entities
         public IgesSphere(double radius, IgesPoint center)
             : base()
         {
-            this.LineCount = 1;
             this.EntityUseFlag = IgesEntityUseFlag.Geometry;
             this.Radius = radius;
             this.Center = center;

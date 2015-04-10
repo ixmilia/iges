@@ -23,7 +23,6 @@ namespace IxMilia.Iges.Entities
         public IgesColorDefinition(double r, double g, double b, string name = null)
             : base()
         {
-            this.LineCount = 1;
             this.SubordinateEntitySwitchType = IgesSubordinateEntitySwitchType.Independent;
             this.EntityUseFlag = IgesEntityUseFlag.Definition;
             this.RedIntensity = r;

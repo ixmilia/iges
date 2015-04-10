@@ -16,7 +16,6 @@ namespace IxMilia.Iges.Entities
         protected IgesViewBase(int viewNumber, double scaleFactor)
             : base()
         {
-            this.LineCount = 1;
             this.EntityUseFlag = IgesEntityUseFlag.Annotation;
             this.ViewNumber = viewNumber;
             this.ScaleFactor = scaleFactor;

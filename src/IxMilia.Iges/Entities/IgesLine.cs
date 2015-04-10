@@ -40,7 +40,6 @@ namespace IxMilia.Iges.Entities
         public IgesLine(IgesPoint p1, IgesPoint p2)
             : base()
         {
-            this.LineCount = 1;
             this.P1 = p1;
             this.P2 = p2;
         }

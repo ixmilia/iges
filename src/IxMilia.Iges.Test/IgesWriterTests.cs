@@ -59,7 +59,7 @@ S      1G      2D      0P      0                                        T      1
             });
             VerifyFileContains(file, @"
      110       1       0       0       0                        00000000D      1
-     110       0       3       1       0                                D      2
+     110       0       3       2       0                                D      2
 110,1.1234512345,2.1234512345,3.1234512345,4.1234512345,               1P      1
 5.1234512345,6.1234512345;                                             1P      2
 ");
@@ -109,7 +109,7 @@ S      1G      2D      0P      0                                        T      1
             file.Entities.Add(line);
             VerifyFileContains(file, @"
      124       1       0       0       0                        00000000D      1
-     124       0       0       0       0                                D      2
+     124       0       0       1       0                                D      2
      110       2       0       0       0               1        00000000D      3
      110       0       0       1       0                                D      4
 124,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.;                            1P      1
@@ -172,6 +172,12 @@ S      1G      2D      0P      0                                        T      1
 7HIxMilia,8,4,15H19870508.123456,8Hprotocol;                            G      3
 S      1G      3D      0P      0                                        T      1
 ");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteCommonPointersTest()
+        {
+            // TODO: implement this once type (402, 212, or 312) is implemented
         }
     }
 }

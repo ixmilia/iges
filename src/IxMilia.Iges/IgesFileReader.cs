@@ -85,18 +85,19 @@ namespace IxMilia.Iges
             ParsingString,
         }
 
-        private static Dictionary<int, List<string>> PrepareParameterLines(List<string> parameterLines, char fieldDelimiter, char recordDelimiter)
+        private static Dictionary<int, Tuple<List<string>, int>> PrepareParameterLines(List<string> parameterLines, char fieldDelimiter, char recordDelimiter)
         {
-            var map = new Dictionary<int, List<string>>();
+            var map = new Dictionary<int, Tuple<List<string>, int>>();
             int parameterStart = 1;
             var fields = new List<string>();
             var state = ParameterParseState.ParsingEntityNumber;
             var current = new StringBuilder();
             int entityNumber = 0;
             int stringLength = 0;
+            int currentEntityLineCount = 1;
 
             // for each line
-            for (int i = 0; i < parameterLines.Count; i++)
+            for (int i = 0; i < parameterLines.Count; i++, currentEntityLineCount++)
             {
                 var line = parameterLines[i];
 
@@ -117,7 +118,8 @@ namespace IxMilia.Iges
                             else if (ch == recordDelimiter)
                             {
                                 state = ParameterParseState.ParsingEntityNumber;
-                                map[parameterStart] = fields;
+                                map[parameterStart] = Tuple.Create(fields, currentEntityLineCount);
+                                currentEntityLineCount = 0;
                                 parameterStart = i + 2;
                                 fields = new List<string>();
                                 break;
@@ -162,7 +164,8 @@ namespace IxMilia.Iges
                             state = ParameterParseState.ParsingEntityNumber;
                             current.Clear();
 
-                            map[parameterStart] = fields;
+                            map[parameterStart] = Tuple.Create(fields, currentEntityLineCount);
+                            currentEntityLineCount = 0;
                             parameterStart = i + 2;
                             fields = new List<string>();
                             break;
@@ -184,14 +187,17 @@ namespace IxMilia.Iges
             return map;
         }
 
-        private static void PopulateEntities(IgesFile file, List<string> directoryLines, Dictionary<int, List<string>> parameterMap)
+        private static void PopulateEntities(IgesFile file, List<string> directoryLines, Dictionary<int, Tuple<List<string>, int>> parameterMap)
         {
             IgesDirectoryData dir = null;
             var entityMap = new Dictionary<int, IgesEntity>();
             for (int i = 0; i < directoryLines.Count; i += 2)
             {
                 dir = IgesDirectoryData.FromRawLines(directoryLines[i], directoryLines[i + 1]);
-                var entity = IgesEntity.FromData(dir, parameterMap[dir.ParameterPointer]);
+                var parameterValues = parameterMap[dir.ParameterPointer].Item1;
+                var parameterLineCount = parameterMap[dir.ParameterPointer].Item2;
+                Debug.Assert(parameterLineCount == dir.LineCount);
+                var entity = IgesEntity.FromData(dir, parameterValues);
                 if (entity != null)
                 {
                     var directoryIndex = i + 1;

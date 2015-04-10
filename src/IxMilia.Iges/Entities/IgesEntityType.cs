@@ -14,10 +14,12 @@ namespace IxMilia.Iges.Entities
         TransformationMatrix = 124,
         Sphere = 158,
         Torus = 160,
+        GeneralNote = 212,
         // 304
         SubfigureDefinition = 308,
+        TextDisplayTemplate = 312,
         ColorDefinition = 314,
-        // 402 form 3,4,5,19
+        AssociativityInstance = 402,
         // 406 form 1
         View = 410
     }
