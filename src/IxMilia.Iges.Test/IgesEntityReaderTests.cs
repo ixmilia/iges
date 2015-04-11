@@ -386,6 +386,49 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadTemplateLineFontDefinitionTest()
+        {
+            var lfd = (IgesTemplateLineFontDefinition)ParseSingleEntity(@"
+       0       1       0       0       0                        00000000D      1
+       0       0       0       1       0                                D      2
+     308       2       0       0       0                        00000200D      3
+     308       0       0       1       0                                D      4
+     304       3       0       0       0                        00000200D      5
+     304       0       0       1       1                                D      6
+0;                                                                     1P      1
+308,0,3Hfoo,1,1;                                                       3P      2
+304,1,3,1.,2.;                                                         5P      3
+");
+            Assert.Equal(IgesTemplateLineFontOrientation.AlignedToTangent, lfd.Orientation);
+            var sub = lfd.Template;
+            Assert.Equal("foo", sub.Name);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadPatternLineFontDefinitionTest()
+        {
+            // fully-specified values
+            var lfd = (IgesPatternLineFontDefinition)ParseSingleEntity(@"
+     304       1       0       0       0                        00000200D      1
+     304       0       0       1       2                                D      2
+304,2,1.,2.,2H34;                                                      1P      1
+");
+            Assert.Equal(2, lfd.SegmentLengths.Count);
+            Assert.Equal(1.0, lfd.SegmentLengths[0]);
+            Assert.Equal(2.0, lfd.SegmentLengths[1]);
+            Assert.Equal(0x34, lfd.DisplayMask);
+
+            // default values
+            lfd = (IgesPatternLineFontDefinition)ParseSingleEntity(@"
+     304       1       0       0       0                        00000200D      1
+     304       0       0       1       2                                D      2
+304;                                                                   1P      1
+");
+            Assert.Equal(0, lfd.SegmentLengths.Count);
+            Assert.Equal(0x00, lfd.DisplayMask);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSubfigureTest()
         {
             var entity = ParseSingleEntity(@"

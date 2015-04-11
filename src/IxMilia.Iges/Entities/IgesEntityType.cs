@@ -15,7 +15,7 @@ namespace IxMilia.Iges.Entities
         Sphere = 158,
         Torus = 160,
         GeneralNote = 212,
-        // 304
+        LineFontDefinition = 304,
         SubfigureDefinition = 308,
         TextDisplayTemplate = 312,
         ColorDefinition = 314,

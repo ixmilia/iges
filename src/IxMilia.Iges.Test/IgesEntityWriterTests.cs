@@ -204,6 +204,60 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteTemplateLineFontDefinitionTest()
+        {
+            // regular case
+            var sfd = new IgesSubfigureDefinition();
+            sfd.Entities.Add(new IgesNull());
+            var lfd = new IgesTemplateLineFontDefinition(sfd, 1.0, 2.0);
+            VerifyEntity(lfd, @"
+       0       1       0       0       0                        00000000D      1
+       0       0       0       1       0                                D      2
+     308       2       0       0       0                        00000200D      3
+     308       0       0       1       0                                D      4
+     304       3       0       0       0                        00000200D      5
+     304       0       0       1       1                                D      6
+0;                                                                     1P      1
+308,0,,1,1;                                                            3P      2
+304,0,3,1.,2.;                                                         5P      3
+");
+
+            // default values
+            lfd = new IgesTemplateLineFontDefinition();
+            VerifyEntity(lfd, @"
+     308       1       0       0       0                        00000200D      1
+     308       0       0       1       0                                D      2
+     304       2       0       0       0                        00000200D      3
+     304       0       0       1       1                                D      4
+308,0,,0;                                                              1P      1
+304,0,1,0.,0.;                                                         3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WritePatternLineFontDefinitionTest()
+        {
+            // regular case
+            var lfd = new IgesPatternLineFontDefinition();
+            lfd.SegmentLengths.Add(1);
+            lfd.SegmentLengths.Add(2);
+            lfd.DisplayMask = 0x34;
+            VerifyEntity(lfd, @"
+     304       1       0       0       0                        00000200D      1
+     304       0       0       1       2                                D      2
+304,2,1.,2.,2H34;                                                      1P      1
+");
+
+            // default values
+            lfd = new IgesPatternLineFontDefinition();
+            VerifyEntity(lfd, @"
+     304       1       0       0       0                        00000200D      1
+     304       0       0       1       2                                D      2
+304,0,1H0;                                                             1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSubfigureEntityTest()
         {
             var trans = new IgesTransformationMatrix()

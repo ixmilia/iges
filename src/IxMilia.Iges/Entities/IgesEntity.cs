@@ -10,7 +10,7 @@ namespace IxMilia.Iges.Entities
     {
         public abstract IgesEntityType EntityType { get; }
 
-        private int _lineCount { get; set; }
+        private int _lineCount;
         public int FormNumber { get; protected set; }
         public IgesEntity StructureEntity { get; set; }
         public IgesViewBase View { get; set; }
@@ -52,7 +52,7 @@ namespace IxMilia.Iges.Entities
         }
 
         protected string EntityLabel { get; set; }
-        private int _structurePointer { get; set; }
+        private int _structurePointer;
         protected int LineFontPattern { get; set; }
         protected int Level { get; set; }
         
@@ -61,8 +61,8 @@ namespace IxMilia.Iges.Entities
         protected int EntitySubscript { get; set; }
         protected internal List<int> SubEntityIndices { get; private set; }
 
-        private int ViewPointer { get; set; }
-        private int TransformationMatrixPointer { get; set; }
+        private int _viewPointer;
+        private int _transformationMatrixPointer;
         protected List<IgesEntity> SubEntities { get; private set; }
 
         private List<int> _associatedEntityIndices;
@@ -113,17 +113,17 @@ namespace IxMilia.Iges.Entities
             }
 
             // populate view
-            if (ViewPointer > 0)
+            if (_viewPointer > 0)
             {
-                View = entityMap[ViewPointer] as IgesViewBase;
-                entitiesToTrim.Add(ViewPointer);
+                View = entityMap[_viewPointer] as IgesViewBase;
+                entitiesToTrim.Add(_viewPointer);
             }
 
             // populate transformation matrix
-            if (TransformationMatrixPointer > 0)
+            if (_transformationMatrixPointer > 0)
             {
-                TransformationMatrix = entityMap[TransformationMatrixPointer] as IgesTransformationMatrix;
-                entitiesToTrim.Add(TransformationMatrixPointer);
+                TransformationMatrix = entityMap[_transformationMatrixPointer] as IgesTransformationMatrix;
+                entitiesToTrim.Add(_transformationMatrixPointer);
             }
             else
             {
@@ -215,8 +215,8 @@ namespace IxMilia.Iges.Entities
             this._structurePointer = directoryData.Structure;
             this.LineFontPattern = directoryData.LineFontPattern;
             this.Level = directoryData.Level;
-            this.ViewPointer = directoryData.View;
-            this.TransformationMatrixPointer = directoryData.TransformationMatrixPointer;
+            this._viewPointer = directoryData.View;
+            this._transformationMatrixPointer = directoryData.TransformationMatrixPointer;
             this.LableDisplay = directoryData.LableDisplay;
             SetStatusNumber(directoryData.StatusNumber);
             this.LineWeight = directoryData.LineWeight;
@@ -242,8 +242,8 @@ namespace IxMilia.Iges.Entities
             dir.Structure = this._structurePointer;
             dir.LineFontPattern = this.LineFontPattern;
             dir.Level = this.Level;
-            dir.View = this.ViewPointer;
-            dir.TransformationMatrixPointer = this.TransformationMatrixPointer;
+            dir.View = this._viewPointer;
+            dir.TransformationMatrixPointer = this._transformationMatrixPointer;
             dir.LableDisplay = this.LableDisplay;
             dir.StatusNumber = this.GetStatusNumber();
             dir.LineWeight = this.LineWeight;
@@ -272,13 +272,13 @@ namespace IxMilia.Iges.Entities
             // write view
             if (View != null)
             {
-                ViewPointer = GetOrWriteEntityIndex(View, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                _viewPointer = GetOrWriteEntityIndex(View, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
             }
 
             // write transformation matrix if applicable
             if (TransformationMatrix != null && !TransformationMatrix.IsIdentity)
             {
-                TransformationMatrixPointer = GetOrWriteEntityIndex(TransformationMatrix, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                _transformationMatrixPointer = GetOrWriteEntityIndex(TransformationMatrix, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
             }
 
             // write structure entity
@@ -431,6 +431,17 @@ namespace IxMilia.Iges.Entities
                     break;
                 case IgesEntityType.Line:
                     entity = new IgesLine();
+                    break;
+                case IgesEntityType.LineFontDefinition:
+                    switch (directoryData.FormNumber)
+                    {
+                        case 1:
+                            entity = new IgesTemplateLineFontDefinition();
+                            break;
+                        case 2:
+                            entity = new IgesPatternLineFontDefinition();
+                            break;
+                    }
                     break;
                 case IgesEntityType.Null:
                     entity = new IgesNull();

@@ -28,13 +28,16 @@
     <Compile Include="Entities\IgesEntityUseFlag.cs" />
     <Compile Include="Entities\IgesHierarchy.cs" />
     <Compile Include="Entities\IgesLine.cs" />
+    <Compile Include="Entities\IgesLineFontDefinitionBase.cs" />
     <Compile Include="Entities\IgesLocation.cs" />
     <Compile Include="Entities\IgesNull.cs" />
+    <Compile Include="Entities\IgesPatternLineFontDefinition.cs" />
     <Compile Include="Entities\IgesPerspectiveView.cs" />
     <Compile Include="Entities\IgesPlane.cs" />
     <Compile Include="Entities\IgesSphere.cs" />
     <Compile Include="Entities\IgesSubfigureDefinition.cs" />
     <Compile Include="Entities\IgesSubordinateEntitySwitchType.cs" />
+    <Compile Include="Entities\IgesTemplateLineFontDefinition.cs" />
     <Compile Include="Entities\IgesTorus.cs" />
     <Compile Include="Entities\IgesTransformationMatrix.cs" />
     <Compile Include="Entities\IgesView.cs" />
