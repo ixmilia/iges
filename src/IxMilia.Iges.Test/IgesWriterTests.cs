@@ -134,6 +134,28 @@ S      1G      2D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteLineWithLineFontPatternTest()
+        {
+            var file = new IgesFile();
+            var line = new IgesLine() { LineFont = IgesLineFontPattern.Phantom };
+            file.Entities.Add(line);
+            VerifyFileContains(file, @"
+     110       1       0       3       0                        00000000D      1
+     110       0       0       1       0                                D      2
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+");
+            line.CustomLineFont = new IgesPatternLineFontDefinition();
+            VerifyFileContains(file, @"
+     304       1       0       0       0                        00000200D      1
+     304       0       0       1       2                                D      2
+     110       2       0      -1       0                        00000000D      3
+     110       0       0       1       0                                D      4
+304,0,1H0;                                                             1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSpecificGlobalValuesTest()
         {
             var file = new IgesFile()

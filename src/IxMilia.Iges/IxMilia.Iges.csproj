@@ -44,6 +44,7 @@
     <Compile Include="Entities\IgesViewBase.cs" />
     <Compile Include="IgesDirectoryData.cs" />
     <Compile Include="IgesFileWriter.cs" />
+    <Compile Include="IgesLineFontPattern.cs" />
     <Compile Include="IgesPoint.cs" />
     <Compile Include="IgesVersion.cs" />
     <Compile Include="IgesColorNumber.cs" />

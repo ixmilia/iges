@@ -45,15 +45,46 @@ namespace IxMilia.Iges.Entities
                 }
                 else
                 {
-                    _customColor = value;
                     _color = IgesColorNumber.Custom;
                 }
+
+                _customColor = value;
+            }
+        }
+
+        private IgesLineFontDefinitionBase _customLineFont;
+        private IgesLineFontPattern _lineFont;
+
+        public IgesLineFontPattern LineFont
+        {
+            get { return _lineFont; }
+            set
+            {
+                _lineFont = value;
+                _customLineFont = null;
+            }
+        }
+
+        public IgesLineFontDefinitionBase CustomLineFont
+        {
+            get { return _customLineFont; }
+            set
+            {
+                if (value == null)
+                {
+                    _lineFont = IgesLineFontPattern.Default;
+                }
+                else
+                {
+                    _lineFont = IgesLineFontPattern.Custom;
+                }
+
+                _customLineFont = value;
             }
         }
 
         protected string EntityLabel { get; set; }
         private int _structurePointer;
-        protected int LineFontPattern { get; set; }
         protected int Level { get; set; }
         
         protected int LableDisplay { get; set; }
@@ -112,14 +143,37 @@ namespace IxMilia.Iges.Entities
                 return;
             }
 
-            // populate view
+            // link to structure entities (field 3)
+            if (_structurePointer < 0)
+            {
+                StructureEntity = entityMap[-_structurePointer];
+            }
+
+            // line font definition (field 4)
+            if (dir.LineFontPattern < 0)
+            {
+                var custom = entityMap[-dir.LineFontPattern] as IgesLineFontDefinitionBase;
+                if (custom != null)
+                {
+                    CustomLineFont = custom;
+                }
+                else
+                {
+                    Debug.Assert(false, "line font pointer was not an IgesLineFontDefinitionBase");
+                    LineFont = IgesLineFontPattern.Default;
+                }
+            }
+
+            // TODO: level (field 5)
+
+            // populate view (field 6)
             if (_viewPointer > 0)
             {
                 View = entityMap[_viewPointer] as IgesViewBase;
                 entitiesToTrim.Add(_viewPointer);
             }
 
-            // populate transformation matrix
+            // populate transformation matrix (field 7)
             if (_transformationMatrixPointer > 0)
             {
                 TransformationMatrix = entityMap[_transformationMatrixPointer] as IgesTransformationMatrix;
@@ -130,13 +184,11 @@ namespace IxMilia.Iges.Entities
                 TransformationMatrix = IgesTransformationMatrix.Identity;
             }
 
-            // link to structure entities
-            if (_structurePointer < 0)
-            {
-                StructureEntity = entityMap[-_structurePointer];
-            }
+            // TODO: label display (field 8)
 
-            // link to custom colors
+            // TODO: line weight (field 12)
+
+            // link to custom colors (field 13)
             if (dir.Color < 0)
             {
                 var custom = entityMap[-dir.Color] as IgesColorDefinition;
@@ -213,7 +265,15 @@ namespace IxMilia.Iges.Entities
         private void PopulateDirectoryData(IgesDirectoryData directoryData)
         {
             this._structurePointer = directoryData.Structure;
-            this.LineFontPattern = directoryData.LineFontPattern;
+            if (directoryData.LineFontPattern < 0)
+            {
+                this.LineFont = IgesLineFontPattern.Custom;
+            }
+            else
+            {
+                this.LineFont = (IgesLineFontPattern)directoryData.LineFontPattern;
+            }
+
             this.Level = directoryData.Level;
             this._viewPointer = directoryData.View;
             this._transformationMatrixPointer = directoryData.TransformationMatrixPointer;
@@ -235,12 +295,12 @@ namespace IxMilia.Iges.Entities
             this.EntitySubscript = directoryData.EntitySubscript;
         }
 
-        private IgesDirectoryData GetDirectoryData(int color)
+        private IgesDirectoryData GetDirectoryData(int color, int lineFontPattern)
         {
             var dir = new IgesDirectoryData();
             dir.EntityType = EntityType;
             dir.Structure = this._structurePointer;
-            dir.LineFontPattern = this.LineFontPattern;
+            dir.LineFontPattern = lineFontPattern;
             dir.Level = this.Level;
             dir.View = this._viewPointer;
             dir.TransformationMatrixPointer = this._transformationMatrixPointer;
@@ -286,6 +346,17 @@ namespace IxMilia.Iges.Entities
             if (StructureEntity != null)
             {
                 _structurePointer = -GetOrWriteEntityIndex(StructureEntity, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+            }
+
+            // write line font pattern
+            int lineFontPattern = 0;
+            if (CustomLineFont != null)
+            {
+                lineFontPattern = -GetOrWriteEntityIndex(CustomLineFont, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+            }
+            else
+            {
+                lineFontPattern = (int)LineFont;
             }
 
             // write custom color entity
@@ -344,7 +415,7 @@ namespace IxMilia.Iges.Entities
 
             this._lineCount = IgesFileWriter.AddParametersToStringList(parameters.ToArray(), parameterLines, fieldDelimiter, recordDelimiter,
                 lineSuffix: string.Format(" {0,7}", nextDirectoryIndex));
-            var dir = GetDirectoryData(color);
+            var dir = GetDirectoryData(color, lineFontPattern);
             dir.ParameterPointer = nextParameterIndex;
             dir.ToString(directoryLines);
 

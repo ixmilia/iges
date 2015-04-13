@@ -217,6 +217,35 @@ S      0G      0D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadLineFontPatternFromEntityTest()
+        {
+            var line = new IgesLine();
+            Assert.Equal(IgesLineFontPattern.Default, line.LineFont);
+
+            // read enumerated value
+            var file = CreateFile(@"
+     110       1       0       3       0                        00000000D      1
+     110       0       0       1       0                                D      2
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+");
+            line = (IgesLine)file.Entities.Single();
+            Assert.Equal(IgesLineFontPattern.Phantom, line.LineFont);
+
+            // read custom value
+            file = CreateFile(@"
+     304       1       0       0       0                        00000200D      1
+     304       0       0       1       2                                D      2
+     110       2       0      -1       0                        00000000D      3
+     110       0       0       1       0                                D      4
+304,1,23.,1H0;                                                         1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+");
+            line = file.Entities.OfType<IgesLine>().Single();
+            var lineFont = (IgesPatternLineFontDefinition)line.CustomLineFont;
+            Assert.Equal(23.0, lineFont.SegmentLengths.Single());
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadViewFromEntityTest()
         {
             // read view
