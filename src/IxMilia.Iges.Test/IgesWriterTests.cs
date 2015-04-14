@@ -230,6 +230,23 @@ S      1G      2D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteLineWithEntityLabelAndSubscriptTest()
+        {
+            var file = new IgesFile();
+            var line = new IgesLine()
+            {
+                EntityLabel = "abcdefghijklmnopqrstuvwxyz", // will be truncated to 8 characters
+                EntitySubscript = 15
+            };
+            file.Entities.Add(line);
+            VerifyFileContains(file, @"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                abcdefgh      15D      2
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSpecificGlobalValuesTest()
         {
             var file = new IgesFile()

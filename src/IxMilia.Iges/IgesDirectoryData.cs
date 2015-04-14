@@ -24,7 +24,9 @@ namespace IxMilia.Iges
         public int LineCount { get; set; }
         public int FormNumber { get; set; }
         public string EntityLabel { get; set; }
-        public int EntitySubscript { get; set; }
+        public uint EntitySubscript { get; set; }
+
+        private const string BlankField = "        ";
 
         public void ToString(List<string> directoryLines)
         {
@@ -40,12 +42,14 @@ namespace IxMilia.Iges
                 ToStringOrDefault(LableDisplay),
                 StatusNumber ?? "0");
             var line2 = string.Format(
-                "{0,8}{1,8}{2,8}{3,8}{4,8}{5,8}{6,8}",
+                "{0,8}{1,8}{2,8}{3,8}{4,8}{5,8}{6,8}{7,8}{8,8}",
                 (int)EntityType,
                 LineWeight,
                 Color,
                 LineCount,
                 FormNumber,
+                BlankField, // reserved field 16
+                BlankField, // reserved field 17
                 ToStringOrDefault(EntityLabel),
                 ToStringOrDefault(EntitySubscript));
             directoryLines.Add(line1);
@@ -55,7 +59,14 @@ namespace IxMilia.Iges
         private static string ToStringOrDefault(int value)
         {
             return value == 0
-                ? "        "
+                ? BlankField
+                : string.Format("{0,8}", value);
+        }
+
+        private static string ToStringOrDefault(uint value)
+        {
+            return value == 0u
+                ? BlankField
                 : string.Format("{0,8}", value);
         }
 
@@ -85,7 +96,7 @@ namespace IxMilia.Iges
             dir.LineCount = int.Parse(GetField(line2, 4));
             dir.FormNumber = int.Parse(GetField(line2, 5));
             dir.EntityLabel = GetField(line2, 8, null);
-            dir.EntitySubscript = int.Parse(GetField(line2, 9));
+            dir.EntitySubscript = uint.Parse(GetField(line2, 9));
             return dir;
         }
 

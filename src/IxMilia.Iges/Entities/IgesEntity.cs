@@ -1,5 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -86,12 +87,24 @@ namespace IxMilia.Iges.Entities
         private int _levelsPointer;
         public HashSet<int> Levels { get; private set; }
 
-        protected string EntityLabel { get; set; }
+        private string _entityLabel;
+        public string EntityLabel
+        {
+            get { return _entityLabel; }
+            set { _entityLabel = value == null || value.Length <= 8 ? value : value.Substring(0, 8); }
+        }
+
+        private uint _entitySubscript;
+        public uint EntitySubscript
+        {
+            get { return _entitySubscript; }
+            set { _entitySubscript = Math.Min(99999999u, value); } // max 8 digits
+        }
+
         private int _structurePointer;
         
         protected int LableDisplay { get; set; }
         protected int LineWeight { get; set; }
-        protected int EntitySubscript { get; set; }
         protected internal List<int> SubEntityIndices { get; private set; }
 
         private int _viewPointer;

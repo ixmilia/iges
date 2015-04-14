@@ -273,6 +273,18 @@ S      0G      0D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadLineWithEntityLabelAndSubscriptTest()
+        {
+            var line = (IgesLine)ParseSingleEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                abcdefgh      15D      2
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+");
+            Assert.Equal("abcdefgh", line.EntityLabel);
+            Assert.Equal(15u, line.EntitySubscript);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadViewFromEntityTest()
         {
             // read view
