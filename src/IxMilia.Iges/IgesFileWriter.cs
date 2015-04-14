@@ -99,7 +99,7 @@ namespace IxMilia.Iges
             AddParametersToStringList(fields, globalLines, file.FieldDelimiter, file.RecordDelimiter);
         }
 
-        internal static int AddParametersToStringList(object[] parameters, List<string> stringList, char fieldDelimiter, char recordDelimiter, int maxLength = IgesFile.MaxDataLength, string lineSuffix = null)
+        internal static int AddParametersToStringList(object[] parameters, List<string> stringList, char fieldDelimiter, char recordDelimiter, int maxLength = IgesFile.MaxDataLength, string lineSuffix = null, string comment = null)
         {
             int suffixLength = lineSuffix == null ? 0 : lineSuffix.Length;
             var sb = new StringBuilder();
@@ -153,6 +153,37 @@ namespace IxMilia.Iges
                             addLine();
                             paramString = paramString.Substring(allowed);
                         }
+                    }
+                }
+            }
+
+            // add comment
+            if (comment != null)
+            {
+                // escape things
+                comment = comment.Replace("\\", "\\\\");
+                comment = comment.Replace("\n", "\\n");
+                comment = comment.Replace("\r", "\\r");
+                comment = comment.Replace("\t", "\\t");
+                comment = comment.Replace("\v", "\\v");
+                comment = comment.Replace("\f", "\\f");
+
+                // write as much of the comment as possible
+                while (comment.Length > 0)
+                {
+                    var allowed = maxLength - sb.Length - suffixLength;
+                    if (comment.Length <= allowed)
+                    {
+                        // write the whole thing
+                        sb.Append(comment);
+                        comment = string.Empty;
+                    }
+                    else
+                    {
+                        // write as much as possible
+                        sb.Append(comment.Substring(0, allowed));
+                        addLine();
+                        comment = comment.Substring(allowed);
                     }
                 }
             }

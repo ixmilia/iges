@@ -285,6 +285,26 @@ S      0G      0D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadCommentFromEntityTest()
+        {
+            var line = (IgesLine)ParseSingleEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       3       0                                D      2
+110,0.,0.,0.,0.,0.,0.;This is a really long comment that should        1P      1
+be ignored.\nIt also contains things that look like fields, and        1P      2
+also contains things that look like 7Hstrings and records;             1P      3
+");
+            Assert.Equal("This is a really long comment that should be ignored.\nIt also contains things that look like fields, and also contains things that look like 7Hstrings and records;", line.Comment);
+
+            line = (IgesLine)ParseSingleEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+110,0.,0.,0.,0.,0.,0.;                                                  P      1
+");
+            Assert.Null(line.Comment);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadViewFromEntityTest()
         {
             // read view

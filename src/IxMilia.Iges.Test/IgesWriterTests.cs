@@ -66,6 +66,20 @@ S      1G      2D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteLineWithCommentTest()
+        {
+            var file = new IgesFile();
+            file.Entities.Add(new IgesLine() { Comment = "This is a really long comment that should be ignored.\nIt also contains things that look like fields, and also contains things that look like 7Hstrings and records;" });
+            VerifyFileContains(file, @"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       3       0                                D      2
+110,0.,0.,0.,0.,0.,0.;This is a really long comment that should        1P      1
+be ignored.\nIt also contains things that look like fields, and        1P      2
+also contains things that look like 7Hstrings and records;             1P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteLineWithViewTest()
         {
             var file = new IgesFile();

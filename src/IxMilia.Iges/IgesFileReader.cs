@@ -72,8 +72,9 @@ namespace IxMilia.Iges
             // don't worry if terminate line isn't present
 
             ParseGlobalLines(file, globalLines);
-            var parameterMap = PrepareParameterLines(parameterLines, file.FieldDelimiter, file.RecordDelimiter);
-            PopulateEntities(file, directoryLines, parameterMap);
+            var directoryEntries = ParseDirectoryLines(directoryLines);
+            var parameterMap = PrepareParameterLines(parameterLines, directoryEntries, file.FieldDelimiter, file.RecordDelimiter);
+            PopulateEntities(file, directoryEntries, parameterMap);
 
             return file;
         }
@@ -83,139 +84,165 @@ namespace IxMilia.Iges
             ParsingEntityNumber,
             ParsingNumber,
             ParsingString,
+            ParsingComment
         }
 
-        private static Dictionary<int, Tuple<List<string>, int>> PrepareParameterLines(List<string> parameterLines, char fieldDelimiter, char recordDelimiter)
+        private static List<IgesDirectoryData> ParseDirectoryLines(List<string> directoryLines)
         {
-            var map = new Dictionary<int, Tuple<List<string>, int>>();
-            int parameterStart = 1;
+            var directoryEntires = new List<IgesDirectoryData>();
+            for (int i = 0; i < directoryLines.Count; i += 2)
+            {
+                var dir = IgesDirectoryData.FromRawLines(directoryLines[i], directoryLines[i + 1]);
+                directoryEntires.Add(dir);
+            }
+
+            return directoryEntires;
+        }
+
+        private static Dictionary<int, Tuple<List<string>, string>> PrepareParameterLines(List<string> parameterLines, IEnumerable<IgesDirectoryData> directoryEntires, char fieldDelimiter, char recordDelimiter)
+        {
+            var map = new Dictionary<int, Tuple<List<string>, string>>();
             var fields = new List<string>();
             var state = ParameterParseState.ParsingEntityNumber;
             var current = new StringBuilder();
             int entityNumber = 0;
             int stringLength = 0;
-            int currentEntityLineCount = 1;
 
-            // for each line
-            for (int i = 0; i < parameterLines.Count; i++, currentEntityLineCount++)
+            foreach (var dir in directoryEntires)
             {
-                var line = parameterLines[i];
-
-                // for each character
-                for (int j = 0; j < line.Length; j++)
+                var lowerBound = dir.ParameterPointer - 1;
+                var upperBound = lowerBound + dir.LineCount;
+                for (int i = lowerBound; i < upperBound; i++)
                 {
-                    var ch = line[j];
-                    if (state == ParameterParseState.ParsingString)
+                    var line = parameterLines[i];
+
+                    // for each character
+                    for (int j = 0; j < line.Length; j++)
                     {
-                        if (current.Length == stringLength)
+                        var ch = line[j];
+                        if (state == ParameterParseState.ParsingString)
                         {
-                            fields.Add(current.ToString());
-                            current.Clear();
+                            if (current.Length == stringLength)
+                            {
+                                fields.Add(current.ToString());
+                                current.Clear();
+                                if (ch == fieldDelimiter)
+                                {
+                                    state = ParameterParseState.ParsingNumber;
+                                }
+                                else if (ch == recordDelimiter)
+                                {
+                                    state = ParameterParseState.ParsingComment;
+                                }
+                                else
+                                {
+                                    Debug.Assert(false, "expected field or record delimiter");
+                                }
+                            }
+                            else
+                            {
+                                current.Append(ch);
+                            }
+                        }
+                        else if (state == ParameterParseState.ParsingComment)
+                        {
+                            current.Append(ch);
+                        }
+                        else
+                        {
                             if (ch == fieldDelimiter)
                             {
+                                if (state == ParameterParseState.ParsingEntityNumber)
+                                {
+                                    entityNumber = int.Parse(current.ToString());
+                                }
+                                else
+                                {
+                                    fields.Add(current.ToString());
+                                }
+
                                 state = ParameterParseState.ParsingNumber;
+                                current.Clear();
                             }
                             else if (ch == recordDelimiter)
                             {
-                                state = ParameterParseState.ParsingEntityNumber;
-                                map[parameterStart] = Tuple.Create(fields, currentEntityLineCount);
-                                currentEntityLineCount = 0;
-                                parameterStart = i + 2;
-                                fields = new List<string>();
-                                break;
+                                if (state == ParameterParseState.ParsingEntityNumber)
+                                {
+                                    entityNumber = int.Parse(current.ToString());
+                                }
+                                else
+                                {
+                                    fields.Add(current.ToString());
+                                }
+
+                                state = ParameterParseState.ParsingComment;
+                                current.Clear();
+                            }
+                            else if (ch == IgesFile.StringSentinelCharacter)
+                            {
+                                stringLength = int.Parse(current.ToString());
+                                current.Clear();
+                                state = ParameterParseState.ParsingString;
                             }
                             else
                             {
-                                Debug.Assert(false, "expected field or record delimiter");
+                                current.Append(ch);
                             }
-                        }
-                        else
-                        {
-                            current.Append(ch);
-                        }
-                    }
-                    else
-                    {
-                        if (ch == fieldDelimiter)
-                        {
-                            if (state == ParameterParseState.ParsingEntityNumber)
-                            {
-                                entityNumber = int.Parse(current.ToString());
-                            }
-                            else
-                            {
-                                fields.Add(current.ToString());
-                            }
-
-                            state = ParameterParseState.ParsingNumber;
-                            current.Clear();
-                        }
-                        else if (ch == recordDelimiter)
-                        {
-                            if (state == ParameterParseState.ParsingEntityNumber)
-                            {
-                                entityNumber = int.Parse(current.ToString());
-                            }
-                            else
-                            {
-                                fields.Add(current.ToString());
-                            }
-
-                            state = ParameterParseState.ParsingEntityNumber;
-                            current.Clear();
-
-                            map[parameterStart] = Tuple.Create(fields, currentEntityLineCount);
-                            currentEntityLineCount = 0;
-                            parameterStart = i + 2;
-                            fields = new List<string>();
-                            break;
-                        }
-                        else if (ch == IgesFile.StringSentinelCharacter)
-                        {
-                            stringLength = int.Parse(current.ToString());
-                            current.Clear();
-                            state = ParameterParseState.ParsingString;
-                        }
-                        else
-                        {
-                            current.Append(ch);
                         }
                     }
                 }
+
+                var comment = current.ToString().Trim();
+
+                // clean up escaped comemnt values
+                comment = comment.Replace("\\\\", "\\");
+                comment = comment.Replace("\\n", "\n");
+                comment = comment.Replace("\\r", "\r");
+                comment = comment.Replace("\\t", "\t");
+                comment = comment.Replace("\\v", "\v");
+                comment = comment.Replace("\\f", "\f");
+
+                current.Clear();
+                map[dir.ParameterPointer] = Tuple.Create(fields, string.IsNullOrEmpty(comment) ? null : comment);
+                fields = new List<string>();
+                state = ParameterParseState.ParsingEntityNumber;
             }
 
             return map;
         }
 
-        private static void PopulateEntities(IgesFile file, List<string> directoryLines, Dictionary<int, Tuple<List<string>, int>> parameterMap)
+        private static void PopulateEntities(IgesFile file, List<IgesDirectoryData> directoryEntries, Dictionary<int, Tuple<List<string>, string>> parameterMap)
         {
-            IgesDirectoryData dir = null;
             var entityMap = new Dictionary<int, IgesEntity>();
-            for (int i = 0; i < directoryLines.Count; i += 2)
+            for (int i = 0; i < directoryEntries.Count; i++)
             {
-                dir = IgesDirectoryData.FromRawLines(directoryLines[i], directoryLines[i + 1]);
+                var dir = directoryEntries[i];
                 var parameterValues = parameterMap[dir.ParameterPointer].Item1;
-                var parameterLineCount = parameterMap[dir.ParameterPointer].Item2;
-                Debug.Assert(parameterLineCount == dir.LineCount);
+                var comment = parameterMap[dir.ParameterPointer].Item2;
                 var entity = IgesEntity.FromData(dir, parameterValues);
                 if (entity != null)
                 {
-                    var directoryIndex = i + 1;
+                    entity.Comment = comment;
+                    var directoryIndex = (i * 2) + 1;
                     entityMap[directoryIndex] = entity;
                     file.Entities.Add(entity);
                 }
             }
 
-            var toTrim = new HashSet<int>();
-            foreach (var entity in file.Entities)
+            var entitiesToTrim = new HashSet<int>();
+            for (int i = 0; i < directoryEntries.Count; i++)
             {
-                entity.BindPointers(dir, entityMap, toTrim);
+                IgesEntity entity = null;
+                if (entityMap.TryGetValue((i * 2) + 1, out entity))
+                {
+                    entity.BindPointers(directoryEntries[i], entityMap, entitiesToTrim);
+                }
             }
 
             for (int i = file.Entities.Count - 1; i >= 0; i--)
             {
                 var deIndex = i * 2 + 1;
-                if (toTrim.Contains(deIndex))
+                if (entitiesToTrim.Contains(deIndex))
                     file.Entities.RemoveAt(i);
             }
         }

@@ -101,6 +101,8 @@ namespace IxMilia.Iges.Entities
             set { _entitySubscript = Math.Min(99999999u, value); } // max 8 digits
         }
 
+        public string Comment { get; set; }
+
         private int _structurePointer;
         
         protected int LableDisplay { get; set; }
@@ -453,7 +455,8 @@ namespace IxMilia.Iges.Entities
             }
 
             this._lineCount = IgesFileWriter.AddParametersToStringList(parameters.ToArray(), writerState.ParameterLines, writerState.FieldDelimiter, writerState.RecordDelimiter,
-                lineSuffix: string.Format(" {0,7}", nextDirectoryIndex));
+                lineSuffix: string.Format(" {0,7}", nextDirectoryIndex),
+                comment: Comment);
             var dir = GetDirectoryData(color, lineFontPattern);
             dir.ParameterPointer = nextParameterIndex;
             dir.ToString(writerState.DirectoryLines);
