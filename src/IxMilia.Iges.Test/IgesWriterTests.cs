@@ -96,6 +96,19 @@ also contains things that look like 7Hstrings and records;             1P      3
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteLineWithLineWeightTest()
+        {
+            var file = new IgesFile();
+            var line = new IgesLine() { LineWeight = 42 };
+            file.Entities.Add(line);
+            VerifyFileContains(file, @"
+     110       1       0       0       0                        00000000D      1
+     110      42       0       1       0                                D      2
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteLineWithTransformationMatrixTest()
         {
             var file = new IgesFile();

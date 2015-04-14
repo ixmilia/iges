@@ -328,6 +328,17 @@ also contains things that look like 7Hstrings and records;             1P      3
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadLineWeightFromEntityTest()
+        {
+            var line = (IgesLine)ParseSingleEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110      42       0       1       0                                D      2
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+");
+            Assert.Equal(42, line.LineWeight);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadTransformationMatrixFromEntityTest()
         {
             var line = (IgesLine)ParseSingleEntity(@"

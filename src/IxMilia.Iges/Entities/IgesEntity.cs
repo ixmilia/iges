@@ -102,11 +102,11 @@ namespace IxMilia.Iges.Entities
         }
 
         public string Comment { get; set; }
+        public int LineWeight { get; set; }
 
         private int _structurePointer;
         
         protected int LableDisplay { get; set; }
-        protected int LineWeight { get; set; }
         protected internal List<int> SubEntityIndices { get; private set; }
 
         private int _viewPointer;
@@ -227,8 +227,6 @@ namespace IxMilia.Iges.Entities
             }
 
             // TODO: label display (field 8)
-
-            // TODO: line weight (field 12)
 
             // link to custom colors (field 13)
             if (dir.Color < 0)
