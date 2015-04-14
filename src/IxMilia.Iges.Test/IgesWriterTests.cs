@@ -156,6 +156,80 @@ S      1G      2D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteLineWithLevelsTest()
+        {
+            var file = new IgesFile();
+            var line = new IgesLine();
+            file.Entities.Add(line);
+
+            // no levels defined
+            line.Levels.Clear();
+            VerifyFileContains(file, @"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+");
+
+            // one level defined
+            line.Levels.Add(13);
+            VerifyFileContains(file, @"
+     110       1       0       0      13                        00000000D      1
+     110       0       0       1       0                                D      2
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+");
+
+            // multiple levels defined
+            line.Levels.Add(23);
+            VerifyFileContains(file, @"
+     406       1       0       0       0                        00000000D      1
+     406       0       0       1       1                                D      2
+     110       2       0       0      -1                        00000000D      3
+     110       0       0       1       0                                D      4
+406,2,13,23;                                                           1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+");
+
+            // multiple entities referencing different multiple levels
+            var otherLine = new IgesLine();
+            otherLine.Levels.Add(40);
+            otherLine.Levels.Add(41);
+            file.Entities.Add(otherLine);
+            VerifyFileContains(file, @"
+     406       1       0       0       0                        00000000D      1
+     406       0       0       1       1                                D      2
+     110       2       0       0      -1                        00000000D      3
+     110       0       0       1       0                                D      4
+     406       3       0       0       0                        00000000D      5
+     406       0       0       1       1                                D      6
+     110       4       0       0      -5                        00000000D      7
+     110       0       0       1       0                                D      8
+406,2,13,23;                                                           1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+406,2,40,41;                                                           5P      3
+110,0.,0.,0.,0.,0.,0.;                                                 7P      4
+");
+
+            // multiple entities referencing the same multiple levels
+            otherLine.Levels.Clear();
+            foreach (var level in line.Levels)
+            {
+                otherLine.Levels.Add(level);
+            }
+
+            VerifyFileContains(file, @"
+     406       1       0       0       0                        00000000D      1
+     406       0       0       1       1                                D      2
+     110       2       0       0      -1                        00000000D      3
+     110       0       0       1       0                                D      4
+     110       3       0       0      -1                        00000000D      5
+     110       0       0       1       0                                D      6
+406,2,13,23;                                                           1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+110,0.,0.,0.,0.,0.,0.;                                                 5P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSpecificGlobalValuesTest()
         {
             var file = new IgesFile()

@@ -18,17 +18,21 @@ namespace IxMilia.Iges
             // prepare entities
             var startLines = new List<string>();
             var globalLines = new List<string>();
-            var directoryLines = new List<string>();
-            var parameterLines = new List<string>();
-            var entityMap = new Dictionary<IgesEntity, int>(); // map from a given entity to it's directory pointer
+
+            var writerState = new IgesEntity.WriterState(
+                new Dictionary<IgesEntity, int>(),
+                new List<string>(),
+                new List<string>(),
+                file.FieldDelimiter,
+                file.RecordDelimiter);
 
             startLines.Add(new string(' ', IgesFile.MaxDataLength));
 
             foreach (var entity in file.Entities)
             {
-                if (!entityMap.ContainsKey(entity))
+                if (!writerState.EntityMap.ContainsKey(entity))
                 {
-                    entity.AddDirectoryAndParameterLines(entityMap, directoryLines, parameterLines, file.FieldDelimiter, file.RecordDelimiter);
+                    entity.AddDirectoryAndParameterLines(writerState);
                 }
             }
 
@@ -41,10 +45,10 @@ namespace IxMilia.Iges
             WriteLines(writer, IgesSectionType.Global, globalLines);
 
             // write directory lines
-            WriteLines(writer, IgesSectionType.Directory, directoryLines);
+            WriteLines(writer, IgesSectionType.Directory, writerState.DirectoryLines);
 
             // write parameter lines
-            WriteLines(writer, IgesSectionType.Parameter, parameterLines); // TODO: ensure space in column 65 and directory pointer in next 7
+            WriteLines(writer, IgesSectionType.Parameter, writerState.ParameterLines); // TODO: ensure space in column 65 and directory pointer in next 7
 
             // write terminator line
             writer.WriteLine(MakeFileLine(IgesSectionType.Terminate,
@@ -54,9 +58,9 @@ namespace IxMilia.Iges
                     SectionTypeChar(IgesSectionType.Global),
                     globalLines.Count,
                     SectionTypeChar(IgesSectionType.Directory),
-                    directoryLines.Count,
+                    writerState.DirectoryLines.Count,
                     SectionTypeChar(IgesSectionType.Parameter),
-                    parameterLines.Count),
+                    writerState.ParameterLines.Count),
                 1));
 
             writer.Flush();

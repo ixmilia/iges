@@ -20,7 +20,7 @@ namespace IxMilia.Iges.Entities
         TextDisplayTemplate = 312,
         ColorDefinition = 314,
         AssociativityInstance = 402,
-        // 406 form 1
+        Property = 406,
         View = 410
     }
 }

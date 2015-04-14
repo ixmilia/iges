@@ -13,9 +13,7 @@ namespace IxMilia.Iges.Test
 
         private static IgesEntity ParseSingleEntity(string content)
         {
-            var file = IgesReaderTests.CreateFile(content);
-            Assert.Equal(1, file.Entities.Count);
-            return file.Entities[0];
+            return IgesReaderTests.ParseSingleEntity(content);
         }
 
         #endregion
@@ -503,7 +501,7 @@ subfigureH,2,1,5;                                                       P      3
             Assert.Null(color.Name);
 
             // read line with custom color
-            var file = IgesReaderTests.CreateFile(@"
+            var line = (IgesLine)ParseSingleEntity(@"
      314       1       0       0       0                        00000200D      1
      314       0       0       1       0                               0D      2
      110       2       0       0       0                               0D      3
@@ -511,8 +509,6 @@ subfigureH,2,1,5;                                                       P      3
 314,77,88,99,4Hname;                                                   1P      1
 110,11,22,33,44,55,66;                                                 3P      2
 ");
-            Assert.Equal(2, file.Entities.Count);
-            var line = file.Entities.OfType<IgesLine>().Single();
             Assert.Equal(IgesColorNumber.Custom, line.Color);
             Assert.Equal(77.0, line.CustomColor.RedIntensity);
             Assert.Equal(88.0, line.CustomColor.GreenIntensity);

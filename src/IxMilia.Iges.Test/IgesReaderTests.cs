@@ -23,6 +23,12 @@ namespace IxMilia.Iges.Test
             }
         }
 
+        internal static IgesEntity ParseSingleEntity(string content)
+        {
+            var file = CreateFile(content);
+            return file.Entities.Single();
+        }
+
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void GlobalParseTest()
         {
@@ -200,7 +206,7 @@ S      0G      0D      0P      0                                        T      1
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadStructureFromEntityTest()
         {
-            var file = CreateFile(@"
+            var line = (IgesLine)ParseSingleEntity(@"
      110       1      -3       0       0                               0D      1
      110       0       0       1       0                                D      2
      110       2       0       0       0                               0D      3
@@ -208,10 +214,8 @@ S      0G      0D      0P      0                                        T      1
 110,11,22,33,44,55,66;                                                 1P      1
 110,77,88,99,10,20,30;                                                 3P      2
 ");
-            Assert.Equal(2, file.Entities.Count);
-            var line1 = (IgesLine)file.Entities.First();
-            Assert.Equal(new IgesPoint(11, 22, 33), line1.P1);
-            var structure = (IgesLine)line1.StructureEntity;
+            Assert.Equal(new IgesPoint(11, 22, 33), line.P1);
+            var structure = (IgesLine)line.StructureEntity;
             Assert.Equal(new IgesPoint(77, 88, 99), structure.P1);
             Assert.Null(structure.StructureEntity);
         }
@@ -223,16 +227,15 @@ S      0G      0D      0P      0                                        T      1
             Assert.Equal(IgesLineFontPattern.Default, line.LineFont);
 
             // read enumerated value
-            var file = CreateFile(@"
+            line = (IgesLine)ParseSingleEntity(@"
      110       1       0       3       0                        00000000D      1
      110       0       0       1       0                                D      2
 110,0.,0.,0.,0.,0.,0.;                                                 1P      1
 ");
-            line = (IgesLine)file.Entities.Single();
             Assert.Equal(IgesLineFontPattern.Phantom, line.LineFont);
 
             // read custom value
-            file = CreateFile(@"
+            line = (IgesLine)ParseSingleEntity(@"
      304       1       0       0       0                        00000200D      1
      304       0       0       1       2                                D      2
      110       2       0      -1       0                        00000000D      3
@@ -240,16 +243,40 @@ S      0G      0D      0P      0                                        T      1
 304,1,23.,1H0;                                                         1P      1
 110,0.,0.,0.,0.,0.,0.;                                                 3P      2
 ");
-            line = file.Entities.OfType<IgesLine>().Single();
             var lineFont = (IgesPatternLineFontDefinition)line.CustomLineFont;
             Assert.Equal(23.0, lineFont.SegmentLengths.Single());
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadLineWithLevelsTest()
+        {
+            // single specified value
+            var line = (IgesLine)ParseSingleEntity(@"
+     110       1       0       0      13                        00000000D      1
+     110       0       0       1       0                                D      2
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+");
+            Assert.Equal(13, line.Levels.Single());
+
+            // multiple values
+            line = (IgesLine)ParseSingleEntity(@"
+     406       1       0       0       0                        00000000D      1
+     406       0       0       1       1                                D      2
+     110       2       0       0      -1                        00000000D      3
+     110       0       0       1       0                                D      4
+406,2,13,23;                                                           1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+");
+            Assert.Equal(2, line.Levels.Count);
+            Assert.Equal(13, line.Levels.First());
+            Assert.Equal(23, line.Levels.Last());
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadViewFromEntityTest()
         {
             // read view
-            var file = CreateFile(@"
+            var line = (IgesLine)ParseSingleEntity(@"
      410       1       0       0       0                        00000100D      1
      410       0       0       1       0                                D      2
      110       2       0       0       0       1                00000000D      3
@@ -257,23 +284,21 @@ S      0G      0D      0P      0                                        T      1
 410,0,2.,0,0,0,0,0,0;                                                  1P      1
 110,0.,0.,0.,0.,0.,0.;                                                 3P      2
 ");
-            var line = file.Entities.Single();
             Assert.Equal(2.0, line.View.ScaleFactor);
 
             // ensure null view if not specified
-            file = CreateFile(@"
+            line = (IgesLine)ParseSingleEntity(@"
      110       1       0       0       0                        00000000D      1
      110       0       0       1       0                                D      2
 110,0.,0.,0.,0.,0.,0.;                                                 1P      1
 ");
-            line = file.Entities.Single();
             Assert.Null(line.View);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadTransformationMatrixFromEntityTest()
         {
-            var file = CreateFile(@"
+            var line = (IgesLine)ParseSingleEntity(@"
      124       1       0       0       0                               0D      1
      124       0       0       1       0                               0D      2
      110       2       0       0       0               1               0D      3
@@ -281,7 +306,7 @@ S      0G      0D      0P      0                                        T      1
 124,1,2,3,4,5,6,7,8,9,10,11,12;                                        1P      1
 110,11,22,33,44,55,66;                                                 3P      2
 ".Trim('\r', '\n'));
-            var matrix = file.Entities.Single(e => e.EntityType == IgesEntityType.Line).TransformationMatrix;
+            var matrix = line.TransformationMatrix;
             Assert.Equal(1.0, matrix.R11);
             Assert.Equal(2.0, matrix.R12);
             Assert.Equal(3.0, matrix.R13);

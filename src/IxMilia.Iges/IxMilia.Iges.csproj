@@ -22,6 +22,7 @@
     <Compile Include="Entities\IgesCircularArc.cs" />
     <Compile Include="Entities\IgesColorDefinition.cs" />
     <Compile Include="Entities\IgesCompositeCurve.cs" />
+    <Compile Include="Entities\IgesDefinitionLevelsProperty.cs" />
     <Compile Include="Entities\IgesDirection.cs" />
     <Compile Include="Entities\IgesEntity.cs" />
     <Compile Include="Entities\IgesEntityType.cs" />
@@ -34,6 +35,7 @@
     <Compile Include="Entities\IgesPatternLineFontDefinition.cs" />
     <Compile Include="Entities\IgesPerspectiveView.cs" />
     <Compile Include="Entities\IgesPlane.cs" />
+    <Compile Include="Entities\IgesProperty.cs" />
     <Compile Include="Entities\IgesSphere.cs" />
     <Compile Include="Entities\IgesSubfigureDefinition.cs" />
     <Compile Include="Entities\IgesSubordinateEntitySwitchType.cs" />
@@ -42,6 +44,7 @@
     <Compile Include="Entities\IgesTransformationMatrix.cs" />
     <Compile Include="Entities\IgesView.cs" />
     <Compile Include="Entities\IgesViewBase.cs" />
+    <Compile Include="Entities\IgesEntity.WriterState.cs" />
     <Compile Include="IgesDirectoryData.cs" />
     <Compile Include="IgesFileWriter.cs" />
     <Compile Include="IgesLineFontPattern.cs" />

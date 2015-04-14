@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace IxMilia.Iges.Entities
 {
-    public abstract class IgesEntity
+    public abstract partial class IgesEntity
     {
         public abstract IgesEntityType EntityType { get; }
 
@@ -83,9 +83,11 @@ namespace IxMilia.Iges.Entities
             }
         }
 
+        private int _levelsPointer;
+        public HashSet<int> Levels { get; private set; }
+
         protected string EntityLabel { get; set; }
         private int _structurePointer;
-        protected int Level { get; set; }
         
         protected int LableDisplay { get; set; }
         protected int LineWeight { get; set; }
@@ -110,6 +112,7 @@ namespace IxMilia.Iges.Entities
             _associatedEntityIndices = new List<int>();
             Properties = new List<IgesEntity>();
             _propertyIndices = new List<int>();
+            Levels = new HashSet<int>();
         }
 
         protected abstract int ReadParameters(List<string> parameters);
@@ -147,6 +150,7 @@ namespace IxMilia.Iges.Entities
             if (_structurePointer < 0)
             {
                 StructureEntity = entityMap[-_structurePointer];
+                entitiesToTrim.Add(-_structurePointer);
             }
 
             // line font definition (field 4)
@@ -156,6 +160,7 @@ namespace IxMilia.Iges.Entities
                 if (custom != null)
                 {
                     CustomLineFont = custom;
+                    entitiesToTrim.Add(-dir.LineFontPattern);
                 }
                 else
                 {
@@ -164,7 +169,29 @@ namespace IxMilia.Iges.Entities
                 }
             }
 
-            // TODO: level (field 5)
+            // level (field 5)
+            Levels.Clear();
+            if (_levelsPointer < 0)
+            {
+                var customLevels = entityMap[-_levelsPointer] as IgesDefinitionLevelsProperty;
+                if (customLevels != null)
+                {
+                    foreach (var customLevel in customLevels.DefinedLevels)
+                    {
+                        Levels.Add(customLevel);
+                    }
+
+                    entitiesToTrim.Add(-_levelsPointer);
+                }
+                else
+                {
+                    Debug.Assert(false, "level pointer was not an IgesDefinitionLevelsProperty");
+                }
+            }
+            else
+            {
+                Levels.Add(_levelsPointer);
+            }
 
             // populate view (field 6)
             if (_viewPointer > 0)
@@ -195,6 +222,7 @@ namespace IxMilia.Iges.Entities
                 if (custom != null)
                 {
                     CustomColor = custom;
+                    entitiesToTrim.Add(-dir.Color);
                 }
                 else
                 {
@@ -274,7 +302,7 @@ namespace IxMilia.Iges.Entities
                 this.LineFont = (IgesLineFontPattern)directoryData.LineFontPattern;
             }
 
-            this.Level = directoryData.Level;
+            this._levelsPointer = directoryData.Level;
             this._viewPointer = directoryData.View;
             this._transformationMatrixPointer = directoryData.TransformationMatrixPointer;
             this.LableDisplay = directoryData.LableDisplay;
@@ -301,7 +329,7 @@ namespace IxMilia.Iges.Entities
             dir.EntityType = EntityType;
             dir.Structure = this._structurePointer;
             dir.LineFontPattern = lineFontPattern;
-            dir.Level = this.Level;
+            dir.Level = this._levelsPointer;
             dir.View = this._viewPointer;
             dir.TransformationMatrixPointer = this._transformationMatrixPointer;
             dir.LableDisplay = this.LableDisplay;
@@ -315,44 +343,42 @@ namespace IxMilia.Iges.Entities
             return dir;
         }
 
-        private int GetOrWriteEntityIndex(IgesEntity entity, Dictionary<IgesEntity, int> entityMap, List<string> directoryLines, List<string> parameterLines, char fieldDelimiter, char recordDelimiter)
-        {
-            if (!entityMap.ContainsKey(entity))
-            {
-                return entity.AddDirectoryAndParameterLines(entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
-            }
-            else
-            {
-                return entityMap[entity];
-            }
-        }
-
-        internal int AddDirectoryAndParameterLines(Dictionary<IgesEntity, int> entityMap, List<string> directoryLines, List<string> parameterLines, char fieldDelimiter, char recordDelimiter)
+        internal int AddDirectoryAndParameterLines(WriterState writerState)
         {
             // write view
             if (View != null)
             {
-                _viewPointer = GetOrWriteEntityIndex(View, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                _viewPointer = writerState.GetOrWriteEntityIndex(View);
             }
 
             // write transformation matrix if applicable
             if (TransformationMatrix != null && !TransformationMatrix.IsIdentity)
             {
-                _transformationMatrixPointer = GetOrWriteEntityIndex(TransformationMatrix, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                _transformationMatrixPointer = writerState.GetOrWriteEntityIndex(TransformationMatrix);
             }
 
             // write structure entity
             _structurePointer = 0;
             if (StructureEntity != null)
             {
-                _structurePointer = -GetOrWriteEntityIndex(StructureEntity, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                _structurePointer = -writerState.GetOrWriteEntityIndex(StructureEntity);
+            }
+
+            // write levels
+            if (Levels.Count <= 1)
+            {
+                _levelsPointer = Levels.FirstOrDefault();
+            }
+            else
+            {
+                _levelsPointer = -writerState.GetLevelsPointer(Levels);
             }
 
             // write line font pattern
             int lineFontPattern = 0;
             if (CustomLineFont != null)
             {
-                lineFontPattern = -GetOrWriteEntityIndex(CustomLineFont, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                lineFontPattern = -writerState.GetOrWriteEntityIndex(CustomLineFont);
             }
             else
             {
@@ -363,7 +389,7 @@ namespace IxMilia.Iges.Entities
             int color = 0;
             if (CustomColor != null)
             {
-                color = -GetOrWriteEntityIndex(CustomColor, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                color = -writerState.GetOrWriteEntityIndex(CustomColor);
             }
             else
             {
@@ -376,7 +402,7 @@ namespace IxMilia.Iges.Entities
             {
                 var index = subEntity == null
                     ? 0
-                    : GetOrWriteEntityIndex(subEntity, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                    : writerState.GetOrWriteEntityIndex(subEntity);
                 SubEntityIndices.Add(index);
             }
 
@@ -384,19 +410,19 @@ namespace IxMilia.Iges.Entities
             _associatedEntityIndices.Clear();
             foreach (var assoc in AssociatedEntities)
             {
-                var index = GetOrWriteEntityIndex(assoc, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                var index = writerState.GetOrWriteEntityIndex(assoc);
                 _associatedEntityIndices.Add(index);
             }
 
             _propertyIndices.Clear();
             foreach (var prop in Properties)
             {
-                var index = GetOrWriteEntityIndex(prop, entityMap, directoryLines, parameterLines, fieldDelimiter, recordDelimiter);
+                var index = writerState.GetOrWriteEntityIndex(prop);
                 _propertyIndices.Add(index);
             }
 
-            var nextDirectoryIndex = directoryLines.Count + 1;
-            var nextParameterIndex = parameterLines.Count + 1;
+            var nextDirectoryIndex = writerState.DirectoryLines.Count + 1;
+            var nextParameterIndex = writerState.ParameterLines.Count + 1;
             var parameters = new List<object>();
             parameters.Add((int)EntityType);
             this.WriteParameters(parameters);
@@ -413,13 +439,13 @@ namespace IxMilia.Iges.Entities
                 parameters.AddRange(_propertyIndices.Cast<object>());
             }
 
-            this._lineCount = IgesFileWriter.AddParametersToStringList(parameters.ToArray(), parameterLines, fieldDelimiter, recordDelimiter,
+            this._lineCount = IgesFileWriter.AddParametersToStringList(parameters.ToArray(), writerState.ParameterLines, writerState.FieldDelimiter, writerState.RecordDelimiter,
                 lineSuffix: string.Format(" {0,7}", nextDirectoryIndex));
             var dir = GetDirectoryData(color, lineFontPattern);
             dir.ParameterPointer = nextParameterIndex;
-            dir.ToString(directoryLines);
+            dir.ToString(writerState.DirectoryLines);
 
-            entityMap[this] = nextDirectoryIndex;
+            writerState.EntityMap[this] = nextDirectoryIndex;
 
             return nextDirectoryIndex;
         }
@@ -522,6 +548,14 @@ namespace IxMilia.Iges.Entities
                     break;
                 case IgesEntityType.Point:
                     entity = new IgesLocation();
+                    break;
+                case IgesEntityType.Property:
+                    switch (directoryData.FormNumber)
+                    {
+                        case 1:
+                            entity = new IgesDefinitionLevelsProperty();
+                            break;
+                    }
                     break;
                 case IgesEntityType.Sphere:
                     entity = new IgesSphere();
