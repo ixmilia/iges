@@ -384,6 +384,36 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadLeaderTest()
+        {
+            // fully-specified values
+            var leader = (IgesLeader)ParseSingleEntity(@"
+     214       1       0       0       0                        00000100D      1
+     214       0       0       1       6                                D      2
+214,2,8.,9.,3.,1.,2.,4.,5.,6.,7.;                                      1P      1
+");
+            Assert.Equal(IgesArrowType.FilledCircle, leader.ArrowType);
+            Assert.Equal(8.0, leader.ArrowHeight);
+            Assert.Equal(9.0, leader.ArrowWidth);
+            Assert.Equal(new IgesPoint(1, 2, 3), leader.ArrowheadCoordinates);
+            Assert.Equal(2, leader.LineSegments.Count);
+            Assert.Equal(new IgesPoint(4, 5, 3), leader.LineSegments.First());
+            Assert.Equal(new IgesPoint(6, 7, 3), leader.LineSegments.Last());
+
+            // read type-default values
+            leader = (IgesLeader)ParseSingleEntity(@"
+     214       1       0       0       0                        00000100D      1
+     214       0       0       1       1                                D      2
+214;                                                                   1P      1
+");
+            Assert.Equal(IgesArrowType.Wedge, leader.ArrowType);
+            Assert.Equal(0.0, leader.ArrowHeight);
+            Assert.Equal(0.0, leader.ArrowWidth);
+            Assert.Equal(IgesPoint.Origin, leader.ArrowheadCoordinates);
+            Assert.Equal(0, leader.LineSegments.Count);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadTemplateLineFontDefinitionTest()
         {
             var lfd = (IgesTemplateLineFontDefinition)ParseSingleEntity(@"

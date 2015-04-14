@@ -25,9 +25,12 @@
     <Compile Include="Entities\IgesDefinitionLevelsProperty.cs" />
     <Compile Include="Entities\IgesDirection.cs" />
     <Compile Include="Entities\IgesEntity.cs" />
+    <Compile Include="Entities\IgesEntity.FromData.cs" />
+    <Compile Include="Entities\IgesEntity.WriterState.cs" />
     <Compile Include="Entities\IgesEntityType.cs" />
     <Compile Include="Entities\IgesEntityUseFlag.cs" />
     <Compile Include="Entities\IgesHierarchy.cs" />
+    <Compile Include="Entities\IgesLeader.cs" />
     <Compile Include="Entities\IgesLine.cs" />
     <Compile Include="Entities\IgesLineFontDefinitionBase.cs" />
     <Compile Include="Entities\IgesLocation.cs" />
@@ -44,19 +47,18 @@
     <Compile Include="Entities\IgesTransformationMatrix.cs" />
     <Compile Include="Entities\IgesView.cs" />
     <Compile Include="Entities\IgesViewBase.cs" />
-    <Compile Include="Entities\IgesEntity.WriterState.cs" />
-    <Compile Include="IgesDirectoryData.cs" />
-    <Compile Include="IgesFileWriter.cs" />
-    <Compile Include="IgesLineFontPattern.cs" />
-    <Compile Include="IgesPoint.cs" />
-    <Compile Include="IgesVersion.cs" />
     <Compile Include="IgesColorNumber.cs" />
+    <Compile Include="IgesDirectoryData.cs" />
     <Compile Include="IgesDraftingStandard.cs" />
     <Compile Include="IgesException.cs" />
     <Compile Include="IgesFile.cs" />
     <Compile Include="IgesFileReader.cs" />
+    <Compile Include="IgesFileWriter.cs" />
+    <Compile Include="IgesLineFontPattern.cs" />
+    <Compile Include="IgesPoint.cs" />
     <Compile Include="IgesSectionType.cs" />
     <Compile Include="IgesUnits.cs" />
+    <Compile Include="IgesVersion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

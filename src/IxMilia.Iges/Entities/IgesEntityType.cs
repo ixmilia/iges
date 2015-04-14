@@ -14,12 +14,14 @@ namespace IxMilia.Iges.Entities
         TransformationMatrix = 124,
         Sphere = 158,
         Torus = 160,
-        GeneralNote = 212,
+        GeneralNote = 212, // NYI, requires TextFontDefinition (310).  Required for common pointers.
+        Leader = 214,
         LineFontDefinition = 304,
         SubfigureDefinition = 308,
-        TextDisplayTemplate = 312,
+        TextFontDefinition = 310, // NYI, required for GeneralNote
+        TextDisplayTemplate = 312, // NYI.  Required for common pointers.  Requires TextFontDefinition (310)
         ColorDefinition = 314,
-        AssociativityInstance = 402,
+        AssociativityInstance = 402, // NYI.  Form 5 (label display) requires Leader (214).  Required for common pointers and DE field 8.
         Property = 406,
         View = 410
     }

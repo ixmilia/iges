@@ -1,0 +1,96 @@
+﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System.Collections.Generic;
+
+namespace IxMilia.Iges.Entities
+{
+    public abstract partial class IgesEntity
+    {
+        internal static IgesEntity FromData(IgesDirectoryData directoryData, List<string> parameters)
+        {
+            IgesEntity entity = null;
+            switch (directoryData.EntityType)
+            {
+                case IgesEntityType.CircularArc:
+                    entity = new IgesCircularArc();
+                    break;
+                case IgesEntityType.ColorDefinition:
+                    entity = new IgesColorDefinition();
+                    break;
+                case IgesEntityType.CompositeCurve:
+                    entity = new IgesCompositeCurve();
+                    break;
+                case IgesEntityType.Direction:
+                    entity = new IgesDirection();
+                    break;
+                case IgesEntityType.Leader:
+                    entity = new IgesLeader();
+                    break;
+                case IgesEntityType.Line:
+                    entity = new IgesLine();
+                    break;
+                case IgesEntityType.LineFontDefinition:
+                    switch (directoryData.FormNumber)
+                    {
+                        case 1:
+                            entity = new IgesTemplateLineFontDefinition();
+                            break;
+                        case 2:
+                            entity = new IgesPatternLineFontDefinition();
+                            break;
+                    }
+                    break;
+                case IgesEntityType.Null:
+                    entity = new IgesNull();
+                    break;
+                case IgesEntityType.Plane:
+                    entity = new IgesPlane();
+                    break;
+                case IgesEntityType.Point:
+                    entity = new IgesLocation();
+                    break;
+                case IgesEntityType.Property:
+                    switch (directoryData.FormNumber)
+                    {
+                        case 1:
+                            entity = new IgesDefinitionLevelsProperty();
+                            break;
+                    }
+                    break;
+                case IgesEntityType.Sphere:
+                    entity = new IgesSphere();
+                    break;
+                case IgesEntityType.SubfigureDefinition:
+                    entity = new IgesSubfigureDefinition();
+                    break;
+                case IgesEntityType.Torus:
+                    entity = new IgesTorus();
+                    break;
+                case IgesEntityType.TransformationMatrix:
+                    entity = new IgesTransformationMatrix();
+                    break;
+                case IgesEntityType.View:
+                    switch (directoryData.FormNumber)
+                    {
+                        case 0:
+                            entity = new IgesView();
+                            break;
+                        case 1:
+                            entity = new IgesPerspectiveView();
+                            break;
+                    }
+                    break;
+            }
+
+            if (entity != null)
+            {
+                entity.PopulateDirectoryData(directoryData);
+                int nextIndex = entity.ReadParameters(parameters);
+                entity.ReadCommonPointers(parameters, nextIndex);
+                entity.OnAfterRead(directoryData);
+            }
+
+            return entity;
+        }
+    }
+}

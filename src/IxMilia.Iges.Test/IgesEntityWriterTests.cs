@@ -204,6 +204,34 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteLeaderTest()
+        {
+            // regular case
+            var leader = new IgesLeader()
+            {
+                ArrowheadCoordinates = new IgesPoint(1, 2, 3),
+                ArrowHeight = 8.0,
+                ArrowWidth = 9.0,
+                ArrowType = IgesArrowType.FilledCircle
+            };
+            leader.LineSegments.Add(new IgesPoint(4, 5, 3));
+            leader.LineSegments.Add(new IgesPoint(6, 7, 3));
+            VerifyEntity(leader, @"
+     214       1       0       0       0                        00000100D      1
+     214       0       0       1       6                                D      2
+214,2,8.,9.,3.,1.,2.,4.,5.,6.,7.;                                      1P      1
+");
+
+            // default values
+            leader = new IgesLeader();
+            VerifyEntity(leader, @"
+     214       1       0       0       0                        00000100D      1
+     214       0       0       1       1                                D      2
+214,0,0.,0.,0.,0.,0.;                                                  1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteTemplateLineFontDefinitionTest()
         {
             // regular case
