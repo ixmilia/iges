@@ -138,6 +138,10 @@ namespace IxMilia.Iges.Entities
         {
         }
 
+        internal virtual void UnMarkEntitiesForTrimming(HashSet<int> entitiesToTrim)
+        {
+        }
+
         internal void ReadCommonPointers(List<string>parameters, int nextIndex)
         {
             var associatedPointerCount = Integer(parameters, nextIndex++);

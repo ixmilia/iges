@@ -239,6 +239,11 @@ namespace IxMilia.Iges
                 }
             }
 
+            foreach (var entity in file.Entities)
+            {
+                entity.UnMarkEntitiesForTrimming(entitiesToTrim);
+            }
+
             for (int i = file.Entities.Count - 1; i >= 0; i--)
             {
                 var deIndex = i * 2 + 1;

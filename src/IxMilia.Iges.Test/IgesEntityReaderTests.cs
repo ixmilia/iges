@@ -547,6 +547,47 @@ subfigureH,2,1,5;                                                       P      3
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void WriteLabelDisplayAssociativityTest()
+        {
+            // fully-specified values
+            var file = IgesReaderTests.CreateFile(@"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       2       1                                D      2
+     214       3       0       0       0                        00000100D      3
+     214       0       0       1       6                                D      4
+     110       4       0       0       0                        00000000D      5
+     110       0       0       1       0                                D      6
+     402       5       0       0       0                        00000000D      7
+     402       0       0       1       5                                D      8
+410,0,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0,         1P      1
+0.,0.;                                                                 1P      2
+214,0,0.,0.,0.,0.,0.;                                                  3P      3
+110,1.,2.,3.,4.,5.,6.;                                                 5P      4
+402,1,1,1.,2.,3.,3,7,5;                                                7P      5
+");
+            Assert.Equal(2, file.Entities.Count);
+            var disp = file.Entities.OfType<IgesLabelDisplayAssociativity>().Single();
+            var line = file.Entities.OfType<IgesLine>().Single();
+            Assert.Equal(1, disp.Count);
+            var placement = disp[0];
+            Assert.IsType(typeof(IgesPerspectiveView), placement.View);
+            Assert.Equal(new IgesPoint(1, 2, 3), placement.Location);
+            Assert.Equal(IgesArrowType.FilledCircle, placement.Leader.ArrowType);
+            Assert.Equal(7, placement.Level);
+            line = (IgesLine)placement.Entity;
+            Assert.Equal(new IgesPoint(1, 2, 3), line.P1);
+            Assert.Equal(new IgesPoint(4, 5, 6), line.P2);
+
+            // read type-defaule values
+            disp = (IgesLabelDisplayAssociativity)ParseSingleEntity(@"
+     402       1       0       0       0                        00000000D      1
+     402       0       0       1       5                                D      2
+402;                                                                   1P      1
+");
+            Assert.Equal(0, disp.Count);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadViewTest()
         {
             // fully-specified values

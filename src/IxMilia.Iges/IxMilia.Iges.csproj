@@ -18,6 +18,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
   <ItemGroup>
+    <Compile Include="Entities\IgesAssociativity.cs" />
     <Compile Include="Entities\IgesBlankStatus.cs" />
     <Compile Include="Entities\IgesCircularArc.cs" />
     <Compile Include="Entities\IgesColorDefinition.cs" />
@@ -30,6 +31,7 @@
     <Compile Include="Entities\IgesEntityType.cs" />
     <Compile Include="Entities\IgesEntityUseFlag.cs" />
     <Compile Include="Entities\IgesHierarchy.cs" />
+    <Compile Include="Entities\IgesLabelDisplayAssociativity.cs" />
     <Compile Include="Entities\IgesLeader.cs" />
     <Compile Include="Entities\IgesLine.cs" />
     <Compile Include="Entities\IgesLineFontDefinitionBase.cs" />

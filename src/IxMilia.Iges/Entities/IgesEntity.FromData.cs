@@ -11,6 +11,14 @@ namespace IxMilia.Iges.Entities
             IgesEntity entity = null;
             switch (directoryData.EntityType)
             {
+                case IgesEntityType.AssociativityInstance:
+                    switch (directoryData.FormNumber)
+                    {
+                        case 5:
+                            entity = new IgesLabelDisplayAssociativity();
+                            break;
+                    }
+                    break;
                 case IgesEntityType.CircularArc:
                     entity = new IgesCircularArc();
                     break;

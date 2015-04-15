@@ -358,6 +358,37 @@ s because it is so huge,2,3,5;                                         7P      5
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteLabelDisplayAssociativityTest()
+        {
+            // regular values
+            var disp = new IgesLabelDisplayAssociativity();
+            disp.Add(new IgesLabelDisplayAssociativity.IgesLabelPlacement(new IgesPerspectiveView(), new IgesPoint(1, 2, 3), new IgesLeader(), 7, new IgesLine()));
+            VerifyEntity(disp, @"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       2       1                                D      2
+     214       3       0       0       0                        00000100D      3
+     214       0       0       1       1                                D      4
+     110       4       0       0       0                        00000000D      5
+     110       0       0       1       0                                D      6
+     402       5       0       0       0                        00000000D      7
+     402       0       0       1       5                                D      8
+410,0,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0,         1P      1
+0.,0.;                                                                 1P      2
+214,0,0.,0.,0.,0.,0.;                                                  3P      3
+110,0.,0.,0.,0.,0.,0.;                                                 5P      4
+402,1,1,1.,2.,3.,3,7,5;                                                7P      5
+");
+
+            // default values
+            disp = new IgesLabelDisplayAssociativity();
+            VerifyEntity(disp, @"
+     402       1       0       0       0                        00000000D      1
+     402       0       0       1       5                                D      2
+402,0;                                                                 1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteViewTest()
         {
             // regular values
