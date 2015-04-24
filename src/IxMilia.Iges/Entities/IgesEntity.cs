@@ -105,8 +105,22 @@ namespace IxMilia.Iges.Entities
         public int LineWeight { get; set; }
 
         private int _structurePointer;
+        private int _labelDisplayPointer;
+        private IgesLabelDisplayAssociativity _labelDisplay;
+
+        public IgesLabelDisplayAssociativity LabelDisplay
+        {
+            get { return _labelDisplay; }
+            set
+            {
+                _labelDisplay = value;
+                if (_labelDisplay != null)
+                {
+                    _labelDisplay.AssociatedEntity = this;
+                }
+            }
+        }
         
-        protected int LableDisplay { get; set; }
         protected internal List<int> SubEntityIndices { get; private set; }
 
         private int _viewPointer;
@@ -135,6 +149,10 @@ namespace IxMilia.Iges.Entities
         protected abstract void WriteParameters(List<object> parameters);
 
         internal virtual void OnAfterRead(IgesDirectoryData directoryData)
+        {
+        }
+
+        internal virtual void OnBeforeWrite()
         {
         }
 
@@ -230,7 +248,14 @@ namespace IxMilia.Iges.Entities
                 TransformationMatrix = IgesTransformationMatrix.Identity;
             }
 
-            // TODO: label display (field 8)
+            // label display (field 8)
+            if (dir.LableDisplay > 0)
+            {
+                var labelDisplay = entityMap[dir.LableDisplay] as IgesLabelDisplayAssociativity;
+                Debug.Assert(labelDisplay != null, "label display pointer was not an IgesLabelDisplayAssociativity");
+                LabelDisplay = labelDisplay;
+                entitiesToTrim.Add(dir.LableDisplay);
+            }
 
             // link to custom colors (field 13)
             if (dir.Color < 0)
@@ -322,7 +347,7 @@ namespace IxMilia.Iges.Entities
             this._levelsPointer = directoryData.Level;
             this._viewPointer = directoryData.View;
             this._transformationMatrixPointer = directoryData.TransformationMatrixPointer;
-            this.LableDisplay = directoryData.LableDisplay;
+            this._labelDisplayPointer = directoryData.LableDisplay;
             SetStatusNumber(directoryData.StatusNumber);
             this.LineWeight = directoryData.LineWeight;
             if (directoryData.Color < 0)
@@ -349,7 +374,7 @@ namespace IxMilia.Iges.Entities
             dir.Level = this._levelsPointer;
             dir.View = this._viewPointer;
             dir.TransformationMatrixPointer = this._transformationMatrixPointer;
-            dir.LableDisplay = this.LableDisplay;
+            dir.LableDisplay = this._labelDisplayPointer;
             dir.StatusNumber = this.GetStatusNumber();
             dir.LineWeight = this.LineWeight;
             dir.Color = color;
@@ -362,36 +387,19 @@ namespace IxMilia.Iges.Entities
 
         internal int AddDirectoryAndParameterLines(WriterState writerState)
         {
-            // write view
-            if (View != null)
-            {
-                _viewPointer = writerState.GetOrWriteEntityIndex(View);
-            }
+            OnBeforeWrite();
 
-            // write transformation matrix if applicable
-            if (TransformationMatrix != null && !TransformationMatrix.IsIdentity)
-            {
-                _transformationMatrixPointer = writerState.GetOrWriteEntityIndex(TransformationMatrix);
-            }
-
-            // write structure entity
-            _structurePointer = 0;
+            // write structure entity (field 3)
             if (StructureEntity != null)
             {
                 _structurePointer = -writerState.GetOrWriteEntityIndex(StructureEntity);
             }
-
-            // write levels
-            if (Levels.Count <= 1)
-            {
-                _levelsPointer = Levels.FirstOrDefault();
-            }
             else
             {
-                _levelsPointer = -writerState.GetLevelsPointer(Levels);
+                _structurePointer = 0;
             }
 
-            // write line font pattern
+            // write line font pattern (field 4)
             int lineFontPattern = 0;
             if (CustomLineFont != null)
             {
@@ -402,7 +410,47 @@ namespace IxMilia.Iges.Entities
                 lineFontPattern = (int)LineFont;
             }
 
-            // write custom color entity
+            // write levels (field 5)
+            if (Levels.Count <= 1)
+            {
+                _levelsPointer = Levels.FirstOrDefault();
+            }
+            else
+            {
+                _levelsPointer = -writerState.GetLevelsPointer(Levels);
+            }
+
+            // write view (field 6)
+            if (View != null)
+            {
+                _viewPointer = writerState.GetOrWriteEntityIndex(View);
+            }
+            else
+            {
+                _viewPointer = 0;
+            }
+
+            // write transformation matrix (field 7)
+            if (TransformationMatrix != null && !TransformationMatrix.IsIdentity)
+            {
+                _transformationMatrixPointer = writerState.GetOrWriteEntityIndex(TransformationMatrix);
+            }
+            else
+            {
+                _transformationMatrixPointer = 0;
+            }
+
+            // write label display associativity (field 8)
+            if (LabelDisplay != null)
+            {
+                _labelDisplayPointer = writerState.GetOrWriteEntityIndex(LabelDisplay);
+            }
+            else
+            {
+                _labelDisplayPointer = 0;
+            }
+
+            // write custom color entity (field 13)
             int color = 0;
             if (CustomColor != null)
             {
@@ -477,7 +525,9 @@ namespace IxMilia.Iges.Entities
         {
             if (index < values.Count)
             {
-                return double.Parse(values[index]);
+                var result = 0.0;
+                double.TryParse(values[index], out result);
+                return result;
             }
             else
             {
@@ -494,7 +544,9 @@ namespace IxMilia.Iges.Entities
         {
             if (index < values.Count)
             {
-                return int.Parse(values[index]);
+                var result = 0;
+                int.TryParse(values[index], out result);
+                return result;
             }
             else
             {
@@ -512,6 +564,23 @@ namespace IxMilia.Iges.Entities
             if (index < values.Count)
             {
                 return values[index];
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+
+        protected bool Boolean(List<string> values, int index)
+        {
+            return BooleanOrDefault(values, index, false);
+        }
+
+        protected bool BooleanOrDefault(List<string> values, int index, bool defaultValue)
+        {
+            if (index < values.Count)
+            {
+                return Integer(values, index) != 0;
             }
             else
             {

@@ -71,6 +71,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.SubfigureDefinition:
                     entity = new IgesSubfigureDefinition();
                     break;
+                case IgesEntityType.TextFontDefinition:
+                    entity = new IgesTextFontDefinition();
+                    break;
                 case IgesEntityType.Torus:
                     entity = new IgesTorus();
                     break;
@@ -95,7 +98,6 @@ namespace IxMilia.Iges.Entities
                 entity.PopulateDirectoryData(directoryData);
                 int nextIndex = entity.ReadParameters(parameters);
                 entity.ReadCommonPointers(parameters, nextIndex);
-                entity.OnAfterRead(directoryData);
             }
 
             return entity;

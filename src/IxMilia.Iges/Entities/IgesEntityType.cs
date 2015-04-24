@@ -18,7 +18,7 @@ namespace IxMilia.Iges.Entities
         Leader = 214,
         LineFontDefinition = 304,
         SubfigureDefinition = 308,
-        TextFontDefinition = 310, // NYI, required for GeneralNote, TextDisplayTemplate, and common pointers.
+        TextFontDefinition = 310,
         TextDisplayTemplate = 312, // NYI.  Required for common pointers.  Requires TextFontDefinition (310)
         ColorDefinition = 314,
         AssociativityInstance = 402,

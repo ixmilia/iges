@@ -236,6 +236,7 @@ namespace IxMilia.Iges
                 if (entityMap.TryGetValue((i * 2) + 1, out entity))
                 {
                     entity.BindPointers(directoryEntries[i], entityMap, entitiesToTrim);
+                    entity.OnAfterRead(directoryEntries[i]);
                 }
             }
 

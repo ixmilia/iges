@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using IxMilia.Iges.Entities;
@@ -199,30 +200,31 @@ namespace IxMilia.Iges
         {
             if (parameter == null)
                 return string.Empty;
-            var type = parameter.GetType();
-            if (type == typeof(int))
+            else if (parameter.GetType() == typeof(int))
                 return ParameterToString((int)parameter);
-            if (type == typeof(double))
+            else if (parameter.GetType() == typeof(double))
                 return ParameterToString((double)parameter);
-            else if (type == typeof(string))
+            else if (parameter.GetType() == typeof(string))
                 return ParameterToString((string)parameter);
-            else if (type == typeof(DateTime))
+            else if (parameter.GetType() == typeof(DateTime))
                 return ParameterToString((DateTime)parameter);
+            else if (parameter.GetType() == typeof(bool))
+                return ParameterToString((bool)parameter);
             else
             {
-                Debug.Assert(false, "Unsupported parameter type: " + type.ToString());
+                Debug.Assert(false, "Unsupported parameter type: " + parameter.GetType().ToString());
                 return string.Empty;
             }
         }
 
         private static string ParameterToString(int parameter)
         {
-            return parameter.ToString();
+            return parameter.ToString(CultureInfo.InvariantCulture);
         }
 
         private static string ParameterToString(double parameter)
         {
-            var str = parameter.ToString();
+            var str = parameter.ToString(CultureInfo.InvariantCulture);
             if (!(str.Contains(".") || str.Contains("e") || str.Contains("E") || str.Contains("d") || str.Contains("D")))
                 str += '.'; // add trailing decimal point
             return str;
@@ -239,6 +241,11 @@ namespace IxMilia.Iges
         private static string ParameterToString(DateTime parameter)
         {
             return ParameterToString(parameter.ToString("yyyyMMdd.HHmmss"));
+        }
+
+        private static string ParameterToString(bool parameter)
+        {
+            return parameter ? "1" : string.Empty;
         }
 
         private static void WriteLines(StreamWriter writer, IgesSectionType sectionType, List<string> lines)

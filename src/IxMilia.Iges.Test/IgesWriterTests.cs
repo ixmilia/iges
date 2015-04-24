@@ -27,7 +27,7 @@ namespace IxMilia.Iges.Test
 
         private static void VerifyFileContains(IgesFile file, string expected)
         {
-            VerifyFileText(file, expected, (ex, ac) => Assert.True(ac.Contains(ex)));
+            VerifyFileText(file, expected, (ex, ac) => Assert.Contains(ex, ac));
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
@@ -253,6 +253,37 @@ also contains things that look like 7Hstrings and records;             1P      3
 406,2,13,23;                                                           1P      1
 110,0.,0.,0.,0.,0.,0.;                                                 3P      2
 110,0.,0.,0.,0.,0.,0.;                                                 5P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteLineWithAssociatedLabelDisplayTest()
+        {
+            var file = new IgesFile();
+            var line = new IgesLine();
+            var label = new IgesLocation(); // cheating and using an IgesLocation as a fake label type
+            line.LabelDisplay = new IgesLabelDisplayAssociativity();
+            line.LabelDisplay.LabelPlacements.Add(
+                new IgesLabelPlacement(new IgesPerspectiveView(), new IgesPoint(1, 2, 3), new IgesLeader(), 7, label));
+            file.Entities.Add(line);
+            Assert.True(ReferenceEquals(line, line.LabelDisplay.AssociatedEntity));
+            VerifyFileContains(file, @"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       2       1                                D      2
+     214       3       0       0       0                        00000100D      3
+     214       0       0       1       1                                D      4
+     116       4       0       0       0                        00000000D      5
+     116       0       0       1       0                                D      6
+     402       5       0       0       0                        00000000D      7
+     402       0       0       1       5                                D      8
+     110       6       0       0       0                       700000000D      9
+     110       0       0       1       0                                D     10
+410,0,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0,         1P      1
+0.,0.;                                                                 1P      2
+214,0,0.,0.,0.,0.,0.;                                                  3P      3
+116,0.,0.,0.;                                                          5P      4
+402,1,1,1.,2.,3.,3,7,5;                                                7P      5
+110,0.,0.,0.,0.,0.,0.;                                                 9P      6
 ");
         }
 

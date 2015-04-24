@@ -327,6 +327,49 @@ s because it is so huge,2,3,5;                                         7P      5
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteTextFontDefinitionTest()
+        {
+            // regular case
+            var tfd = new IgesTextFontDefinition();
+            tfd.FontCode = 1;
+            tfd.Name = "STANDARD";
+
+            tfd.Scale = 8;
+            var character = new IgesTextFontDefinitionCharacter();
+            character.ASCIICode = 65;
+            character.CharacterOrigin = new IgesGridPoint(11, 0);
+            character.CharacterMovements.Add(new IgesTextFontDefinitionCharacterMovement() { IsUp = false, Location = new IgesGridPoint(4, 8) });
+            character.CharacterMovements.Add(new IgesTextFontDefinitionCharacterMovement() { IsUp = false, Location = new IgesGridPoint(8, 0) });
+            character.CharacterMovements.Add(new IgesTextFontDefinitionCharacterMovement() { IsUp = true, Location = new IgesGridPoint(2, 4) });
+            character.CharacterMovements.Add(new IgesTextFontDefinitionCharacterMovement() { IsUp = false, Location = new IgesGridPoint(6, 4) });
+            tfd.Characters.Add(character);
+            VerifyEntity(tfd, @"
+     310       1       0       0       0                        00000200D      1
+     310       0       0       1       0                                D      2
+310,1,8HSTANDARD,,8,1,65,11,0,4,,4,8,,8,0,1,2,4,,6,4;                  1P      1
+");
+
+            // with supercedes value
+            tfd.SupercedesCode = 42;
+            VerifyEntity(tfd, @"
+     310       1       0       0       0                        00000200D      1
+     310       0       0       1       0                                D      2
+310,1,8HSTANDARD,42,8,1,65,11,0,4,,4,8,,8,0,1,2,4,,6,4;                1P      1
+");
+
+            // with supercedes pointer
+            tfd.SupercedesFont = new IgesTextFontDefinition();
+            VerifyEntity(tfd, @"
+     310       1       0       0       0                        00000200D      1
+     310       0       0       1       0                                D      2
+     310       2       0       0       0                        00000200D      3
+     310       0       0       1       0                                D      4
+310,0,,,0,0;                                                           1P      1
+310,1,8HSTANDARD,-1,8,1,65,11,0,4,,4,8,,8,0,1,2,4,,6,4;                3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteColorDefinitionTest()
         {
             // regular case
@@ -362,7 +405,7 @@ s because it is so huge,2,3,5;                                         7P      5
         {
             // regular values
             var disp = new IgesLabelDisplayAssociativity();
-            disp.Add(new IgesLabelDisplayAssociativity.IgesLabelPlacement(new IgesPerspectiveView(), new IgesPoint(1, 2, 3), new IgesLeader(), 7, new IgesLine()));
+            disp.LabelPlacements.Add(new IgesLabelPlacement(new IgesPerspectiveView(), new IgesPoint(1, 2, 3), new IgesLeader(), 7, new IgesLine()));
             VerifyEntity(disp, @"
      410       1       0       0       0                        00000100D      1
      410       0       0       2       1                                D      2

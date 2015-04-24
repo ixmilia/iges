@@ -273,6 +273,44 @@ S      0G      0D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadLineWithAssociatedLabelDisplayTest()
+        {
+            // specified pointer
+            var line = (IgesLine)ParseSingleEntity(@"
+     410       1       0       0       0                        00000100D      1
+     410       0       0       2       1                                D      2
+     214       3       0       0       0                        00000100D      3
+     214       0       0       1       1                                D      4
+     116       4       0       0       0                        00000000D      5
+     116       0       0       1       0                                D      6
+     402       5       0       0       0                        00000000D      7
+     402       0       0       1       5                                D      8
+     110       6       0       0       0                       700000000D      9
+     110       0       0       1       0                                D     10
+410,0,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0,         1P      1
+0.,0.;                                                                 1P      2
+214,0,0.,0.,0.,0.,0.;                                                  3P      3
+116,0.,0.,0.;                                                          5P      4
+402,1,1,1.,2.,3.,3,7,5;                                                7P      5
+110,0.,0.,0.,0.,0.,0.;                                                 9P      6
+");
+            Assert.Equal(1, line.LabelDisplay.LabelPlacements.Count);
+            var placement = line.LabelDisplay.LabelPlacements.Single();
+            Assert.IsType<IgesPerspectiveView>(placement.View);
+            Assert.Equal(new IgesPoint(1, 2, 3), placement.Location);
+            Assert.Equal(7, placement.Level);
+            Assert.IsType<IgesLocation>(placement.Label);
+
+            // no label display pointer
+            line = (IgesLine)ParseSingleEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+");
+            Assert.Null(line.LabelDisplay);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadLineWithEntityLabelAndSubscriptTest()
         {
             var line = (IgesLine)ParseSingleEntity(@"

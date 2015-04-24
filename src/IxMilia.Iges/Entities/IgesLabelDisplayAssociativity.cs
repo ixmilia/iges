@@ -5,28 +5,31 @@ using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
+    public class IgesLabelPlacement
+    {
+        public IgesViewBase View { get; set; }
+        public IgesPoint Location { get; set; }
+        public IgesLeader Leader { get; set; }
+        public int Level { get; set; }
+        public IgesEntity Label { get; set; }
+
+        public IgesLabelPlacement(IgesViewBase view, IgesPoint location, IgesLeader leader, int level, IgesEntity label)
+        {
+            View = view;
+            Location = location;
+            Leader = leader;
+            Level = level;
+            Label = label;
+        }
+    }
+
     public class IgesLabelDisplayAssociativity : IgesAssociativity
     {
-        public class IgesLabelPlacement
-        {
-            public IgesViewBase View { get; internal set; }
-            public IgesPoint Location { get; internal set; }
-            public IgesLeader Leader { get; internal set; }
-            public int Level { get; internal set; }
-            public IgesEntity Entity { get; internal set; }
-
-            public IgesLabelPlacement(IgesViewBase view, IgesPoint location, IgesLeader leader, int level, IgesEntity entity)
-            {
-                View = view;
-                Location = location;
-                Leader = leader;
-                Level = level;
-                Entity = entity;
-            }
-        }
-
         private List<IgesPoint> _labelLocations;
         private List<int> _labelLevels;
+
+        public List<IgesLabelPlacement> LabelPlacements { get; private set; }
+        public IgesEntity AssociatedEntity { get; internal set; }
 
         public IgesLabelDisplayAssociativity()
             : base()
@@ -34,50 +37,8 @@ namespace IxMilia.Iges.Entities
             FormNumber = 5;
             _labelLocations = new List<IgesPoint>();
             _labelLevels = new List<int>();
+            LabelPlacements = new List<IgesLabelPlacement>();
         }
-
-        public IgesLabelPlacement this[int index]
-        {
-            get
-            {
-                return new IgesLabelPlacement(
-                    (IgesViewBase)SubEntities[index * 3],
-                    _labelLocations[index],
-                    (IgesLeader)SubEntities[index * 3 + 1],
-                    _labelLevels[index],
-                    SubEntities[index * 3 + 2]);
-            }
-            set
-            {
-                AssertCollections();
-                SubEntities[index * 3] = value.View;
-                _labelLocations[index] = value.Location;
-                SubEntities[index * 3 + 1] = value.Leader;
-                _labelLevels[index] = value.Level;
-                SubEntities[index * 3 + 2] = value.Entity;
-            }
-        }
-
-        public void Add(IgesLabelPlacement labelPlacement)
-        {
-            AssertCollections();
-            SubEntities.Add(labelPlacement.View);
-            _labelLocations.Add(labelPlacement.Location);
-            SubEntities.Add(labelPlacement.Leader);
-            _labelLevels.Add(labelPlacement.Level);
-            SubEntities.Add(labelPlacement.Entity);
-            AssertCollections();
-        }
-
-        public void Clear()
-        {
-            SubEntities.Clear();
-            _labelLocations.Clear();
-            _labelLevels.Clear();
-            AssertCollections();
-        }
-
-        public int Count { get { return _labelLocations.Count; } }
 
         protected override int ReadParameters(List<string> parameters)
         {
@@ -98,6 +59,27 @@ namespace IxMilia.Iges.Entities
             return index;
         }
 
+        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        {
+            base.OnAfterRead(directoryData);
+            AssertCollections();
+            LabelPlacements.Clear();
+            for (int i = 0; i < _labelLocations.Count; i++)
+            {
+                LabelPlacements.Add(
+                    new IgesLabelPlacement(
+                        SubEntities[i * 3] as IgesViewBase,
+                        _labelLocations[i],
+                        SubEntities[i * 3 + 1] as IgesLeader,
+                        _labelLevels[i],
+                        SubEntities[i * 3 + 2]));
+            }
+
+            _labelLevels.Clear();
+            _labelLocations.Clear();
+            SubEntities.Clear();
+        }
+
         protected override void WriteParameters(List<object> parameters)
         {
             AssertCollections();
@@ -111,6 +93,22 @@ namespace IxMilia.Iges.Entities
                 parameters.Add(SubEntityIndices[i * 3 + 1]); // pointer to leader
                 parameters.Add(_labelLevels[i]);
                 parameters.Add(SubEntityIndices[i * 3 + 2]); // pointer to entity
+            }
+        }
+
+        internal override void OnBeforeWrite()
+        {
+            base.OnBeforeWrite();
+            SubEntities.Clear();
+            _labelLocations.Clear();
+            _labelLevels.Clear();
+            for (int i = 0; i < LabelPlacements.Count; i++)
+            {
+                SubEntities.Add(LabelPlacements[i].View);
+                _labelLocations.Add(LabelPlacements[i].Location);
+                SubEntities.Add(LabelPlacements[i].Leader);
+                _labelLevels.Add(LabelPlacements[i].Level);
+                SubEntities.Add(LabelPlacements[i].Label);
             }
         }
 
