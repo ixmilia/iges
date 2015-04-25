@@ -14,7 +14,7 @@ namespace IxMilia.Iges.Entities
         TransformationMatrix = 124,
         Sphere = 158,
         Torus = 160,
-        GeneralNote = 212, // NYI, requires TextFontDefinition (310).  Required for common pointers.
+        GeneralNote = 212,
         Leader = 214,
         LineFontDefinition = 304,
         SubfigureDefinition = 308,

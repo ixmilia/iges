@@ -31,6 +31,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.Direction:
                     entity = new IgesDirection();
                     break;
+                case IgesEntityType.GeneralNote:
+                    entity = new IgesGeneralNote();
+                    break;
                 case IgesEntityType.Leader:
                     entity = new IgesLeader();
                     break;

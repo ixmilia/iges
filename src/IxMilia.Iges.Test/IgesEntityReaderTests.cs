@@ -384,6 +384,51 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadGeneralNoteTest()
+        {
+            // fully-specified values
+            var note = (IgesGeneralNote)ParseSingleEntity(@"
+     212       1       0       0       0                        00000100D      1
+     212       0       0       1       6                                D      2
+212,1,11,1.,2.,3,4.,5.,1,1,6.,7.,8.,11Htest string;                    1P      1
+");
+            Assert.Equal(IgesGeneralNoteType.MultipleStackLeftJustified, note.NoteType);
+            var str = note.Strings.Single();
+            Assert.Equal(1.0, str.BoxWidth);
+            Assert.Equal(2.0, str.BoxHeight);
+            Assert.Equal(3, str.FontCode);
+            Assert.Null(str.TextFontDefinition);
+            Assert.Equal(4.0, str.SlantAngle);
+            Assert.Equal(5.0, str.RotationAngle);
+            Assert.Equal(IgesTextMirroringAxis.PerpendicularToTextBase, str.MirroringAxis);
+            Assert.Equal(IgesTextRotationType.Vertical, str.RotationType);
+            Assert.Equal(6.0, str.Location.X);
+            Assert.Equal(7.0, str.Location.Y);
+            Assert.Equal(8.0, str.Location.Z);
+            Assert.Equal("test string", str.Value);
+
+            // with a text font definition
+            note = (IgesGeneralNote)ParseSingleEntity(@"
+     310       1       0       0       0                        00000200D      1
+     310       0       0       1       0                                D      2
+     212       2       0       0       0                        00000100D      3
+     212       0       0       1       6                                D      4
+310,0,,,0,0;                                                           1P      1
+212,1,11,1.,2.,-1,4.,5.,1,1,6.,7.,8.,11Htest string;                   3P      2
+");
+            Assert.NotNull(note.Strings.Single().TextFontDefinition);
+
+            // type-default values
+            note = (IgesGeneralNote)ParseSingleEntity(@"
+     212       1       0       0       0                        00000100D      1
+     212       0       0       1       0                                D      2
+212;                                                                   1P      1
+");
+            Assert.Equal(IgesGeneralNoteType.Simple, note.NoteType);
+            Assert.Empty(note.Strings);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadLeaderTest()
         {
             // fully-specified values

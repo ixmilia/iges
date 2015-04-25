@@ -204,6 +204,51 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteGeneralNoteTest()
+        {
+            // regular case with font code
+            var note = new IgesGeneralNote();
+            note.NoteType = IgesGeneralNoteType.MultipleStackLeftJustified;
+            var str = new IgesTextString();
+            str.BoxWidth = 1.0;
+            str.BoxHeight = 2.0;
+            str.FontCode = 3;
+            str.SlantAngle = 4.0;
+            str.RotationAngle = 5.0;
+            str.MirroringAxis = IgesTextMirroringAxis.PerpendicularToTextBase;
+            str.RotationType = IgesTextRotationType.Vertical;
+            str.Location.X = 6.0;
+            str.Location.Y = 7.0;
+            str.Location.Z = 8.0;
+            str.Value = "test string";
+            note.Strings.Add(str);
+            VerifyEntity(note, @"
+     212       1       0       0       0                        00000100D      1
+     212       0       0       1       6                                D      2
+212,1,11,1.,2.,3,4.,5.,1,1,6.,7.,8.,11Htest string;                    1P      1
+");
+
+            // with text font definition pointer
+            str.TextFontDefinition = new IgesTextFontDefinition();
+            VerifyEntity(note, @"
+     310       1       0       0       0                        00000200D      1
+     310       0       0       1       0                                D      2
+     212       2       0       0       0                        00000100D      3
+     212       0       0       1       6                                D      4
+310,0,,,0,0;                                                           1P      1
+212,1,11,1.,2.,-1,4.,5.,1,1,6.,7.,8.,11Htest string;                   3P      2
+");
+
+            // default values
+            note = new IgesGeneralNote();
+            VerifyEntity(note, @"
+     212       1       0       0       0                        00000100D      1
+     212       0       0       1       0                                D      2
+212,0;                                                                 1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteLeaderTest()
         {
             // regular case
