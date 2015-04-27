@@ -46,6 +46,7 @@
     <Compile Include="Entities\IgesSubfigureDefinition.cs" />
     <Compile Include="Entities\IgesSubordinateEntitySwitchType.cs" />
     <Compile Include="Entities\IgesTemplateLineFontDefinition.cs" />
+    <Compile Include="Entities\IgesTextDisplayTemplate.cs" />
     <Compile Include="Entities\IgesTextFontDefinition.cs" />
     <Compile Include="Entities\IgesTorus.cs" />
     <Compile Include="Entities\IgesTransformationMatrix.cs" />

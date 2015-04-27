@@ -19,7 +19,7 @@ namespace IxMilia.Iges.Entities
         LineFontDefinition = 304,
         SubfigureDefinition = 308,
         TextFontDefinition = 310,
-        TextDisplayTemplate = 312, // NYI.  Required for common pointers.  Requires TextFontDefinition (310)
+        TextDisplayTemplate = 312,
         ColorDefinition = 314,
         AssociativityInstance = 402,
         Property = 406,

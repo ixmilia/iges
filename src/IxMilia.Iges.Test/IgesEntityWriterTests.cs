@@ -249,6 +249,46 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteTextDisplayTemplateTest()
+        {
+            // regular case with font code
+            var tdt = new IgesTextDisplayTemplate();
+            tdt.CharacterBoxWidth = 1.0;
+            tdt.CharacterBoxHeight = 2.0;
+            tdt.FontCode = 3;
+            tdt.SlantAngle = 4.0;
+            tdt.RotationAngle = 5.0;
+            tdt.MirroringAxis = IgesTextMirroringAxis.PerpendicularToTextBase;
+            tdt.RotationType = IgesTextRotationType.Vertical;
+            tdt.LocationOrOffset = new IgesVector(6, 7, 8);
+            VerifyEntity(tdt, @"
+     312       1       0       0       0                        00000200D      1
+     312       0       0       1       0                                D      2
+312,1.,2.,3,4.,5.,1,1,6.,7.,8.;                                        1P      1
+");
+
+            // with text font definition pointer and incremental display
+            tdt.TextFontDefinition = new IgesTextFontDefinition();
+            tdt.IsIncrementalDisplayTemplate = true;
+            VerifyEntity(tdt, @"
+     310       1       0       0       0                        00000200D      1
+     310       0       0       1       0                                D      2
+     312       2       0       0       0                        00000200D      3
+     312       0       0       1       1                                D      4
+310,0,,,0,0;                                                           1P      1
+312,1.,2.,-1,4.,5.,1,1,6.,7.,8.;                                       3P      2
+");
+
+            // default values
+            tdt = new IgesTextDisplayTemplate();
+            VerifyEntity(tdt, @"
+     312       1       0       0       0                        00000200D      1
+     312       0       0       1       0                                D      2
+312,0.,0.,1,0.,0.,0,0,0.,0.,0.;                                        1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteLeaderTest()
         {
             // regular case

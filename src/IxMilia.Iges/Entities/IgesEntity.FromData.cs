@@ -74,6 +74,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.SubfigureDefinition:
                     entity = new IgesSubfigureDefinition();
                     break;
+                case IgesEntityType.TextDisplayTemplate:
+                    entity = new IgesTextDisplayTemplate();
+                    break;
                 case IgesEntityType.TextFontDefinition:
                     entity = new IgesTextFontDefinition();
                     break;

@@ -5,19 +5,6 @@ using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
-    public enum IgesTextMirroringAxis
-    {
-        None = 0,
-        PerpendicularToTextBase = 1,
-        TextBase = 2
-    }
-
-    public enum IgesTextRotationType
-    {
-        Horizontal = 0,
-        Vertical = 1
-    }
-
     public class IgesTextString
     {
         public double BoxWidth { get; set; }

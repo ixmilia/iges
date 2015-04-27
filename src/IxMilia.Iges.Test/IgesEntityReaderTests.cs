@@ -429,6 +429,58 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadTextDisplayTemplateTest()
+        {
+            // fully-specified values
+            var tdt = (IgesTextDisplayTemplate)ParseSingleEntity(@"
+     312       1       0       0       0                        00000200D      1
+     312       0       0       1       0                                D      2
+312,1.,2.,3,4.,5.,1,1,6.,7.,8.;                                        1P      1
+");
+            Assert.Equal(1.0, tdt.CharacterBoxWidth);
+            Assert.Equal(2.0, tdt.CharacterBoxHeight);
+            Assert.Equal(3, tdt.FontCode);
+            Assert.Null(tdt.TextFontDefinition);
+            Assert.Equal(4.0, tdt.SlantAngle);
+            Assert.Equal(5.0, tdt.RotationAngle);
+            Assert.Equal(IgesTextMirroringAxis.PerpendicularToTextBase, tdt.MirroringAxis);
+            Assert.Equal(IgesTextRotationType.Vertical, tdt.RotationType);
+            Assert.Equal(new IgesVector(6, 7, 8), tdt.LocationOrOffset);
+            Assert.False(tdt.IsIncrementalDisplayTemplate);
+            Assert.True(tdt.IsAbsoluteDisplayTemplate);
+
+            // with a text font definition and incremental display
+            tdt = (IgesTextDisplayTemplate)ParseSingleEntity(@"
+     310       1       0       0       0                        00000200D      1
+     310       0       0       1       0                                D      2
+     312       2       0       0       0                        00000200D      3
+     312       0       0       1       1                                D      4
+310,0,,,0,0;                                                           1P      1
+312,1.,2.,-1,4.,5.,1,1,6.,7.,8.;                                       3P      2
+");
+            Assert.Equal(0, tdt.FontCode);
+            Assert.NotNull(tdt.TextFontDefinition);
+            Assert.True(tdt.IsIncrementalDisplayTemplate);
+            Assert.False(tdt.IsAbsoluteDisplayTemplate);
+
+            // type-default values
+            tdt = (IgesTextDisplayTemplate)ParseSingleEntity(@"
+     312       1       0       0       0                        00000200D      1
+     312       0       0       1       0                                D      2
+312;                                                                   1P      1
+");
+            Assert.Equal(0.0, tdt.CharacterBoxWidth);
+            Assert.Equal(0.0, tdt.CharacterBoxHeight);
+            Assert.Equal(0, tdt.FontCode);
+            Assert.Null(tdt.TextFontDefinition);
+            Assert.Equal(0.0, tdt.SlantAngle);
+            Assert.Equal(0.0, tdt.RotationAngle);
+            Assert.Equal(IgesTextMirroringAxis.None, tdt.MirroringAxis);
+            Assert.Equal(IgesTextRotationType.Horizontal, tdt.RotationType);
+            Assert.Equal(IgesVector.Zero, tdt.LocationOrOffset);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadLeaderTest()
         {
             // fully-specified values

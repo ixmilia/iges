@@ -7,6 +7,19 @@ using System.Linq;
 
 namespace IxMilia.Iges.Entities
 {
+    public enum IgesTextMirroringAxis
+    {
+        None = 0,
+        PerpendicularToTextBase = 1,
+        TextBase = 2
+    }
+
+    public enum IgesTextRotationType
+    {
+        Horizontal = 0,
+        Vertical = 1
+    }
+
     public abstract partial class IgesEntity
     {
         public abstract IgesEntityType EntityType { get; }
