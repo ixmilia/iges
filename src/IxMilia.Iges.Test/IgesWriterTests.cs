@@ -348,7 +348,31 @@ S      1G      3D      0P      0                                        T      1
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteCommonPointersTest()
         {
-            // TODO: implement this once type (402, 212, or 312) is implemented
+            // all other write tests validate the case where there are no common pointers
+            var line = new IgesLine();
+            line.AssociatedEntities.Add(new IgesLabelDisplayAssociativity());
+            line.AssociatedEntities.Add(new IgesGeneralNote());
+            line.AssociatedEntities.Add(new IgesTextDisplayTemplate());
+            line.Properties.Add(new IgesLocation());
+            var file = new IgesFile();
+            file.Entities.Add(line);
+            VerifyFileContains(file, @"
+     402       1       0       0       0                        00000000D      1
+     402       0       0       1       5                                D      2
+     212       2       0       0       0                        00000100D      3
+     212       0       0       1       0                                D      4
+     312       3       0       0       0                        00000200D      5
+     312       0       0       1       0                                D      6
+     116       4       0       0       0                        00000000D      7
+     116       0       0       1       0                                D      8
+     110       5       0       0       0                        00000000D      9
+     110       0       0       1       0                                D     10
+402,0;                                                                 1P      1
+212,0;                                                                 3P      2
+312,0.,0.,1,0.,0.,0,0,0.,0.,0.;                                        5P      3
+116,0.,0.,0.;                                                          7P      4
+110,0.,0.,0.,0.,0.,0.,3,1,3,5,1,7;                                     9P      5
+");
         }
     }
 }

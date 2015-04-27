@@ -141,16 +141,16 @@ namespace IxMilia.Iges.Entities
         protected List<IgesEntity> SubEntities { get; private set; }
 
         private List<int> _associatedEntityIndices;
-        public List<IgesEntity> AssociatedEntities { get; private set; }
+        public AssociatedEntityCollection AssociatedEntities { get; private set; }
 
         private List<int> _propertyIndices;
-        public List<IgesEntity> Properties { get; private set; }
+        public List<IgesEntity> Properties { get; private set; } // should this collection be restricted like AssociatedEntities?
 
         protected IgesEntity()
         {
             SubEntities = new List<IgesEntity>();
             SubEntityIndices = new List<int>();
-            AssociatedEntities = new List<IgesEntity>();
+            AssociatedEntities = new AssociatedEntityCollection();
             _associatedEntityIndices = new List<int>();
             Properties = new List<IgesEntity>();
             _propertyIndices = new List<int>();

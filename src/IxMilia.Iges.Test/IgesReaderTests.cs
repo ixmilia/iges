@@ -405,7 +405,29 @@ also contains things that look like 7Hstrings and records;             1P      3
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadCommonPointersTest()
         {
-            // TODO: implement this once type (402, 212, or 312) is implemented
+            var file = CreateFile(@"
+     402       1       0       0       0                        00000000D      1
+     402       0       0       1       5                                D      2
+     212       2       0       0       0                        00000100D      3
+     212       0       0       1       0                                D      4
+     312       3       0       0       0                        00000200D      5
+     312       0       0       1       0                                D      6
+     116       4       0       0       0                        00000000D      7
+     116       0       0       1       0                                D      8
+     110       5       0       0       0                        00000000D      9
+     110       0       0       1       0                                D     10
+402,0;                                                                 1P      1
+212,0;                                                                 3P      2
+312,0.,0.,1,0.,0.,0,0,0.,0.,0.;                                        5P      3
+116,0.,0.,0.;                                                          7P      4
+110,0.,0.,0.,0.,0.,0.,3,1,3,5,1,7;                                     9P      5
+");
+            var line = file.Entities.OfType<IgesLine>().Single();
+            Assert.Equal(3, line.AssociatedEntities.Count);
+            Assert.IsType<IgesLabelDisplayAssociativity>(line.AssociatedEntities[0]);
+            Assert.IsType<IgesGeneralNote>(line.AssociatedEntities[1]);
+            Assert.IsType<IgesTextDisplayTemplate>(line.AssociatedEntities[2]);
+            Assert.IsType<IgesLocation>(line.Properties.Single());
         }
     }
 }
