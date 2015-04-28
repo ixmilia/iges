@@ -167,6 +167,28 @@ namespace IxMilia.Iges.Test
             Assert.Equal(0.0, arc.CoefficientF);
             Assert.Equal(IgesPoint.Origin, arc.StartPoint);
             Assert.Equal(IgesPoint.Origin, arc.EndPoint);
+
+            // real-world examples
+            arc = (IgesConicArc)ParseSingleEntity(@"
+     104       1       0       1       0       0               000000000D      1
+     104       2       3       1       1                               9D      2
+104,0.5,0.,1.,0.,0.,-0.5,0.,0.7575,-0.4616,-0.8971,0.3125;             1P      1
+");
+            Assert.Equal(IgesArcType.Ellipse, arc.ArcType);
+
+            arc = (IgesConicArc)ParseSingleEntity(@"
+     104       1       0       1       0       0               000000000D      1
+     104       2       4       1       2                              44D      2
+104,-0.49,0.,1.96,0.,0.,0.9603999,0.,1.9799,-0.7,1.9799,0.7;           1P      1
+");
+            Assert.Equal(IgesArcType.Hyperbola, arc.ArcType);
+
+            arc = (IgesConicArc)ParseSingleEntity(@"
+     104       1       0       1       0       0               000000000D      1
+     104       2       2       1       3                              28D      2
+104,0.,0.,1.,-4.,0.,0.,0.,0.25,-1.,0.25,1.;                            1P      1
+");
+            Assert.Equal(IgesArcType.Parabola, arc.ArcType);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]

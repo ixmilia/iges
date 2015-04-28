@@ -57,7 +57,9 @@ namespace IxMilia.Iges.Entities
         {
             get
             {
-                if (CoefficientC * Q1 < 0.0)
+                if (CoefficientB == 0.0 && CoefficientD == 0.0 && CoefficientE == 0.0 &&
+                    CoefficientA != 0.0 && CoefficientC != 0.0 && CoefficientF != 0.0 &&
+                    CoefficientF == -CoefficientA * CoefficientC)
                 {
                     return IgesArcType.Ellipse;
                 }
