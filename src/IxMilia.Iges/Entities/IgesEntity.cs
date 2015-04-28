@@ -505,16 +505,16 @@ namespace IxMilia.Iges.Entities
             parameters.Add((int)EntityType);
             this.WriteParameters(parameters);
 
-            if (_associatedEntityIndices.Any())
+            if (_associatedEntityIndices.Any() || _propertyIndices.Any())
             {
                 parameters.Add(_associatedEntityIndices.Count);
                 parameters.AddRange(_associatedEntityIndices.Cast<object>());
-            }
 
-            if (_propertyIndices.Any())
-            {
-                parameters.Add(_propertyIndices.Count);
-                parameters.AddRange(_propertyIndices.Cast<object>());
+                if (_propertyIndices.Any())
+                {
+                    parameters.Add(_propertyIndices.Count);
+                    parameters.AddRange(_propertyIndices.Cast<object>());
+                }
             }
 
             this._lineCount = IgesFileWriter.AddParametersToStringList(parameters.ToArray(), writerState.ParameterLines, writerState.FieldDelimiter, writerState.RecordDelimiter,

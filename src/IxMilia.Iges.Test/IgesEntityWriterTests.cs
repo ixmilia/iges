@@ -76,6 +76,19 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteConicArcTest()
+        {
+            var arc = IgesConicArc.MakeEllipse(2, 4);
+            arc.StartPoint = new IgesPoint(8, 9, 7);
+            arc.EndPoint = new IgesPoint(10, 11, 7);
+            VerifyEntity(arc, @"
+     104       1       0       0       0                        00000000D      1
+     104       0       0       1       1                                D      2
+104,16.,0.,4.,0.,0.,-64.,7.,8.,9.,10.,11.;                             1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WritePlaneTest()
         {
             // unbounded

@@ -7,6 +7,7 @@ namespace IxMilia.Iges.Entities
         Null = 0,
         CircularArc = 100,
         CompositeCurve = 102,
+        ConicArc = 104,
         Plane = 108,
         Line = 110,
         Point = 116,

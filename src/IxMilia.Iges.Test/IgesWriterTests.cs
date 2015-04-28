@@ -373,6 +373,35 @@ S      1G      3D      0P      0                                        T      1
 116,0.,0.,0.;                                                          7P      4
 110,0.,0.,0.,0.,0.,0.,3,1,3,5,1,7;                                     9P      5
 ");
+
+            // no properties
+            line.Properties.Clear();
+            VerifyFileContains(file, @"
+     402       1       0       0       0                        00000000D      1
+     402       0       0       1       5                                D      2
+     212       2       0       0       0                        00000100D      3
+     212       0       0       1       0                                D      4
+     312       3       0       0       0                        00000200D      5
+     312       0       0       1       0                                D      6
+     110       4       0       0       0                        00000000D      7
+     110       0       0       1       0                                D      8
+402,0;                                                                 1P      1
+212,0;                                                                 3P      2
+312,0.,0.,1,0.,0.,0,0,0.,0.,0.;                                        5P      3
+110,0.,0.,0.,0.,0.,0.,3,1,3,5;                                         7P      4
+");
+
+            // no associated entities
+            line.AssociatedEntities.Clear();
+            line.Properties.Add(new IgesLocation());
+            VerifyFileContains(file, @"
+     116       1       0       0       0                        00000000D      1
+     116       0       0       1       0                                D      2
+     110       2       0       0       0                        00000000D      3
+     110       0       0       1       0                                D      4
+116,0.,0.,0.;                                                          1P      1
+110,0.,0.,0.,0.,0.,0.,0,1,1;                                           3P      2
+");
         }
     }
 }

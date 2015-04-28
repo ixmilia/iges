@@ -134,6 +134,42 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadConicArcTest()
+        {
+            // fully-specified values
+            var arc = (IgesConicArc)ParseSingleEntity(@"
+     104       1       0       0       0                        00000000D      1
+     104       0       0       1       1                                D      2
+104,16.,0.,4.,0.,0.,-64.,7.,8.,9.,10.,11.;                             1P      1
+");
+            Assert.Equal(IgesArcType.Ellipse, arc.ArcType);
+            Assert.Equal(16.0, arc.CoefficientA);
+            Assert.Equal(0.0, arc.CoefficientB);
+            Assert.Equal(4.0, arc.CoefficientC);
+            Assert.Equal(0.0, arc.CoefficientD);
+            Assert.Equal(0.0, arc.CoefficientE);
+            Assert.Equal(-64.0, arc.CoefficientF);
+            Assert.Equal(new IgesPoint(8, 9, 7), arc.StartPoint);
+            Assert.Equal(new IgesPoint(10, 11, 7), arc.EndPoint);
+
+            // type-default values
+            arc = (IgesConicArc)ParseSingleEntity(@"
+     104       1       0       0       0                        00000000D      1
+     104       0       0       1       0                                D      2
+104;                                                                   1P      1
+");
+            Assert.Equal(IgesArcType.Unknown, arc.ArcType);
+            Assert.Equal(0.0, arc.CoefficientA);
+            Assert.Equal(0.0, arc.CoefficientB);
+            Assert.Equal(0.0, arc.CoefficientC);
+            Assert.Equal(0.0, arc.CoefficientD);
+            Assert.Equal(0.0, arc.CoefficientE);
+            Assert.Equal(0.0, arc.CoefficientF);
+            Assert.Equal(IgesPoint.Origin, arc.StartPoint);
+            Assert.Equal(IgesPoint.Origin, arc.EndPoint);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadPlaneTest()
         {
             // unbounded

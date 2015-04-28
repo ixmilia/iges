@@ -23,6 +23,7 @@
     <Compile Include="Entities\IgesCircularArc.cs" />
     <Compile Include="Entities\IgesColorDefinition.cs" />
     <Compile Include="Entities\IgesCompositeCurve.cs" />
+    <Compile Include="Entities\IgesConicArc.cs" />
     <Compile Include="Entities\IgesDefinitionLevelsProperty.cs" />
     <Compile Include="Entities\IgesDirection.cs" />
     <Compile Include="Entities\IgesEntity.AssociatedEntityCollection.cs" />

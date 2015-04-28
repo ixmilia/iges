@@ -28,6 +28,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.CompositeCurve:
                     entity = new IgesCompositeCurve();
                     break;
+                case IgesEntityType.ConicArc:
+                    entity = new IgesConicArc();
+                    break;
                 case IgesEntityType.Direction:
                     entity = new IgesDirection();
                     break;
