@@ -8,6 +8,7 @@ namespace IxMilia.Iges.Entities
         CircularArc = 100,
         CompositeCurve = 102,
         ConicArc = 104,
+        CopiousData = 106,
         Plane = 108,
         Line = 110,
         Point = 116,

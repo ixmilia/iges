@@ -89,6 +89,21 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteCopiousDataTest()
+        {
+            var cd = new IgesCopiousData();
+            cd.DataPoints.Add(new IgesPoint(1, 2, 3));
+            cd.DataPoints.Add(new IgesPoint(4, 5, 3));
+            cd.DataPoints.Add(new IgesPoint(6, 7, 3));
+            cd.DataType = IgesCopiousDataType.WitnessLine;
+            VerifyEntity(cd, @"
+     106       1       0       0       0                        00000100D      1
+     106       0       0       1      40                                D      2
+106,1,3,3.,1.,2.,4.,5.,6.,7.;                                          1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WritePlaneTest()
         {
             // unbounded

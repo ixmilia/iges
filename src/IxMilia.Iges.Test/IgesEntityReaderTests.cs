@@ -192,6 +192,22 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadCopiousDataTest()
+        {
+            var cd = (IgesCopiousData)ParseSingleEntity(@"
+     106       1       0       0       0                        00000100D      1
+     106       0       0       1      40                                D      2
+106,1,3,3.,1.,2.,4.,5.,6.,7.;                                          1P      1
+");
+            Assert.Equal(IgesCopiousDataType.WitnessLine, cd.DataType);
+            Assert.Equal(0, cd.DataVectors.Count);
+            Assert.Equal(3, cd.DataPoints.Count);
+            Assert.Equal(new IgesPoint(1, 2, 3), cd.DataPoints[0]);
+            Assert.Equal(new IgesPoint(4, 5, 3), cd.DataPoints[1]);
+            Assert.Equal(new IgesPoint(6, 7, 3), cd.DataPoints[2]);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadPlaneTest()
         {
             // unbounded
