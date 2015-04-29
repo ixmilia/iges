@@ -149,6 +149,49 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteParametricSplineCurveTest()
+        {
+            var psc = new IgesParametricSplineCurve();
+            psc.SplineType = IgesSplineType.BSpline;
+            psc.DegreeOfContinuity = 1;
+            psc.NumberOfDimensions = 2;
+            psc.Segments.Add(new IgesSplinePolynomialSegment()
+            {
+                BreakPoint = 3.0,
+                AX = 4.0,
+                BX = 5.0,
+                CX = 6.0,
+                DX = 7.0,
+                AY = 8.0,
+                BY = 9.0,
+                CY = 10.0,
+                DY = 11.0,
+                AZ = 12.0,
+                BZ = 13.0,
+                CZ = 14.0,
+                DZ = 15.0,
+                XValue = 16.0,
+                XFirstDerivative = 17.0,
+                XSecondDerivative = 18.0,
+                XThirdDerivative = 19.0,
+                YValue = 20.0,
+                YFirstDerivative = 21.0,
+                YSecondDerivative = 22.0,
+                YThirdDerivative = 23.0,
+                ZValue = 24.0,
+                ZFirstDerivative = 25.0,
+                ZSecondDerivative = 26.0,
+                ZThirdDerivative = 27.0
+            });
+            VerifyEntity(psc, @"
+     112       1       0       0       0                        00000000D      1
+     112       0       0       2       0                                D      2
+112,6,1,2,1,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.,13.,14.,15.,16.,          1P      1
+17.,18.,19.,20.,21.,22.,23.,24.,25.,26.,27.;                           1P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteLocationTest()
         {
             VerifyEntity(new IgesLocation(11, 22, 33), @"

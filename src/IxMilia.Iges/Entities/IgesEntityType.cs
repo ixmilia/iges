@@ -11,6 +11,7 @@ namespace IxMilia.Iges.Entities
         CopiousData = 106,
         Plane = 108,
         Line = 110,
+        ParametricSplineCurve = 112,
         Point = 116,
         Direction = 123,
         TransformationMatrix = 124,

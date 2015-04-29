@@ -60,6 +60,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.Null:
                     entity = new IgesNull();
                     break;
+                case IgesEntityType.ParametricSplineCurve:
+                    entity = new IgesParametricSplineCurve();
+                    break;
                 case IgesEntityType.Plane:
                     entity = new IgesPlane();
                     break;

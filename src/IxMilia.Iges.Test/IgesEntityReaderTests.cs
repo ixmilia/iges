@@ -322,6 +322,46 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadParametricSplineCurveTest()
+        {
+            var psc = (IgesParametricSplineCurve)ParseSingleEntity(@"
+     112       1       0       0       0                        00000000D      1
+     112       0       0       2       0                                D      2
+112,6,1,2,1,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.,13.,14.,15.,16.,          1P      1
+17.,18.,19.,20.,21.,22.,23.,24.,25.,26.,27.;                           1P      2
+");
+            Assert.Equal(IgesSplineType.BSpline, psc.SplineType);
+            Assert.Equal(1, psc.DegreeOfContinuity);
+            Assert.Equal(2, psc.NumberOfDimensions);
+            var segment = psc.Segments.Single();
+            Assert.Equal(3.0, segment.BreakPoint);
+            Assert.Equal(4.0, segment.AX);
+            Assert.Equal(5.0, segment.BX);
+            Assert.Equal(6.0, segment.CX);
+            Assert.Equal(7.0, segment.DX);
+            Assert.Equal(8.0, segment.AY);
+            Assert.Equal(9.0, segment.BY);
+            Assert.Equal(10.0, segment.CY);
+            Assert.Equal(11.0, segment.DY);
+            Assert.Equal(12.0, segment.AZ);
+            Assert.Equal(13.0, segment.BZ);
+            Assert.Equal(14.0, segment.CZ);
+            Assert.Equal(15.0, segment.DZ);
+            Assert.Equal(16.0, segment.XValue);
+            Assert.Equal(17.0, segment.XFirstDerivative);
+            Assert.Equal(18.0, segment.XSecondDerivative);
+            Assert.Equal(19.0, segment.XThirdDerivative);
+            Assert.Equal(20.0, segment.YValue);
+            Assert.Equal(21.0, segment.YFirstDerivative);
+            Assert.Equal(22.0, segment.YSecondDerivative);
+            Assert.Equal(23.0, segment.YThirdDerivative);
+            Assert.Equal(24.0, segment.ZValue);
+            Assert.Equal(25.0, segment.ZFirstDerivative);
+            Assert.Equal(26.0, segment.ZSecondDerivative);
+            Assert.Equal(27.0, segment.ZThirdDerivative);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadLocationTest()
         {
             var location = (IgesLocation)ParseSingleEntity(@"
