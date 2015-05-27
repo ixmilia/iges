@@ -600,13 +600,5 @@ namespace IxMilia.Iges.Entities
                 return defaultValue;
             }
         }
-
-        protected static string ReadParameterOrDefault(List<string> parameters, int index, string defaultValue)
-        {
-            if (index < parameters.Count)
-                return parameters[index];
-            else
-                return defaultValue;
-        }
     }
 }

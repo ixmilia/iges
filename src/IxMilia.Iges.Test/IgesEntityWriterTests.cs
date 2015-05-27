@@ -1,5 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.IO;
 using IxMilia.Iges.Entities;
 using Xunit;
@@ -189,6 +190,12 @@ namespace IxMilia.Iges.Test
 112,6,1,2,1,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.,13.,14.,15.,16.,          1P      1
 17.,18.,19.,20.,21.,22.,23.,24.,25.,26.,27.;                           1P      2
 ");
+        }
+
+        [Fact(Skip = "need additional spec"), Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteParametricSplineSurfaceTest()
+        {
+            throw new NotImplementedException();
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
