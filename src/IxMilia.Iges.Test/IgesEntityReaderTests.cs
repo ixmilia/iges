@@ -472,6 +472,37 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadRuledSurfaceTest()
+        {
+            var ruledSurface = (IgesRuledSurface)ParseSingleEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     110       2       0       0       0                        00000000D      3
+     110       0       0       1       0                                D      4
+     118       3       0       0       0                        00000000D      5
+     118       0       0       1       0                                D      6
+110,1.,0.,0.,0.,0.,0.;                                                 1P      1
+110,2.,0.,0.,0.,0.,0.;                                                 3P      2
+118,1,3,1,1;                                                           5P      3
+");
+            Assert.Equal(1.0, ((IgesLine)ruledSurface.FirstCurve).P1.X);
+            Assert.Equal(2.0, ((IgesLine)ruledSurface.SecondCurve).P1.X);
+            Assert.Equal(IgesRuledSurfaceDirection.FirstToLast_LastToFirst, ruledSurface.Direction);
+            Assert.True(ruledSurface.IsDevelopable);
+
+            // read type-value defaults
+            ruledSurface = (IgesRuledSurface)ParseSingleEntity(@"
+     118       1       0       0       0                        00000000D      1
+     118       0       0       1       0                                D      2
+118;                                                                   1P      1
+");
+            Assert.Null(ruledSurface.FirstCurve);
+            Assert.Null(ruledSurface.SecondCurve);
+            Assert.Equal(IgesRuledSurfaceDirection.FirstToFirst_LastToLast, ruledSurface.Direction);
+            Assert.False(ruledSurface.IsDevelopable);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadDirectionTest()
         {
             var direction = (IgesDirection)ParseSingleEntity(@"

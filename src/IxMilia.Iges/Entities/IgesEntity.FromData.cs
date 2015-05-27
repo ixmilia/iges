@@ -80,6 +80,9 @@ namespace IxMilia.Iges.Entities
                             break;
                     }
                     break;
+                case IgesEntityType.RuledSurface:
+                    entity = new IgesRuledSurface();
+                    break;
                 case IgesEntityType.Sphere:
                     entity = new IgesSphere();
                     break;

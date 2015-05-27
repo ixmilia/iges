@@ -47,6 +47,7 @@
     <Compile Include="Entities\IgesPerspectiveView.cs" />
     <Compile Include="Entities\IgesPlane.cs" />
     <Compile Include="Entities\IgesProperty.cs" />
+    <Compile Include="Entities\IgesRuledSurface.cs" />
     <Compile Include="Entities\IgesSphere.cs" />
     <Compile Include="Entities\IgesSubfigureDefinition.cs" />
     <Compile Include="Entities\IgesSubordinateEntitySwitchType.cs" />
