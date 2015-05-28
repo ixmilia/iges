@@ -16,6 +16,7 @@ namespace IxMilia.Iges.Entities
         Point = 116,
         RuledSurface = 118,
         SurfaceOfRevolution = 120,
+        TabulatedCylinder = 122,
         Direction = 123,
         TransformationMatrix = 124,
         Sphere = 158,

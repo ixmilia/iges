@@ -534,6 +534,30 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadTabulatedCylinderTest()
+        {
+            var tab = (IgesTabulatedCylinder)ParseSingleEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     122       2       0       0       0                        00000000D      3
+     122       0       0       1       0                                D      4
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+122,1,1.,2.,3.;                                                        3P      2
+");
+            Assert.IsType<IgesLine>(tab.Directrix);
+            Assert.Equal(new IgesPoint(1, 2, 3), tab.GeneratrixTerminatePoint);
+
+            // read type-default values
+            tab = (IgesTabulatedCylinder)ParseSingleEntity(@"
+     122       1       0       0       0                        00000000D      1
+     122       0       0       1       0                                D      2
+122;                                                                   1P      1
+");
+            Assert.Null(tab.Directrix);
+            Assert.Equal(IgesPoint.Origin, tab.GeneratrixTerminatePoint);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadDirectionTest()
         {
             var direction = (IgesDirection)ParseSingleEntity(@"

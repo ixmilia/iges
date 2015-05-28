@@ -92,6 +92,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.SurfaceOfRevolution:
                     entity = new IgesSurfaceOfRevolution();
                     break;
+                case IgesEntityType.TabulatedCylinder:
+                    entity = new IgesTabulatedCylinder();
+                    break;
                 case IgesEntityType.TextDisplayTemplate:
                     entity = new IgesTextDisplayTemplate();
                     break;

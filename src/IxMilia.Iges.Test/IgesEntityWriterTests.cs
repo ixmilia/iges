@@ -249,6 +249,24 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteTabulatedCylinderTest()
+        {
+            var tab = new IgesTabulatedCylinder()
+            {
+                Directrix = new IgesLine(),
+                GeneratrixTerminatePoint = new IgesPoint(1, 2, 3)
+            };
+            VerifyEntity(tab, @"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     122       2       0       0       0                        00000000D      3
+     122       0       0       1       0                                D      4
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+122,1,1.,2.,3.;                                                        3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteDirectionTest()
         {
             VerifyEntity(new IgesDirection(11, 22, 33), @"
