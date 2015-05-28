@@ -15,6 +15,7 @@ namespace IxMilia.Iges.Entities
         ParametricSplineSurface = 114,
         Point = 116,
         RuledSurface = 118,
+        SurfaceOfRevolution = 120,
         Direction = 123,
         TransformationMatrix = 124,
         Sphere = 158,

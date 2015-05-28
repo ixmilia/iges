@@ -490,7 +490,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(IgesRuledSurfaceDirection.FirstToLast_LastToFirst, ruledSurface.Direction);
             Assert.True(ruledSurface.IsDevelopable);
 
-            // read type-value defaults
+            // read type-default values
             ruledSurface = (IgesRuledSurface)ParseSingleEntity(@"
      118       1       0       0       0                        00000000D      1
      118       0       0       1       0                                D      2
@@ -500,6 +500,37 @@ namespace IxMilia.Iges.Test
             Assert.Null(ruledSurface.SecondCurve);
             Assert.Equal(IgesRuledSurfaceDirection.FirstToFirst_LastToLast, ruledSurface.Direction);
             Assert.False(ruledSurface.IsDevelopable);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadSurfaceOfRevolutionTest()
+        {
+            var surface = (IgesSurfaceOfRevolution)ParseSingleEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     110       2       0       0       0                        00000000D      3
+     110       0       0       1       0                                D      4
+     120       3       0       0       0                        00000000D      5
+     120       0       0       1       0                                D      6
+110,1.,0.,0.,0.,0.,0.;                                                 1P      1
+110,2.,0.,0.,0.,0.,0.;                                                 3P      2
+120,1,3,3.,4.;                                                         5P      3
+");
+            Assert.Equal(1.0, surface.AxisOfRevolution.P1.X);
+            Assert.Equal(2.0, ((IgesLine)surface.Generatrix).P1.X);
+            Assert.Equal(3.0, surface.StartAngle);
+            Assert.Equal(4.0, surface.EndAngle);
+
+            // read type-default values
+            surface = (IgesSurfaceOfRevolution)ParseSingleEntity(@"
+     120       1       0       0       0                        00000000D      1
+     120       0       0       1       0                                D      2
+120;                                                                   1P      1
+");
+            Assert.Null(surface.AxisOfRevolution);
+            Assert.Null(surface.Generatrix);
+            Assert.Equal(0.0, surface.StartAngle);
+            Assert.Equal(0.0, surface.EndAngle);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]

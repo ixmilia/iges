@@ -226,6 +226,29 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteSurfaceOfRevolutionTest()
+        {
+            var surface = new IgesSurfaceOfRevolution()
+            {
+                AxisOfRevolution = new IgesLine(new IgesPoint(1, 0, 0), IgesPoint.Origin),
+                Generatrix = new IgesLine(new IgesPoint(2, 0, 0), IgesPoint.Origin),
+                StartAngle = 3,
+                EndAngle = 4
+            };
+            VerifyEntity(surface, @"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     110       2       0       0       0                        00000000D      3
+     110       0       0       1       0                                D      4
+     120       3       0       0       0                        00000000D      5
+     120       0       0       1       0                                D      6
+110,1.,0.,0.,0.,0.,0.;                                                 1P      1
+110,2.,0.,0.,0.,0.,0.;                                                 3P      2
+120,1,3,3.,4.;                                                         5P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteDirectionTest()
         {
             VerifyEntity(new IgesDirection(11, 22, 33), @"

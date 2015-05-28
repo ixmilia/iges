@@ -89,6 +89,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.SubfigureDefinition:
                     entity = new IgesSubfigureDefinition();
                     break;
+                case IgesEntityType.SurfaceOfRevolution:
+                    entity = new IgesSurfaceOfRevolution();
+                    break;
                 case IgesEntityType.TextDisplayTemplate:
                     entity = new IgesTextDisplayTemplate();
                     break;
