@@ -622,6 +622,50 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadFlashTest()
+        {
+            // regular case
+            var flash = (IgesFlash)ParseSingleEntity(@"
+     125       1       0       0       0                        00000000D      1
+     125       0       0       1       3                                D      2
+125,1.,2.,3.,4.,5.,0;                                                  1P      1
+");
+            Assert.Equal(1.0, flash.XOffset);
+            Assert.Equal(2.0, flash.YOffset);
+            Assert.Equal(3.0, flash.SizeParameter1);
+            Assert.Equal(4.0, flash.SizeParameter2);
+            Assert.Equal(5.0, flash.RotationAngle);
+            Assert.Equal(IgesClosedAreaType.Donut, flash.AreaType);
+            Assert.Null(flash.ReferenceEntity);
+
+            // referenced entity case
+            flash = (IgesFlash)ParseSingleEntity(@"
+     100       1       0       0       0                        00000000D      1
+     100       0       0       1       0                                D      2
+     125       2       0       0       0                        00000000D      3
+     125       0       0       1       0                                D      4
+100,0.,0.,0.,0.,0.,0.,0.;                                              1P      1
+125,1.,2.,3.,4.,5.,1;                                                  3P      2
+");
+            Assert.Equal(IgesClosedAreaType.ReferencedEntity, flash.AreaType);
+            Assert.IsType<IgesCircularArc>(flash.ReferenceEntity);
+
+            // read type-default values
+            flash = (IgesFlash)ParseSingleEntity(@"
+     125       1       0       0       0                        00000000D      1
+     125       0       0       1       3                                D      2
+125;                                                                   1P      1
+");
+            Assert.Equal(0.0, flash.XOffset);
+            Assert.Equal(0.0, flash.YOffset);
+            Assert.Equal(0.0, flash.SizeParameter1);
+            Assert.Equal(0.0, flash.SizeParameter2);
+            Assert.Equal(0.0, flash.RotationAngle);
+            Assert.Equal(IgesClosedAreaType.Donut, flash.AreaType);
+            Assert.Null(flash.ReferenceEntity);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSphereTest()
         {
             // fully-specified values

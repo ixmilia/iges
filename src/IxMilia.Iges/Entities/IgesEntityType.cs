@@ -19,6 +19,7 @@ namespace IxMilia.Iges.Entities
         TabulatedCylinder = 122,
         Direction = 123,
         TransformationMatrix = 124,
+        Flash = 125,
         Sphere = 158,
         Torus = 160,
         GeneralNote = 212,

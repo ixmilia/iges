@@ -288,6 +288,35 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteFlashTest()
+        {
+            var flash = new IgesFlash()
+            {
+                XOffset = 1,
+                YOffset = 2,
+                SizeParameter1 = 3,
+                SizeParameter2 = 4,
+                RotationAngle = 5,
+                AreaType = IgesClosedAreaType.Donut
+            };
+            VerifyEntity(flash, @"
+     125       1       0       0       0                        00000000D      1
+     125       0       0       1       3                                D      2
+125,1.,2.,3.,4.,5.,0;                                                  1P      1
+");
+
+            flash.ReferenceEntity = new IgesCircularArc();
+            VerifyEntity(flash, @"
+     100       1       0       0       0                        00000000D      1
+     100       0       0       1       0                                D      2
+     125       2       0       0       0                        00000000D      3
+     125       0       0       1       0                                D      4
+100,0.,0.,0.,0.,0.,0.,0.;                                              1P      1
+125,1.,2.,3.,4.,5.,1;                                                  3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSphereTest()
         {
             // regular case

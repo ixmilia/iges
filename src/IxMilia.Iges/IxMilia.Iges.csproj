@@ -33,6 +33,7 @@
     <Compile Include="Entities\IgesEntity.WriterState.cs" />
     <Compile Include="Entities\IgesEntityType.cs" />
     <Compile Include="Entities\IgesEntityUseFlag.cs" />
+    <Compile Include="Entities\IgesFlash.cs" />
     <Compile Include="Entities\IgesGeneralNote.cs" />
     <Compile Include="Entities\IgesHierarchy.cs" />
     <Compile Include="Entities\IgesLabelDisplayAssociativity.cs" />
