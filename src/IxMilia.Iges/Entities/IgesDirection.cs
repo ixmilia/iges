@@ -47,7 +47,7 @@ namespace IxMilia.Iges.Entities
         internal override void OnAfterRead(IgesDirectoryData directoryData)
         {
             Debug.Assert(directoryData.TransformationMatrixPointer == 0);
-
+            Debug.Assert(FormNumber == 0);
             Debug.Assert(SubordinateEntitySwitchType == IgesSubordinateEntitySwitchType.PhysicallyDependent);
             Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Definition);
         }
