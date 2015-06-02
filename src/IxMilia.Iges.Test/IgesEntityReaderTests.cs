@@ -1,5 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Linq;
 using IxMilia.Iges.Entities;
 using Xunit;
@@ -663,6 +664,31 @@ namespace IxMilia.Iges.Test
             Assert.Equal(0.0, flash.RotationAngle);
             Assert.Equal(IgesClosedAreaType.Donut, flash.AreaType);
             Assert.Null(flash.ReferenceEntity);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadRationalBSplineCurveTest()
+        {
+            var curve = (IgesRationalBSplineCurve)ParseSingleEntity(@"
+     126       1       0       1       2       0       0       000000001D      1
+     126       3       2       3       0                                D      2
+126,5,3,1,0,1,0,0.,0.,0.,0.,0.333333,0.666667,1.,1.,1.,1.,1.,1.,       1P      1
+1.,1.,1.,1.,-178.,109.,0.,-166.,128.,0.,-144.,109.,0.,-109.,           1P      2
+112.,0.,-106.,134.,0.,-119.,138.,0.,0.,1.,0.,0.,1.;                    1P      3
+");
+            Assert.Equal(IgesSplineCurveType.Custom, curve.CurveType);
+            Assert.True(curve.IsPlanar);
+            Assert.False(curve.IsClosed);
+            Assert.True(curve.IsPolynomial);
+            Assert.False(curve.IsPeriodic);
+            Assert.Equal(new List<double>() { 0.0, 0.0, 0.0, 0.0, 0.333333, 0.666667, 1.0, 1.0, 1.0, 1.0 }, curve.KnotValues);
+            Assert.Equal(new List<double>() { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 }, curve.Weights);
+            Assert.Equal(6, curve.ControlPoints.Count);
+            Assert.Equal(new IgesPoint(-178, 109, 0), curve.ControlPoints.First());
+            Assert.Equal(new IgesPoint(-119, 138, 0), curve.ControlPoints.Last());
+            Assert.Equal(0.0, curve.StartParameter);
+            Assert.Equal(1.0, curve.EndParameter);
+            Assert.Equal(IgesVector.ZAxis, curve.Normal);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]

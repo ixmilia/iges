@@ -83,6 +83,9 @@ namespace IxMilia.Iges.Entities
                             break;
                     }
                     break;
+                case IgesEntityType.RationalBSplineCurve:
+                    entity = new IgesRationalBSplineCurve();
+                    break;
                 case IgesEntityType.RuledSurface:
                     entity = new IgesRuledSurface();
                     break;

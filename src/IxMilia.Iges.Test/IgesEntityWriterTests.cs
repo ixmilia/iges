@@ -317,6 +317,40 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteRationalBSplineTest()
+        {
+            var curve = new IgesRationalBSplineCurve()
+            {
+                CurveType = IgesSplineCurveType.Custom,
+                IsPlanar = true,
+                IsClosed = false,
+                IsPolynomial = true,
+                IsPeriodic = false,
+                StartParameter = 0.0,
+                EndParameter = 1.0,
+                Normal = IgesVector.ZAxis
+            };
+            curve.KnotValues.AddRange(new[] { 0.0, 0.0, 0.0, 0.0, 0.333333, 0.666667, 1.0, 1.0, 1.0, 1.0 });
+            curve.Weights.AddRange(new[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 });
+            curve.ControlPoints.AddRange(new[]
+            {
+                new IgesPoint(-178, 109, 0),
+                new IgesPoint(-166, 128, 0),
+                new IgesPoint(-144, 109, 0),
+                new IgesPoint(-109, 112, 0),
+                new IgesPoint(-106, 134, 0),
+                new IgesPoint(-119, 138, 0)
+            });
+            VerifyEntity(curve, @"
+     126       1       0       0       0                        00000000D      1
+     126       0       0       3       0                                D      2
+126,5,3,1,0,1,0,0.,0.,0.,0.,0.333333,0.666667,1.,1.,1.,1.,1.,1.,       1P      1
+1.,1.,1.,1.,-178.,109.,0.,-166.,128.,0.,-144.,109.,0.,-109.,           1P      2
+112.,0.,-106.,134.,0.,-119.,138.,0.,0.,1.,0.,0.,1.;                    1P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSphereTest()
         {
             // regular case
