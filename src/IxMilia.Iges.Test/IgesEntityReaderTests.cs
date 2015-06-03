@@ -692,6 +692,39 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadRationalBSplineSurfaceTest()
+        {
+            var surface = (IgesRationalBSplineSurface)ParseSingleEntity(@"
+     128       1       0       0       0                        00000000D      1
+     128       0       0       2       0                                D      2
+128,1,1,-2,-2,1,1,1,0,0,-1.,-2.,1.,3.,2.,4.,5.,6.,0.,9.,10.,0.,        1P      1
+7.,8.,0.,11.,12.,0.,0.,1.,0.,1.;                                       1P      2
+");
+            Assert.Equal(IgesSplineSurfaceType.Custom, surface.SurfaceType);
+            Assert.True(surface.IsClosedInFirstParametricVariable);
+            Assert.True(surface.IsClosedInSecondParametricVariable);
+            Assert.True(surface.IsPolynomial);
+            Assert.False(surface.IsPeriodicInFirstParametricVariable);
+            Assert.False(surface.IsPeriodicInSecondParametricVariable);
+            Assert.Equal(0.0, surface.FirstParametricStartingValue);
+            Assert.Equal(1.0, surface.FirstParametricEndingValue);
+            Assert.Equal(0.0, surface.SecondParametricStartingValue);
+            Assert.Equal(1.0, surface.SecondParametricEndingValue);
+            Assert.Equal(2, surface.Weights.GetLength(0));
+            Assert.Equal(2, surface.Weights.GetLength(1));
+            Assert.Equal(1.0, surface.Weights[0, 0]);
+            Assert.Equal(3.0, surface.Weights[1, 0]);
+            Assert.Equal(2.0, surface.Weights[0, 1]);
+            Assert.Equal(4.0, surface.Weights[1, 1]);
+            Assert.Equal(new IgesPoint(5, 6, 0), surface.ControlPoints[0, 0]);
+            Assert.Equal(new IgesPoint(9, 10, 0), surface.ControlPoints[1, 0]);
+            Assert.Equal(new IgesPoint(7, 8, 0), surface.ControlPoints[0, 1]);
+            Assert.Equal(new IgesPoint(11, 12, 0), surface.ControlPoints[1, 1]);
+            Assert.Equal(new[] { -1.0 }, surface.FirstKnotValueSequence);
+            Assert.Equal(new[] { -2.0 }, surface.SecondKnotValueSequence);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSphereTest()
         {
             // fully-specified values

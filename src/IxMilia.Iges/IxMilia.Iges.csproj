@@ -49,6 +49,7 @@
     <Compile Include="Entities\IgesPlane.cs" />
     <Compile Include="Entities\IgesProperty.cs" />
     <Compile Include="Entities\IgesRationalBSplineCurve.cs" />
+    <Compile Include="Entities\IgesRationalBSplineSurface.cs" />
     <Compile Include="Entities\IgesRuledSurface.cs" />
     <Compile Include="Entities\IgesSphere.cs" />
     <Compile Include="Entities\IgesSubfigureDefinition.cs" />

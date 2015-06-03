@@ -21,6 +21,7 @@ namespace IxMilia.Iges.Entities
         TransformationMatrix = 124,
         Flash = 125,
         RationalBSplineCurve = 126,
+        RationalBSplineSurface = 128,
         Sphere = 158,
         Torus = 160,
         GeneralNote = 212,

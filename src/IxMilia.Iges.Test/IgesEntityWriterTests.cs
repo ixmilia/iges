@@ -317,7 +317,7 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
-        public void WriteRationalBSplineTest()
+        public void WriteRationalBSplineCurveTest()
         {
             var curve = new IgesRationalBSplineCurve()
             {
@@ -347,6 +347,33 @@ namespace IxMilia.Iges.Test
 126,5,3,1,0,1,0,0.,0.,0.,0.,0.333333,0.666667,1.,1.,1.,1.,1.,1.,       1P      1
 1.,1.,1.,1.,-178.,109.,0.,-166.,128.,0.,-144.,109.,0.,-109.,           1P      2
 112.,0.,-106.,134.,0.,-119.,138.,0.,0.,1.,0.,0.,1.;                    1P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteRationalBSplineSurfaceTest()
+        {
+            var surface = new IgesRationalBSplineSurface()
+            {
+                IsClosedInFirstParametricVariable = true,
+                IsClosedInSecondParametricVariable = true,
+                IsPolynomial = true,
+                IsPeriodicInFirstParametricVariable = false,
+                IsPeriodicInSecondParametricVariable = false,
+                FirstParametricStartingValue = 0.0,
+                FirstParametricEndingValue = 1.0,
+                SecondParametricStartingValue = 0.0,
+                SecondParametricEndingValue = 1.0,
+                Weights = new double[2, 2] { { 1.0, 2.0 }, { 3.0, 4.0 } },
+                ControlPoints = new IgesPoint[2, 2] { { new IgesPoint(5, 6, 0), new IgesPoint(7, 8, 0) }, { new IgesPoint(9, 10, 0), new IgesPoint(11, 12, 0) } }
+            };
+            surface.FirstKnotValueSequence.AddRange(new[] { -1.0 });
+            surface.SecondKnotValueSequence.AddRange(new[] { -2.0 });
+            VerifyEntity(surface, @"
+     128       1       0       0       0                        00000000D      1
+     128       0       0       2       0                                D      2
+128,1,1,-2,-2,1,1,1,0,0,-1.,-2.,1.,3.,2.,4.,5.,6.,0.,9.,10.,0.,        1P      1
+7.,8.,0.,11.,12.,0.,0.,1.,0.,1.;                                       1P      2
 ");
         }
 
