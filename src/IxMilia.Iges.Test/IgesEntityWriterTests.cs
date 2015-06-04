@@ -406,6 +406,31 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteConnectPointTest()
+        {
+            var point = new IgesConnectPoint()
+            {
+                Location = new IgesPoint(1, 2, 3),
+                DisplaySymbolGeometry = null,
+                ConnectionType = IgesConnectionType.LogicalPortConnector,
+                FunctionType = IgesConnectionFunctionType.ElectricalSignal,
+                FunctionIdentifier = "func-id",
+                FunctionIdentifierTextDisplayTemplate = null,
+                FunctionName = "func-name",
+                FunctionNameTextDisplayTemplate = null,
+                UniqueIdentifier = 42,
+                FunctionCode = IgesConnectionFunctionCode.InvertingOutput,
+                ConnectPointMayBeSwapped = true,
+                Owner = null
+            };
+            VerifyEntity(point, @"
+     132       1       0       0       0                        00000400D      1
+     132       0       0       1       0                                D      2
+132,1.,2.,3.,0,102,1,7Hfunc-id,0,9Hfunc-name,0,42,20,0,0;              1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSphereTest()
         {
             // regular case

@@ -750,6 +750,28 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadConnectPointTest()
+        {
+            var point = (IgesConnectPoint)ParseSingleEntity(@"
+     132       1       0       0       0                        00000400D      1
+     132       0       0       1       0                                D      2
+132,1.,2.,3.,0,102,1,7Hfunc-id,0,9Hfunc-name,0,42,20,0,0;              1P      1
+");
+            Assert.Equal(new IgesPoint(1, 2, 3), point.Location);
+            Assert.Null(point.DisplaySymbolGeometry);
+            Assert.Equal(IgesConnectionType.LogicalPortConnector, point.ConnectionType);
+            Assert.Equal(IgesConnectionFunctionType.ElectricalSignal, point.FunctionType);
+            Assert.Equal("func-id", point.FunctionIdentifier);
+            Assert.Null(point.FunctionIdentifierTextDisplayTemplate);
+            Assert.Equal("func-name", point.FunctionName);
+            Assert.Null(point.FunctionNameTextDisplayTemplate);
+            Assert.Equal(42, point.UniqueIdentifier);
+            Assert.Equal(IgesConnectionFunctionCode.InvertingOutput, point.FunctionCode);
+            Assert.True(point.ConnectPointMayBeSwapped);
+            Assert.Null(point.Owner);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSphereTest()
         {
             // fully-specified values

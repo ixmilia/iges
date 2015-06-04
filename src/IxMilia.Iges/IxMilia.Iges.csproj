@@ -24,6 +24,7 @@
     <Compile Include="Entities\IgesColorDefinition.cs" />
     <Compile Include="Entities\IgesCompositeCurve.cs" />
     <Compile Include="Entities\IgesConicArc.cs" />
+    <Compile Include="Entities\IgesConnectPoint.cs" />
     <Compile Include="Entities\IgesCopiousData.cs" />
     <Compile Include="Entities\IgesDefinitionLevelsProperty.cs" />
     <Compile Include="Entities\IgesDirection.cs" />

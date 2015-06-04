@@ -31,6 +31,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.ConicArc:
                     entity = new IgesConicArc();
                     break;
+                case IgesEntityType.ConnectPoint:
+                    entity = new IgesConnectPoint();
+                    break;
                 case IgesEntityType.CopiousData:
                     entity = new IgesCopiousData();
                     break;
