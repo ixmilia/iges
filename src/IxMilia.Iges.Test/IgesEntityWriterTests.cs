@@ -378,6 +378,34 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteOffsetCurveTest()
+        {
+            var curve = new IgesOffsetCurve()
+            {
+                CurveToOffset = new IgesLine(),
+                DistanceType = IgesOffsetDistanceType.SingleUniformOffset,
+                EntityOffsetCurveFunction = null,
+                ParameterIndexOfFunctionEntityCurve = 0,
+                TaperedOffsetType = IgesTaperedOffsetType.None,
+                FirstOffsetDistance = 1.0,
+                FirstOffsetDistanceValue = 2.0,
+                SecondOffsetDistance = 3.0,
+                SecondOffsetDistanceValue = 4.0,
+                EntityNormal = IgesVector.ZAxis,
+                StartingParameterValue = 5.0,
+                EndingParameterValue = 6.0
+            };
+            VerifyEntity(curve, @"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     130       2       0       0       0                        00000000D      3
+     130       0       0       1       0                                D      4
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+130,1,1,0,0,0,1.,2.,3.,4.,0.,0.,1.,5.,6.;                              3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSphereTest()
         {
             // regular case

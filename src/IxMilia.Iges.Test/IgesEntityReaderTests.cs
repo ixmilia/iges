@@ -725,6 +725,31 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadOffsetCurveTest()
+        {
+            var curve = (IgesOffsetCurve)ParseSingleEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     130       2       0       0       0                        00000000D      3
+     130       0       0       1       0                                D      4
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+130,1,1,0,0,0,1.,2.,3.,4.,0.,0.,1.,5.,6.;                              3P      2
+");
+            Assert.IsType<IgesLine>(curve.CurveToOffset);
+            Assert.Equal(IgesOffsetDistanceType.SingleUniformOffset, curve.DistanceType);
+            Assert.Null(curve.EntityOffsetCurveFunction);
+            Assert.Equal(0, curve.ParameterIndexOfFunctionEntityCurve);
+            Assert.Equal(IgesTaperedOffsetType.None, curve.TaperedOffsetType);
+            Assert.Equal(1.0, curve.FirstOffsetDistance);
+            Assert.Equal(2.0, curve.FirstOffsetDistanceValue);
+            Assert.Equal(3.0, curve.SecondOffsetDistance);
+            Assert.Equal(4.0, curve.SecondOffsetDistanceValue);
+            Assert.Equal(IgesVector.ZAxis, curve.EntityNormal);
+            Assert.Equal(5.0, curve.StartingParameterValue);
+            Assert.Equal(6.0, curve.EndingParameterValue);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSphereTest()
         {
             // fully-specified values

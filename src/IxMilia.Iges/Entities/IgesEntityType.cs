@@ -22,6 +22,7 @@ namespace IxMilia.Iges.Entities
         Flash = 125,
         RationalBSplineCurve = 126,
         RationalBSplineSurface = 128,
+        OffsetCurve = 130,
         Sphere = 158,
         Torus = 160,
         GeneralNote = 212,
