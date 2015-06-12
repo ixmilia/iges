@@ -51,3 +51,13 @@ using (FileStream fs = new FileStream(@"C:\Path\To\File.iges", FileMode.Open))
 ### IGES reference
 
 [Full specification (from uspro.org)](http://www.uspro.org/documents/IGES5-3_forDownload.pdf)
+
+### Sample files
+
+Sample files can be found [here](http://www.wiz-worx.com/iges5x/).  Of particular note are the following categories:
+
+- [Class 1](http://www.wiz-worx.com/iges5x/onetwo/class1.shtml)
+
+- [Class 2](http://www.wiz-worx.com/iges5x/onetwo/class2.shtml)
+
+- [Class 7](http://www.wiz-worx.com/iges5x/onetwo/class7.shtml)
