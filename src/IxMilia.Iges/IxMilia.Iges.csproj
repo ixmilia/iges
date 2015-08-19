@@ -42,6 +42,7 @@
     <Compile Include="Entities\IgesLine.cs" />
     <Compile Include="Entities\IgesLineFontDefinitionBase.cs" />
     <Compile Include="Entities\IgesLocation.cs" />
+    <Compile Include="Entities\IgesNode.cs" />
     <Compile Include="Entities\IgesNull.cs" />
     <Compile Include="Entities\IgesOffsetCurve.cs" />
     <Compile Include="Entities\IgesParametricSplineCurve.cs" />

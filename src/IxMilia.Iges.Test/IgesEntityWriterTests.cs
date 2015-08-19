@@ -431,6 +431,18 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteNodeTest()
+        {
+            var node = new IgesNode(new IgesPoint(1, 2, 3));
+            node.NodeNumber = 17u;
+            VerifyEntity(node, @"
+     134       1       0       0       0                        00000400D      1
+     134       0       0       1       0                              17D      2
+134,1.,2.,3.,0;                                                        1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSphereTest()
         {
             // regular case

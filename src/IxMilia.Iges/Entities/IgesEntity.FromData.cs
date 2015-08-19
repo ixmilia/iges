@@ -63,6 +63,9 @@ namespace IxMilia.Iges.Entities
                             break;
                     }
                     break;
+                case IgesEntityType.Node:
+                    entity = new IgesNode();
+                    break;
                 case IgesEntityType.Null:
                     entity = new IgesNull();
                     break;

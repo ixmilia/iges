@@ -772,6 +772,19 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadNodeTest()
+        {
+            var node = (IgesNode)ParseSingleEntity(@"
+     134       1       0       0       0                        00000400D      1
+     134       0       0       1       0                              17D      2
+134,1.,2.,3.,0;                                                        1P      1
+");
+            Assert.Equal(new IgesPoint(1, 2, 3), node.Offset);
+            Assert.Equal(17u, node.NodeNumber);
+            Assert.Null(node.DisplacementCoordinateSystem);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSphereTest()
         {
             // fully-specified values

@@ -24,6 +24,7 @@ namespace IxMilia.Iges.Entities
         RationalBSplineSurface = 128,
         OffsetCurve = 130,
         ConnectPoint = 132,
+        Node = 134,
         Sphere = 158,
         Torus = 160,
         GeneralNote = 212,
