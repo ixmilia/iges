@@ -173,6 +173,11 @@ namespace IxMilia.Iges.Entities
         {
         }
 
+        internal virtual IgesEntity PostProcess()
+        {
+            return this;
+        }
+
         internal void ReadCommonPointers(List<string>parameters, int nextIndex)
         {
             var associatedPointerCount = Integer(parameters, nextIndex++);

@@ -443,6 +443,39 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteFiniteElementBeamTest()
+        {
+            var beam = new IgesBeam(new IgesPoint(1, 2, 3), new IgesPoint(4, 5, 6)) { ElementTypeName = "name" };
+            VerifyEntity(beam, @"
+     134       1       0       0       0                        00000400D      1
+     134       0       0       1       0                                D      2
+     134       2       0       0       0                        00000400D      3
+     134       0       0       1       0                                D      4
+     136       3       0       0       0                        00000000D      5
+     136       0       0       1       0                                D      6
+134,1.,2.,3.,0;                                                        1P      1
+134,4.,5.,6.,0;                                                        3P      2
+136,1,2,1,3,4Hname;                                                    5P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteCustomFiniteElementTest()
+        {
+            var custom = new IgesCustomFiniteElement(5002);
+            custom.ElementTypeName = "custom";
+            custom.Nodes.Add(new IgesNode(new IgesPoint(1, 2, 3)));
+            VerifyEntity(custom, @"
+     134       1       0       0       0                        00000400D      1
+     134       0       0       1       0                                D      2
+     136       2       0       0       0                        00000000D      3
+     136       0       0       1       0                                D      4
+134,1.,2.,3.,0;                                                        1P      1
+136,5002,1,1,6Hcustom;                                                 3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSphereTest()
         {
             // regular case

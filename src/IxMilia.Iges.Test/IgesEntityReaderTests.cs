@@ -785,6 +785,42 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadFiniteElementBeamTest()
+        {
+            var beam = (IgesBeam)ParseSingleEntity(@"
+     134       1       0       0       0                        00000400D      1
+     134       0       0       1       0                                D      2
+     134       2       0       0       0                        00000400D      3
+     134       0       0       1       0                                D      4
+     136       3       0       0       0                        00000000D      5
+     136       0       0       1       0                                D      6
+134,1.,2.,3.,0;                                                        1P      1
+134,4.,5.,6.,0;                                                        3P      2
+136,1,2,1,3,4Hname;                                                    5P      3
+");
+            Assert.Equal(new IgesPoint(1, 2, 3), beam.P1);
+            Assert.Equal(new IgesPoint(4, 5, 6), beam.P2);
+            Assert.Equal("name", beam.ElementTypeName);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadCustomFiniteElementTest()
+        {
+            var custom = (IgesCustomFiniteElement)ParseSingleEntity(@"
+     134       1       0       0       0                        00000400D      1
+     134       0       0       1       0                                D      2
+     136       2       0       0       0                        00000000D      3
+     136       0       0       1       0                                D      4
+134,1.,2.,3.,0;                                                        1P      1
+136,5002,1,1,6Hcustom;                                                 3P      2
+");
+            Assert.Equal(5001, (int)custom.TopologyType);
+            Assert.Equal(5002, custom.CustomTopologyNumber);
+            Assert.Equal(new IgesPoint(1, 2, 3), custom.Nodes.Single().Offset);
+            Assert.Equal("custom", custom.ElementTypeName);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSphereTest()
         {
             // fully-specified values

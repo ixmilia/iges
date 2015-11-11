@@ -43,6 +43,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.Flash:
                     entity = new IgesFlash();
                     break;
+                case IgesEntityType.FiniteElement:
+                    entity = new IgesFiniteElementDummy();
+                    break;
                 case IgesEntityType.GeneralNote:
                     entity = new IgesGeneralNote();
                     break;

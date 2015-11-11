@@ -233,10 +233,14 @@ namespace IxMilia.Iges
             for (int i = 0; i < directoryEntries.Count; i++)
             {
                 IgesEntity entity = null;
-                if (entityMap.TryGetValue((i * 2) + 1, out entity))
+                var lineNumber = (i * 2) + 1;
+                if (entityMap.TryGetValue(lineNumber, out entity))
                 {
                     entity.BindPointers(directoryEntries[i], entityMap, entitiesToTrim);
                     entity.OnAfterRead(directoryEntries[i]);
+                    var processedEntity = entity.PostProcess();
+                    entityMap[lineNumber] = processedEntity;
+                    file.Entities[(lineNumber - 1) / 2] = processedEntity;
                 }
             }
 
