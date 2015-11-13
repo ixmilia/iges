@@ -15,13 +15,7 @@ namespace IxMilia.Iges.Entities
         public string Name { get; set; }
 
         // custom properties
-        public List<IgesEntity> Entities
-        {
-            get
-            {
-                return SubEntities;
-            }
-        }
+        public List<IgesEntity> Entities { get; private set; }
 
         public IgesSubfigureDefinition()
             : base()
@@ -29,6 +23,7 @@ namespace IxMilia.Iges.Entities
             this.Depth = 0;
             this.Name = null;
             this.EntityUseFlag = IgesEntityUseFlag.Definition;
+            Entities = new List<IgesEntity>();
         }
 
         protected override int ReadParameters(List<string> parameters)
@@ -44,17 +39,24 @@ namespace IxMilia.Iges.Entities
             return entityCount + 3;
         }
 
+        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        {
+            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Definition);
+            Entities.Clear();
+            Entities.AddRange(SubEntities);
+        }
+
+        internal override void OnBeforeWrite()
+        {
+            SubEntities.AddRange(Entities);
+        }
+
         protected override void WriteParameters(List<object> parameters)
         {
             parameters.Add(this.Depth);
             parameters.Add(this.Name);
             parameters.Add(this.Entities.Count);
             parameters.AddRange(this.SubEntityIndices.Cast<object>());
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Definition);
         }
     }
 }

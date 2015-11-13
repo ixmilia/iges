@@ -25,21 +25,7 @@ namespace IxMilia.Iges.Entities
         public IgesPoint DisplaySymbolLocation { get; set; }
         public double DisplaySymbolSize { get; set; }
 
-        public IgesEntity ClosedCurveBoundingEntity
-        {
-            get
-            {
-                return SubEntities.FirstOrDefault();
-            }
-            set
-            {
-                SubEntities.Clear();
-                if (value != null)
-                {
-                    SubEntities.Add(value);
-                }
-            }
-        }
+        public IgesEntity ClosedCurveBoundingEntity { get; set; }
 
         // custom properties
         public IgesPlaneBounding Bounding
@@ -88,13 +74,23 @@ namespace IxMilia.Iges.Entities
             return 9;
         }
 
+        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        {
+            this.ClosedCurveBoundingEntity = SubEntities.Count > 0 ? SubEntities[0] : null;
+        }
+
+        internal override void OnBeforeWrite()
+        {
+            SubEntities.Add(ClosedCurveBoundingEntity);
+        }
+
         protected override void WriteParameters(List<object> parameters)
         {
             parameters.Add(PlaneCoefficientA);
             parameters.Add(PlaneCoefficientB);
             parameters.Add(PlaneCoefficientC);
             parameters.Add(PlaneCoefficientD);
-            parameters.Add(SubEntityIndices.FirstOrDefault());
+            parameters.Add(SubEntityIndices[0]);
             parameters.Add(DisplaySymbolLocation.X);
             parameters.Add(DisplaySymbolLocation.Y);
             parameters.Add(DisplaySymbolLocation.Z);

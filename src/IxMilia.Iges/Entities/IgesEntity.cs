@@ -138,7 +138,7 @@ namespace IxMilia.Iges.Entities
 
         private int _viewPointer;
         private int _transformationMatrixPointer;
-        protected List<IgesEntity> SubEntities { get; private set; }
+        protected internal List<IgesEntity> SubEntities { get; private set; }
 
         private List<int> _associatedEntityIndices;
         public AssociatedEntityCollection AssociatedEntities { get; private set; }
@@ -405,6 +405,7 @@ namespace IxMilia.Iges.Entities
 
         internal int AddDirectoryAndParameterLines(WriterState writerState)
         {
+            SubEntities.Clear();
             OnBeforeWrite();
 
             // write structure entity (field 3)
@@ -489,6 +490,8 @@ namespace IxMilia.Iges.Entities
                 SubEntityIndices.Add(index);
             }
 
+            SubEntities.Clear();
+
             // write common pointers
             _associatedEntityIndices.Clear();
             foreach (var assoc in AssociatedEntities)
@@ -509,6 +512,7 @@ namespace IxMilia.Iges.Entities
             var parameters = new List<object>();
             parameters.Add((int)EntityType);
             this.WriteParameters(parameters);
+            SubEntityIndices.Clear();
 
             if (_associatedEntityIndices.Any() || _propertyIndices.Any())
             {

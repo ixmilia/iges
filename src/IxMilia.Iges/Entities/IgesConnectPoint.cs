@@ -157,7 +157,6 @@ namespace IxMilia.Iges.Entities
         internal override void OnBeforeWrite()
         {
             base.OnBeforeWrite();
-            SubEntities.Clear();
             SubEntities.Add(DisplaySymbolGeometry);
             SubEntities.Add(FunctionIdentifierTextDisplayTemplate);
             SubEntities.Add(FunctionNameTextDisplayTemplate);

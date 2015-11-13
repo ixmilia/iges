@@ -32,14 +32,11 @@ namespace IxMilia.Iges.Entities
 
         internal override void OnBeforeWrite()
         {
-            base.OnBeforeWrite();
-            SubEntities.Clear();
             SubEntities.Add(Directrix);
         }
 
         internal override void OnAfterRead(IgesDirectoryData directoryData)
         {
-            base.OnAfterRead(directoryData);
             Debug.Assert(FormNumber == 0);
             Directrix = SubEntities[0];
         }

@@ -77,7 +77,20 @@ namespace IxMilia.Iges.Entities
 
             _labelLevels.Clear();
             _labelLocations.Clear();
-            SubEntities.Clear();
+        }
+
+        internal override void OnBeforeWrite()
+        {
+            _labelLocations.Clear();
+            _labelLevels.Clear();
+            for (int i = 0; i < LabelPlacements.Count; i++)
+            {
+                SubEntities.Add(LabelPlacements[i].View);
+                _labelLocations.Add(LabelPlacements[i].Location);
+                SubEntities.Add(LabelPlacements[i].Leader);
+                _labelLevels.Add(LabelPlacements[i].Level);
+                SubEntities.Add(LabelPlacements[i].Label);
+            }
         }
 
         protected override void WriteParameters(List<object> parameters)
@@ -96,22 +109,6 @@ namespace IxMilia.Iges.Entities
             }
         }
 
-        internal override void OnBeforeWrite()
-        {
-            base.OnBeforeWrite();
-            SubEntities.Clear();
-            _labelLocations.Clear();
-            _labelLevels.Clear();
-            for (int i = 0; i < LabelPlacements.Count; i++)
-            {
-                SubEntities.Add(LabelPlacements[i].View);
-                _labelLocations.Add(LabelPlacements[i].Location);
-                SubEntities.Add(LabelPlacements[i].Leader);
-                _labelLevels.Add(LabelPlacements[i].Level);
-                SubEntities.Add(LabelPlacements[i].Label);
-            }
-        }
-
         internal override void UnMarkEntitiesForTrimming(HashSet<int> entitiesToTrim)
         {
             base.UnMarkEntitiesForTrimming(entitiesToTrim);
@@ -125,7 +122,7 @@ namespace IxMilia.Iges.Entities
         private void AssertCollections()
         {
             Debug.Assert(_labelLocations.Count == _labelLevels.Count);
-            Debug.Assert(_labelLocations.Count * 3 == SubEntities.Count);
+            Debug.Assert(_labelLocations.Count * 3 == SubEntityIndices.Count);
         }
     }
 }

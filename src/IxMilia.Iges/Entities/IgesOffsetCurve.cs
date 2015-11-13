@@ -79,15 +79,12 @@ namespace IxMilia.Iges.Entities
 
         internal override void OnBeforeWrite()
         {
-            base.OnBeforeWrite();
-            SubEntities.Clear();
             SubEntities.Add(CurveToOffset);
             SubEntities.Add(EntityOffsetCurveFunction);
         }
 
         internal override void OnAfterRead(IgesDirectoryData directoryData)
         {
-            base.OnAfterRead(directoryData);
             Debug.Assert(FormNumber == 0);
             CurveToOffset = SubEntities[0];
             EntityOffsetCurveFunction = SubEntities[1];

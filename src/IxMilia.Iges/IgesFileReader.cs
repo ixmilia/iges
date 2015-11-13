@@ -239,6 +239,8 @@ namespace IxMilia.Iges
                     entity.BindPointers(directoryEntries[i], entityMap, entitiesToTrim);
                     entity.OnAfterRead(directoryEntries[i]);
                     var processedEntity = entity.PostProcess();
+                    entity.SubEntities.Clear();
+                    entity.SubEntityIndices.Clear();
                     entityMap[lineNumber] = processedEntity;
                     file.Entities[(lineNumber - 1) / 2] = processedEntity;
                 }

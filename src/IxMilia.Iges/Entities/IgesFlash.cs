@@ -78,14 +78,11 @@ namespace IxMilia.Iges.Entities
 
         internal override void OnBeforeWrite()
         {
-            base.OnBeforeWrite();
-            SubEntities.Clear();
             SubEntities.Add(ReferenceEntity);
         }
 
         internal override void OnAfterRead(IgesDirectoryData directoryData)
         {
-            base.OnAfterRead(directoryData);
             Debug.Assert(Hierarchy == IgesHierarchy.GlobalTopDown);
             _referenceEntity = SubEntities[0];
         }

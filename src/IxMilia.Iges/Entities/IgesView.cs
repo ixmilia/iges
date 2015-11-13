@@ -16,49 +16,25 @@ namespace IxMilia.Iges.Entities
             : base(viewNumber, scaleFactor)
         {
             this.FormNumber = 0;
-            SubEntities.Add(left);
-            SubEntities.Add(top);
-            SubEntities.Add(right);
-            SubEntities.Add(bottom);
-            SubEntities.Add(back);
-            SubEntities.Add(front);
+            ViewVolumeLeft = left;
+            ViewVolumeTop = top;
+            ViewVolumeRight = right;
+            ViewVolumeBottom = bottom;
+            ViewVolumeBack = back;
+            ViewVolumeFront = front;
         }
 
-        public IgesPlane ViewVolumeLeft
-        {
-            get { return SubEntities[0] as IgesPlane; }
-            set { SubEntities[0] = value; }
-        }
+        public IgesPlane ViewVolumeLeft { get; set; }
 
-        public IgesPlane ViewVolumeTop
-        {
-            get { return SubEntities[1] as IgesPlane; }
-            set { SubEntities[1] = value; }
-        }
+        public IgesPlane ViewVolumeTop { get; set; }
 
-        public IgesPlane ViewVolumeRight
-        {
-            get { return SubEntities[2] as IgesPlane; }
-            set { SubEntities[2] = value; }
-        }
+        public IgesPlane ViewVolumeRight { get; set; }
 
-        public IgesPlane ViewVolumeBottom
-        {
-            get { return SubEntities[3] as IgesPlane; }
-            set { SubEntities[3] = value; }
-        }
+        public IgesPlane ViewVolumeBottom { get; set; }
 
-        public IgesPlane ViewVolumeBack
-        {
-            get { return SubEntities[4] as IgesPlane; }
-            set { SubEntities[4] = value; }
-        }
+        public IgesPlane ViewVolumeBack { get; set; }
 
-        public IgesPlane ViewVolumeFront
-        {
-            get { return SubEntities[5] as IgesPlane; }
-            set { SubEntities[5] = value; }
-        }
+        public IgesPlane ViewVolumeFront { get; set; }
 
         protected override int ReadParameters(List<string> parameters)
         {
@@ -72,6 +48,27 @@ namespace IxMilia.Iges.Entities
             return nextIndex + 6;
         }
 
+        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        {
+            base.OnAfterRead(directoryData);
+            ViewVolumeLeft = SubEntities[0] as IgesPlane;
+            ViewVolumeTop = SubEntities[1] as IgesPlane;
+            ViewVolumeRight = SubEntities[2] as IgesPlane;
+            ViewVolumeBottom = SubEntities[3] as IgesPlane;
+            ViewVolumeBack = SubEntities[4] as IgesPlane;
+            ViewVolumeFront = SubEntities[5] as IgesPlane;
+        }
+
+        internal override void OnBeforeWrite()
+        {
+            SubEntities.Add(ViewVolumeLeft);
+            SubEntities.Add(ViewVolumeTop);
+            SubEntities.Add(ViewVolumeRight);
+            SubEntities.Add(ViewVolumeBottom);
+            SubEntities.Add(ViewVolumeBack);
+            SubEntities.Add(ViewVolumeFront);
+        }
+
         protected override void WriteParameters(List<object> parameters)
         {
             base.WriteParameters(parameters);
@@ -80,11 +77,6 @@ namespace IxMilia.Iges.Entities
             {
                 parameters.Add(SubEntityIndices[i]);
             }
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            base.OnAfterRead(directoryData);
         }
     }
 }

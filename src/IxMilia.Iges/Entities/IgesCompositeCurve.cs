@@ -10,17 +10,12 @@ namespace IxMilia.Iges.Entities
         public override IgesEntityType EntityType { get { return IgesEntityType.CompositeCurve; } }
 
         // custom properties
-        public List<IgesEntity> Entities
-        {
-            get
-            {
-                return SubEntities;
-            }
-        }
+        public List<IgesEntity> Entities { get; private set; }
 
         public IgesCompositeCurve()
             : base()
         {
+            Entities = new List<IgesEntity>();
         }
 
         protected override int ReadParameters(List<string> parameters)
@@ -32,6 +27,17 @@ namespace IxMilia.Iges.Entities
             }
 
             return entityCount + 1;
+        }
+
+        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        {
+            Entities.Clear();
+            Entities.AddRange(SubEntities);
+        }
+
+        internal override void OnBeforeWrite()
+        {
+            SubEntities.AddRange(Entities);
         }
 
         protected override void WriteParameters(List<object> parameters)

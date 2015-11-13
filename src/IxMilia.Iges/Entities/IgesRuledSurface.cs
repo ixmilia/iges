@@ -56,15 +56,12 @@ namespace IxMilia.Iges.Entities
 
         internal override void OnBeforeWrite()
         {
-            base.OnBeforeWrite();
-            SubEntities.Clear();
             SubEntities.Add(FirstCurve);
             SubEntities.Add(SecondCurve);
         }
 
         internal override void OnAfterRead(IgesDirectoryData directoryData)
         {
-            base.OnAfterRead(directoryData);
             Debug.Assert(FormNumber == 0 || FormNumber == 1);
             FirstCurve = SubEntities[0];
             SecondCurve = SubEntities[1];

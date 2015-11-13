@@ -67,11 +67,25 @@ namespace IxMilia.Iges.Entities
             return 10;
         }
 
+        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        {
+            base.OnAfterRead(directoryData);
+            Debug.Assert(SubordinateEntitySwitchType == IgesSubordinateEntitySwitchType.Independent);
+            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Definition);
+            Debug.Assert(Hierarchy == IgesHierarchy.GlobalTopDown);
+            TextFontDefinition = SubEntities[0] as IgesTextFontDefinition;
+        }
+
+        internal override void OnBeforeWrite()
+        {
+            SubEntities.Add(TextFontDefinition);
+        }
+
         protected override void WriteParameters(List<object> parameters)
         {
             parameters.Add(CharacterBoxWidth);
             parameters.Add(CharacterBoxHeight);
-            if (SubEntities[0] == null)
+            if (TextFontDefinition == null)
             {
                 parameters.Add(FontCode);
             }
@@ -87,22 +101,6 @@ namespace IxMilia.Iges.Entities
             parameters.Add(LocationOrOffset.X);
             parameters.Add(LocationOrOffset.Y);
             parameters.Add(LocationOrOffset.Z);
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            base.OnAfterRead(directoryData);
-            Debug.Assert(SubordinateEntitySwitchType == IgesSubordinateEntitySwitchType.Independent);
-            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Definition);
-            Debug.Assert(Hierarchy == IgesHierarchy.GlobalTopDown);
-            TextFontDefinition = SubEntities[0] as IgesTextFontDefinition;
-        }
-
-        internal override void OnBeforeWrite()
-        {
-            base.OnBeforeWrite();
-            SubEntities.Clear();
-            SubEntities.Add(TextFontDefinition);
         }
     }
 }

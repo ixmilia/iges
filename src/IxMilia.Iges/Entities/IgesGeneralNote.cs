@@ -130,7 +130,6 @@ namespace IxMilia.Iges.Entities
 
         internal override void OnAfterRead(IgesDirectoryData directoryData)
         {
-            base.OnAfterRead(directoryData);
             Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Annotation);
             Debug.Assert(
                 (FormNumber >= 0 && FormNumber <= 8) ||
@@ -148,8 +147,6 @@ namespace IxMilia.Iges.Entities
 
         internal override void OnBeforeWrite()
         {
-            base.OnBeforeWrite();
-            SubEntities.Clear();
             foreach (var str in Strings)
             {
                 SubEntities.Add(str.TextFontDefinition);

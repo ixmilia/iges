@@ -52,23 +52,7 @@ namespace IxMilia.Iges.Entities
         public int Scale { get; set; }
         public List<IgesTextFontDefinitionCharacter> Characters { get; private set; }
         public int SupercedesCode { get; set; }
-        public IgesTextFontDefinition SupercedesFont
-        {
-            get
-            {
-                return SubEntities.Any()
-                    ? SubEntities[0] as IgesTextFontDefinition
-                    : null;
-            }
-            set
-            {
-                SubEntities.Clear();
-                if (value != null)
-                {
-                    SubEntities.Add(value);
-                }
-            }
-        }
+        public IgesTextFontDefinition SupercedesFont { get; set; }
 
         public IgesTextFontDefinition()
             : base()
@@ -118,6 +102,22 @@ namespace IxMilia.Iges.Entities
             return index;
         }
 
+        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        {
+            Debug.Assert(SubordinateEntitySwitchType == IgesSubordinateEntitySwitchType.Independent);
+            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Definition);
+            Debug.Assert(FormNumber == 0);
+            SupercedesFont = SubEntities.Count > 0 ? SubEntities[0] as IgesTextFontDefinition : null;
+        }
+
+        internal override void OnBeforeWrite()
+        {
+            if (SupercedesFont != null)
+            {
+                SubEntities.Add(SupercedesFont);
+            }
+        }
+
         protected override void WriteParameters(List<object> parameters)
         {
             parameters.Add(FontCode);
@@ -150,14 +150,6 @@ namespace IxMilia.Iges.Entities
                     parameters.Add(movement.Location.Y);
                 }
             }
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            base.OnAfterRead(directoryData);
-            Debug.Assert(SubordinateEntitySwitchType == IgesSubordinateEntitySwitchType.Independent);
-            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Definition);
-            Debug.Assert(FormNumber == 0);
         }
     }
 }

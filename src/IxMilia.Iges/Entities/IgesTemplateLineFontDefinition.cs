@@ -14,11 +14,7 @@ namespace IxMilia.Iges.Entities
     {
         public IgesTemplateLineFontOrientation Orientation { get; set; }
 
-        public IgesSubfigureDefinition Template
-        {
-            get { return SubEntities[0] as IgesSubfigureDefinition; }
-            set { SubEntities[0] = value; }
-        }
+        public IgesSubfigureDefinition Template { get; set; }
 
         public double CommonArcLength { get; set; }
         public double ScaleFactor { get; set; }
@@ -32,7 +28,7 @@ namespace IxMilia.Iges.Entities
             : base()
         {
             this.FormNumber = 1;
-            SubEntities.Add(template);
+            Template = template;
             CommonArcLength = commonArcLength;
             ScaleFactor = scaleFactor;
         }
@@ -44,6 +40,16 @@ namespace IxMilia.Iges.Entities
             this.CommonArcLength = Double(parameters, 2);
             this.ScaleFactor = Double(parameters, 3);
             return 4;
+        }
+
+        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        {
+            Template = SubEntities[0] as IgesSubfigureDefinition;
+        }
+
+        internal override void OnBeforeWrite()
+        {
+            SubEntities.Add(Template);
         }
 
         protected override void WriteParameters(List<object> parameters)
