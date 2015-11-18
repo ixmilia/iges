@@ -476,6 +476,30 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteNodalDisplacementAndRotationTest()
+        {
+            var displacement = new IgesNodalDisplacementAndRotation();
+            displacement.NodeAnalyses.Add(new IgesNodalAnalysis(42, new IgesGeneralNote(), new IgesBeam(new IgesPoint(8, 9, 10), new IgesPoint(11, 12, 13)), new[] { new IgesNodalAnalysisCase(new IgesVector(2, 3, 4), 5, 6, 7) }));
+            VerifyEntity(displacement, @"
+     212       1       0       0       0                        00000100D      1
+     212       0       0       1       0                                D      2
+     134       2       0       0       0                        00000400D      3
+     134       0       0       1       0                                D      4
+     134       3       0       0       0                        00000400D      5
+     134       0       0       1       0                                D      6
+     136       4       0       0       0                        00000000D      7
+     136       0       0       1       0                                D      8
+     138       5       0       0       0                        00000000D      9
+     138       0       0       1       0                                D     10
+212,0;                                                                 1P      1
+134,8.,9.,10.,0;                                                       3P      2
+134,11.,12.,13.,0;                                                     5P      3
+136,1,2,3,5,;                                                          7P      4
+138,1,1,1,42,7,2.,3.,4.,5.,6.,7.;                                      9P      5
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSphereTest()
         {
             // regular case

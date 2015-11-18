@@ -26,6 +26,7 @@ namespace IxMilia.Iges.Entities
         ConnectPoint = 132,
         Node = 134,
         FiniteElement = 136,
+        NodalDisplacementAndRotation = 138,
         Sphere = 158,
         Torus = 160,
         GeneralNote = 212,

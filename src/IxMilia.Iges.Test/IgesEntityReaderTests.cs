@@ -17,6 +17,11 @@ namespace IxMilia.Iges.Test
             return IgesReaderTests.ParseSingleEntity(content);
         }
 
+        private static IgesFile CreateFile(string content)
+        {
+            return IgesReaderTests.CreateFile(content);
+        }
+
         #endregion
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
@@ -818,6 +823,31 @@ namespace IxMilia.Iges.Test
             Assert.Equal(5002, custom.CustomTopologyNumber);
             Assert.Equal(new IgesPoint(1, 2, 3), custom.Nodes.Single().Offset);
             Assert.Equal("custom", custom.ElementTypeName);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadNodalDisplacementAndRotationTest()
+        {
+            var file = CreateFile(@"
+     212       1       0       0       0                        00000100D      1
+     212       0       0       1       0                                D      2
+     134       2       0       0       0                        00000400D      3
+     134       0       0       1       0                                D      4
+     134       3       0       0       0                        00000400D      5
+     134       0       0       1       0                                D      6
+     136       4       0       0       0                        00000000D      7
+     136       0       0       1       0                                D      8
+     138       5       0       0       0                        00000000D      9
+     138       0       0       1       0                                D     10
+212,0;                                                                 1P      1
+134,8.,9.,10.,0;                                                       3P      2
+134,11.,12.,13.,0;                                                     5P      3
+136,1,2,3,5,;                                                          7P      4
+138,1,1,1,42,7,2.,3.,4.,5.,6.,7.;                                      9P      5
+");
+            Assert.Equal(2, file.Entities.Count);
+            Assert.Equal(1, file.Entities.OfType<IgesBeam>().Count());
+            Assert.Equal(1, file.Entities.OfType<IgesNodalDisplacementAndRotation>().Count());
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
