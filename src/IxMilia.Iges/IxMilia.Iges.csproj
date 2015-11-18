@@ -76,6 +76,7 @@
     <Compile Include="Entities\IgesOffsetBeam.cs" />
     <Compile Include="Entities\IgesOffsetCurve.cs" />
     <Compile Include="Entities\IgesOffsetMass.cs" />
+    <Compile Include="Entities\IgesOffsetSurface.cs" />
     <Compile Include="Entities\IgesParabolicQuadrilateral.cs" />
     <Compile Include="Entities\IgesParabolicSolid.cs" />
     <Compile Include="Entities\IgesParabolicSolidTetrahedron.cs" />

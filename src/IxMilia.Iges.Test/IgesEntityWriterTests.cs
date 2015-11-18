@@ -500,6 +500,20 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteOffsetSurfaceTest()
+        {
+            var offset = new IgesOffsetSurface(new IgesVector(1, 2, 3), 4, new IgesRuledSurface());
+            VerifyEntity(offset, @"
+     118       1       0       0       0                        00000000D      1
+     118       0       0       1       0                                D      2
+     140       2       0       0       0                        00000000D      3
+     140       0       0       1       0                                D      4
+118,0,0,0,0;                                                           1P      1
+140,1.,2.,3.,4.,1;                                                     3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSphereTest()
         {
             // regular case

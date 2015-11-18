@@ -851,6 +851,22 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadOffsetSurfaceTest()
+        {
+            var offset = (IgesOffsetSurface)ParseSingleEntity(@"
+     118       1       0       0       0                        00000000D      1
+     118       0       0       1       0                                D      2
+     140       2       0       0       0                        00000000D      3
+     140       0       0       1       0                                D      4
+118,0,0,0,0;                                                           1P      1
+140,1.,2.,3.,4.,1;                                                     3P      2
+");
+            Assert.Equal(new IgesVector(1, 2, 3), offset.Direction);
+            Assert.Equal(4.0, offset.Distance);
+            Assert.IsType<IgesRuledSurface>(offset.Surface);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSphereTest()
         {
             // fully-specified values
