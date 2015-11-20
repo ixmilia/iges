@@ -48,7 +48,7 @@
     <Compile Include="Entities\IgesDirection.cs" />
     <Compile Include="Entities\IgesEntity.AssociatedEntityCollection.cs" />
     <Compile Include="Entities\IgesEntity.cs" />
-    <Compile Include="Entities\IgesEntity.FromData.cs" />
+    <Compile Include="Entities\IgesEntity_FromData.cs" />
     <Compile Include="Entities\IgesEntity.WriterState.cs" />
     <Compile Include="Entities\IgesEntityType.cs" />
     <Compile Include="Entities\IgesEntityUseFlag.cs" />
