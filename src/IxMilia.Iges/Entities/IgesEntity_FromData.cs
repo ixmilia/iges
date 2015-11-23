@@ -19,6 +19,9 @@ namespace IxMilia.Iges.Entities
                             break;
                     }
                     break;
+                case IgesEntityType.Boundary:
+                    entity = new IgesBoundary();
+                    break;
                 case IgesEntityType.CircularArc:
                     entity = new IgesCircularArc();
                     break;

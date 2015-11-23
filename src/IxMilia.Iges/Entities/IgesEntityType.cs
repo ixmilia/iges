@@ -28,6 +28,7 @@ namespace IxMilia.Iges.Entities
         FiniteElement = 136,
         NodalDisplacementAndRotation = 138,
         OffsetSurface = 140,
+        Boundary = 141,
         Sphere = 158,
         Torus = 160,
         GeneralNote = 212,
