@@ -31,6 +31,7 @@ namespace IxMilia.Iges.Entities
         Boundary = 141,
         CurveOnAParametricSurface = 142,
         BoundedSurface = 143,
+        TrimmedParametricSurface = 144,
         Sphere = 158,
         Torus = 160,
         GeneralNote = 212,

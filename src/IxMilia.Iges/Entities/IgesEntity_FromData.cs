@@ -143,6 +143,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.TransformationMatrix:
                     entity = new IgesTransformationMatrix();
                     break;
+                case IgesEntityType.TrimmedParametricSurface:
+                    entity = new IgesTrimmedParametricSurface();
+                    break;
                 case IgesEntityType.View:
                     switch (directoryData.FormNumber)
                     {

@@ -110,6 +110,7 @@
     <Compile Include="Entities\IgesThreeNodedBeam.cs" />
     <Compile Include="Entities\IgesTorus.cs" />
     <Compile Include="Entities\IgesTransformationMatrix.cs" />
+    <Compile Include="Entities\IgesTrimmedParametricSurface.cs" />
     <Compile Include="Entities\IgesView.cs" />
     <Compile Include="Entities\IgesViewBase.cs" />
     <Compile Include="IgesColorNumber.cs" />
