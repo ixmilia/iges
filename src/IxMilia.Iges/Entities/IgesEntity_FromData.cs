@@ -22,6 +22,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.Boundary:
                     entity = new IgesBoundary();
                     break;
+                case IgesEntityType.BoundedSurface:
+                    entity = new IgesBoundedSurface();
+                    break;
                 case IgesEntityType.CircularArc:
                     entity = new IgesCircularArc();
                     break;
