@@ -40,6 +40,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.CopiousData:
                     entity = new IgesCopiousData();
                     break;
+                case IgesEntityType.CurveOnAParametricSurface:
+                    entity = new IgesCurveOnAParametricSurface();
+                    break;
                 case IgesEntityType.Direction:
                     entity = new IgesDirection();
                     break;

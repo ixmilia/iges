@@ -43,6 +43,7 @@
     <Compile Include="Entities\IgesCubicThickShellWedge.cs" />
     <Compile Include="Entities\IgesCubicTriangle.cs" />
     <Compile Include="Entities\IgesCurvedBeam.cs" />
+    <Compile Include="Entities\IgesCurveOnAParametricSurface.cs" />
     <Compile Include="Entities\IgesCustomFiniteElement.cs" />
     <Compile Include="Entities\IgesDamper.cs" />
     <Compile Include="Entities\IgesDefinitionLevelsProperty.cs" />

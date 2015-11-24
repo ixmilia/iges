@@ -29,6 +29,7 @@ namespace IxMilia.Iges.Entities
         NodalDisplacementAndRotation = 138,
         OffsetSurface = 140,
         Boundary = 141,
+        CurveOnAParametricSurface = 142,
         Sphere = 158,
         Torus = 160,
         GeneralNote = 212,
