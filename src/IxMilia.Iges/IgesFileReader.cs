@@ -458,7 +458,7 @@ namespace IxMilia.Iges
                 return double.Parse(sb.ToString());
         }
 
-        private static DateTime ParseDateTime(string value, DateTime defaultValue)
+        internal static DateTime ParseDateTime(string value, DateTime defaultValue)
         {
             if (string.IsNullOrEmpty(value))
             {

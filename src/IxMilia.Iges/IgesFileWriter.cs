@@ -238,7 +238,7 @@ namespace IxMilia.Iges
                 return string.Format("{0}H{1}", parameter.Length, parameter);
         }
 
-        private static string ParameterToString(DateTime parameter)
+        internal static string ParameterToString(DateTime parameter)
         {
             return ParameterToString(parameter.ToString("yyyyMMdd.HHmmss"));
         }

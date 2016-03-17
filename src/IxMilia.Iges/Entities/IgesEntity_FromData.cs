@@ -78,6 +78,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.NodalDisplacementAndRotation:
                     entity = new IgesNodalDisplacementAndRotation();
                     break;
+                case IgesEntityType.NodalResults:
+                    entity = new IgesNodalResults();
+                    break;
                 case IgesEntityType.Node:
                     entity = new IgesNode();
                     break;

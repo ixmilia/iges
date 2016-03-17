@@ -867,6 +867,19 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadNodalResultsTest()
+        {
+            var nodalResults = (IgesNodalResults)ParseSingleEntity(@"
+     146       1       0       0       0                        00000000D      1
+     146       0       0       1       1                                D      2
+146,0,0,18H15H20000101.000000,1,1,0,0,42.;                             1P      1
+");
+            Assert.Equal(new System.DateTime(2000, 1, 1, 0, 0, 0), nodalResults.AnalysisTime);
+            Assert.Equal(IgesNodalResultType.Temperature, nodalResults.NodalResultsType);
+            Assert.Equal(42.0, nodalResults.Results.Single().Values.Single());
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSphereTest()
         {
             // fully-specified values

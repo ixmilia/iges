@@ -74,6 +74,7 @@
     <Compile Include="Entities\IgesLocation.cs" />
     <Compile Include="Entities\IgesMass.cs" />
     <Compile Include="Entities\IgesNodalDisplacementAndRotation.cs" />
+    <Compile Include="Entities\IgesNodalResults.cs" />
     <Compile Include="Entities\IgesNode.cs" />
     <Compile Include="Entities\IgesNull.cs" />
     <Compile Include="Entities\IgesOffsetBeam.cs" />

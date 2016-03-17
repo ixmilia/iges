@@ -609,5 +609,22 @@ namespace IxMilia.Iges.Entities
                 return defaultValue;
             }
         }
+
+        protected DateTime DateTime(List<string> values, int index)
+        {
+            return DateTimeOrDefault(values, index, System.DateTime.MinValue);
+        }
+
+        protected DateTime DateTimeOrDefault(List<string> values, int index, DateTime defaultValue)
+        {
+            if (index < values.Count)
+            {
+                return IgesFileReader.ParseDateTime(values[index], defaultValue);
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
     }
 }
