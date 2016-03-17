@@ -12,6 +12,7 @@ using System.IO;
 using IxMilia.Iges;
 using IxMilia.Iges.Entities;
 // ...
+
 IgesFile igesFile;
 using (FileStream fs = new FileStream(@"C:\Path\To\File.iges", FileMode.Open))
 {
@@ -48,6 +49,7 @@ using (FileStream fs = new FileStream(@"C:\Path\To\File.iges", FileMode.Open))
     igesFile.Save(fs);
 }
 ```
+
 ### IGES reference
 
 [Full specification (from uspro.org)](http://www.uspro.org/documents/IGES5-3_forDownload.pdf)
