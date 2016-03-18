@@ -49,6 +49,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.Direction:
                     entity = new IgesDirection();
                     break;
+                case IgesEntityType.ElementResults:
+                    entity = new IgesElementResults();
+                    break;
                 case IgesEntityType.Flash:
                     entity = new IgesFlash();
                     break;

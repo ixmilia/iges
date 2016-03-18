@@ -6,45 +6,6 @@ using System.Linq;
 
 namespace IxMilia.Iges.Entities
 {
-    public enum IgesNodalResultType
-    {
-        Unknown = 0,
-        Temperature = 1,
-        Pressure = 2,
-        TotalDisplacement = 3,
-        TotalDisplacementAndRotation = 4,
-        Velocity = 5,
-        VelocityGradient = 6,
-        Acceleration = 7,
-        Flux = 8,
-        ElementalForce = 9,
-        StrainEnergy = 10,
-        StrainEnergyDensity = 11,
-        ReactionForce = 12,
-        KineticEnergy = 13,
-        KineticEnergyDensity = 14,
-        HydrostaticPressure = 15,
-        CoefficientOfPressure = 16,
-        Symmetric2DimentionalElasticStressTensor = 17,
-        Symmetric2DimentionalTotalStressTensor = 18,
-        Symmetric2DimentionalElasticStrainTensor = 19,
-        Symmetric2DimentionalPlasticStrainTensor = 20,
-        Symmetric2DimentionalTotalStrainTensor = 21,
-        Symmetric2DimentionalThermalStrain = 22,
-        Symmetric3DimentionalElasticStressTensor = 23,
-        Symmetric3DimentionalTotalStressTensor = 24,
-        Symmetric3DimentionalElasticStrainTensor = 25,
-        Symmetric3DimentionalPlasticStrainTensor = 26,
-        Symmetric3DimentionalTotalStrainTensor = 27,
-        Symmetric3DimentionalThermalStrain = 28,
-        GeneralElasticStressTensor = 29,
-        GeneralTotalStressTensor = 30,
-        GeneralElasticStrainTensor = 31,
-        GeneralPlasticStrainTensor = 32,
-        GeneralTotalStrainTensor = 33,
-        GeneralThermalStrain = 34
-    }
-
     public class IgesNodalResult
     {
         public IgesNode Node { get; set; }
@@ -55,9 +16,9 @@ namespace IxMilia.Iges.Entities
     {
         public override IgesEntityType EntityType { get { return IgesEntityType.NodalResults; } }
 
-        public IgesNodalResultType NodalResultsType
+        public IgesResultType ResultsType
         {
-            get { return (IgesNodalResultType)FormNumber; }
+            get { return (IgesResultType)FormNumber; }
             set { FormNumber = (int)value; }
         }
 
@@ -135,45 +96,45 @@ namespace IxMilia.Iges.Entities
         {
             get
             {
-                switch (NodalResultsType)
+                switch (ResultsType)
                 {
-                    case IgesNodalResultType.CoefficientOfPressure:
-                    case IgesNodalResultType.KineticEnergy:
-                    case IgesNodalResultType.KineticEnergyDensity:
-                    case IgesNodalResultType.Pressure:
-                    case IgesNodalResultType.StrainEnergy:
-                    case IgesNodalResultType.StrainEnergyDensity:
-                    case IgesNodalResultType.Temperature:
+                    case IgesResultType.CoefficientOfPressure:
+                    case IgesResultType.KineticEnergy:
+                    case IgesResultType.KineticEnergyDensity:
+                    case IgesResultType.Pressure:
+                    case IgesResultType.StrainEnergy:
+                    case IgesResultType.StrainEnergyDensity:
+                    case IgesResultType.Temperature:
                         return 1;
-                    case IgesNodalResultType.Acceleration:
-                    case IgesNodalResultType.ElementalForce:
-                    case IgesNodalResultType.Flux:
-                    case IgesNodalResultType.HydrostaticPressure:
-                    case IgesNodalResultType.ReactionForce:
-                    case IgesNodalResultType.Symmetric2DimentionalElasticStressTensor:
-                    case IgesNodalResultType.Symmetric2DimentionalTotalStressTensor:
-                    case IgesNodalResultType.Symmetric2DimentionalElasticStrainTensor:
-                    case IgesNodalResultType.Symmetric2DimentionalPlasticStrainTensor:
-                    case IgesNodalResultType.Symmetric2DimentionalTotalStrainTensor:
-                    case IgesNodalResultType.Symmetric2DimentionalThermalStrain:
-                    case IgesNodalResultType.TotalDisplacement:
-                    case IgesNodalResultType.Velocity:
-                    case IgesNodalResultType.VelocityGradient:
+                    case IgesResultType.Acceleration:
+                    case IgesResultType.ElementalForce:
+                    case IgesResultType.Flux:
+                    case IgesResultType.HydrostaticPressure:
+                    case IgesResultType.ReactionForce:
+                    case IgesResultType.Symmetric2DimentionalElasticStressTensor:
+                    case IgesResultType.Symmetric2DimentionalTotalStressTensor:
+                    case IgesResultType.Symmetric2DimentionalElasticStrainTensor:
+                    case IgesResultType.Symmetric2DimentionalPlasticStrainTensor:
+                    case IgesResultType.Symmetric2DimentionalTotalStrainTensor:
+                    case IgesResultType.Symmetric2DimentionalThermalStrain:
+                    case IgesResultType.TotalDisplacement:
+                    case IgesResultType.Velocity:
+                    case IgesResultType.VelocityGradient:
                         return 3;
-                    case IgesNodalResultType.Symmetric3DimentionalElasticStressTensor:
-                    case IgesNodalResultType.Symmetric3DimentionalTotalStressTensor:
-                    case IgesNodalResultType.Symmetric3DimentionalElasticStrainTensor:
-                    case IgesNodalResultType.Symmetric3DimentionalPlasticStrainTensor:
-                    case IgesNodalResultType.Symmetric3DimentionalTotalStrainTensor:
-                    case IgesNodalResultType.Symmetric3DimentionalThermalStrain:
-                    case IgesNodalResultType.TotalDisplacementAndRotation:
+                    case IgesResultType.Symmetric3DimentionalElasticStressTensor:
+                    case IgesResultType.Symmetric3DimentionalTotalStressTensor:
+                    case IgesResultType.Symmetric3DimentionalElasticStrainTensor:
+                    case IgesResultType.Symmetric3DimentionalPlasticStrainTensor:
+                    case IgesResultType.Symmetric3DimentionalTotalStrainTensor:
+                    case IgesResultType.Symmetric3DimentionalThermalStrain:
+                    case IgesResultType.TotalDisplacementAndRotation:
                         return 6;
-                    case IgesNodalResultType.GeneralElasticStressTensor:
-                    case IgesNodalResultType.GeneralTotalStressTensor:
-                    case IgesNodalResultType.GeneralElasticStrainTensor:
-                    case IgesNodalResultType.GeneralPlasticStrainTensor:
-                    case IgesNodalResultType.GeneralTotalStrainTensor:
-                    case IgesNodalResultType.GeneralThermalStrain:
+                    case IgesResultType.GeneralElasticStressTensor:
+                    case IgesResultType.GeneralTotalStressTensor:
+                    case IgesResultType.GeneralElasticStrainTensor:
+                    case IgesResultType.GeneralPlasticStrainTensor:
+                    case IgesResultType.GeneralTotalStrainTensor:
+                    case IgesResultType.GeneralThermalStrain:
                         return 9;
                     default:
                         return 0;

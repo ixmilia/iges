@@ -518,7 +518,7 @@ namespace IxMilia.Iges.Test
         {
             var nodalResults = new IgesNodalResults();
             nodalResults.AnalysisTime = new DateTime(2000, 1, 1, 0, 0, 0);
-            nodalResults.NodalResultsType = IgesNodalResultType.Temperature;
+            nodalResults.ResultsType = IgesResultType.Temperature;
             var result = new IgesNodalResult();
             result.Values.Add(42);
             nodalResults.Results.Add(result);
@@ -526,6 +526,18 @@ namespace IxMilia.Iges.Test
      146       1       0       0       0                        00000000D      1
      146       0       0       1       1                                D      2
 146,0,0,18H15H20000101.000000,1,1,0,0,42.;                             1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteElementResultsTest()
+        {
+            var elementResults = new IgesElementResults();
+            elementResults.ReportingType = IgesResultsReportingType.ElementCentroid;
+            VerifyEntity(elementResults, @"
+     148       1       0       0       0                        00000000D      1
+     148       0       0       1       0                                D      2
+148,0,0,15H00010101.000000,0,1,0;                                      1P      1
 ");
         }
 

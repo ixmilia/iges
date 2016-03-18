@@ -49,6 +49,7 @@
     <Compile Include="Entities\IgesDamper.cs" />
     <Compile Include="Entities\IgesDefinitionLevelsProperty.cs" />
     <Compile Include="Entities\IgesDirection.cs" />
+    <Compile Include="Entities\IgesElementResults.cs" />
     <Compile Include="Entities\IgesEntity.AssociatedEntityCollection.cs" />
     <Compile Include="Entities\IgesEntity.cs" />
     <Compile Include="Entities\IgesEntity_FromData.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Entities\IgesProperty.cs" />
     <Compile Include="Entities\IgesRationalBSplineCurve.cs" />
     <Compile Include="Entities\IgesRationalBSplineSurface.cs" />
+    <Compile Include="Entities\IgesResultType.cs" />
     <Compile Include="Entities\IgesRigidBody.cs" />
     <Compile Include="Entities\IgesRuledSurface.cs" />
     <Compile Include="Entities\IgesSphere.cs" />

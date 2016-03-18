@@ -875,8 +875,19 @@ namespace IxMilia.Iges.Test
 146,0,0,18H15H20000101.000000,1,1,0,0,42.;                             1P      1
 ");
             Assert.Equal(new System.DateTime(2000, 1, 1, 0, 0, 0), nodalResults.AnalysisTime);
-            Assert.Equal(IgesNodalResultType.Temperature, nodalResults.NodalResultsType);
+            Assert.Equal(IgesResultType.Temperature, nodalResults.ResultsType);
             Assert.Equal(42.0, nodalResults.Results.Single().Values.Single());
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadElementResultsTest()
+        {
+            var elementResults = (IgesElementResults)ParseSingleEntity(@"
+     148       1       0       0       0                        00000000D      1
+     148       0       0       1       0                                D      2
+148,0,0,15H00010101.000000,0,1,0;                                      1P      1
+");
+            Assert.Equal(IgesResultsReportingType.ElementCentroid, elementResults.ReportingType);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
