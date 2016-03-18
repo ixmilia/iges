@@ -34,6 +34,7 @@ namespace IxMilia.Iges.Entities
         TrimmedParametricSurface = 144,
         NodalResults = 146,
         ElementResults = 148,
+        Block = 150,
         Sphere = 158,
         Torus = 160,
         GeneralNote = 212,

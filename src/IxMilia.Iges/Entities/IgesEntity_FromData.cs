@@ -19,6 +19,9 @@ namespace IxMilia.Iges.Entities
                             break;
                     }
                     break;
+                case IgesEntityType.Block:
+                    entity = new IgesBlock();
+                    break;
                 case IgesEntityType.Boundary:
                     entity = new IgesBoundary();
                     break;

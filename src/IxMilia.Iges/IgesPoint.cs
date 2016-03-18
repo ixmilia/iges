@@ -67,6 +67,11 @@ namespace IxMilia.Iges
             get { return new IgesVector(0.0, 0.0, 0.0); }
         }
 
+        public static IgesVector XAxis
+        {
+            get { return new IgesVector(1.0, 0.0, 0.0); }
+        }
+
         public static IgesVector ZAxis
         {
             get { return new IgesVector(0.0, 0.0, 1.0); }

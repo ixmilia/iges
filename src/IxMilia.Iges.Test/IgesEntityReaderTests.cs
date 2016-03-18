@@ -891,6 +891,22 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadBlockTest()
+        {
+            var block = (IgesBlock)ParseSingleEntity(@"
+     150       1       0       0       0                        00000000D      1
+     150       0       0       1       0                                D      2
+150,1.,2.,3.,4.,5.,6.,1.,0.,0.,0.,0.,1.;                               1P      1
+");
+            Assert.Equal(1.0, block.XLength);
+            Assert.Equal(2.0, block.YLength);
+            Assert.Equal(3.0, block.ZLength);
+            Assert.Equal(new IgesPoint(4.0, 5.0, 6.0), block.Corner);
+            Assert.Equal(IgesVector.XAxis, block.XAxis);
+            Assert.Equal(IgesVector.ZAxis, block.ZAxis);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSphereTest()
         {
             // fully-specified values

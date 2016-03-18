@@ -542,6 +542,21 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteBlockTest()
+        {
+            var block = new IgesBlock();
+            block.XLength = 1.0;
+            block.YLength = 2.0;
+            block.ZLength = 3.0;
+            block.Corner = new IgesPoint(4.0, 5.0, 6.0);
+            VerifyEntity(block, @"
+     150       1       0       0       0                        00000000D      1
+     150       0       0       1       0                                D      2
+150,1.,2.,3.,4.,5.,6.,1.,0.,0.,0.,0.,1.;                               1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSphereTest()
         {
             // regular case

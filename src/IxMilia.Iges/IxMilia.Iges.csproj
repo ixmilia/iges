@@ -28,6 +28,7 @@
     <Compile Include="Entities\IgesAxisymmetricParabolicTriangle.cs" />
     <Compile Include="Entities\IgesBeam.cs" />
     <Compile Include="Entities\IgesBlankStatus.cs" />
+    <Compile Include="Entities\IgesBlock.cs" />
     <Compile Include="Entities\IgesBoundary.cs" />
     <Compile Include="Entities\IgesBoundedSurface.cs" />
     <Compile Include="Entities\IgesCircularArc.cs" />
