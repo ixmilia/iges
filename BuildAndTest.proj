@@ -7,9 +7,10 @@
 
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
-    <IgesSolution>$(MSBuildThisFileDirectory)\src\IxMilia.Iges.sln</IgesSolution>
-    <TestAssembly>$(MSBuildThisFileDirectory)\src\Binaries\$(Configuration)\IxMilia.Iges.Test.dll</TestAssembly>
-    <NuGetExe>$(MSBuildThisFileDirectory)\src\.nuget\NuGet.exe</NuGetExe>
+    <SolutionDir>$(MSBuildThisFileDirectory)src</SolutionDir>
+    <SolutionFile>$(SolutionDir)\IxMilia.Iges.sln</SolutionFile>
+    <TestAssembly>$(SolutionDir)\Binaries\$(Configuration)\IxMilia.Iges.Test.dll</TestAssembly>
+    <NuGetExe>$(MSBuildThisFileDirectory)src\.nuget\NuGet.exe</NuGetExe>
   </PropertyGroup>
 
   <UsingTask TaskName="DownloadFile" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
@@ -28,32 +29,32 @@
   </UsingTask>
 
   <Target Name="RestorePackages">
-    <DownloadFile Url="https://www.nuget.org/nuget.exe" Destination="$(NuGetExe)" />
-    <Exec Command="&quot;$(NuGetExe)&quot; restore &quot;$(IgesSolution)&quot;" />
+    <DownloadFile Url="https://www.nuget.org/nuget.exe" Destination="$(NuGetExe)" Condition="!Exists('$(NuGetExe)')" />
+    <Exec Command="&quot;$(NuGetExe)&quot; restore &quot;$(SolutionFile)&quot;" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="RestorePackages">
     <MSBuild BuildInParallel="true"
-             Projects="$(IgesSolution)"
+             Projects="$(SolutionFile)"
              Properties="TreatWarningsAsErrors=true"
              Targets="Build" />
   </Target>
 
   <Target Name="Clean">
     <MSBuild BuildInParallel="true"
-             Projects="$(IgesSolution)"
+             Projects="$(SolutionFile)"
              Targets="Clean" />
   </Target>
 
   <Target Name="Rebuild">
     <MSBuild BuildInParallel="true"
-             Projects="$(IgesSolution)"
+             Projects="$(SolutionFile)"
              Properties="TreatWarningsAsErrors=true"
              Targets="Rebuild" />
   </Target>
 
   <Target Name="Test">
-    <Exec Command="$(MSBuildThisFileDirectory)\src\packages\xunit.runners.1.9.2\tools\xunit.console.clr4.exe $(TestAssembly)" />
+    <Exec Command="$(MSBuildThisFileDirectory)src\packages\xunit.runners.1.9.2\tools\xunit.console.clr4.exe $(TestAssembly)" />
   </Target>
 
   <Target Name="BuildAndTest"
