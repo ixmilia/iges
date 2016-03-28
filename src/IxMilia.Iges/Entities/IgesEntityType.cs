@@ -37,6 +37,7 @@ namespace IxMilia.Iges.Entities
         Block = 150,
         RightAngularWedge = 152,
         RightCircularCylinder = 154,
+        RightCircularConeFrustrum = 156,
         Sphere = 158,
         Torus = 160,
         GeneralNote = 212,

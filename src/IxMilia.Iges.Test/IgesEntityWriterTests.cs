@@ -588,6 +588,22 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteRightCircularConeFrustrumTest()
+        {
+            var cone = new IgesRightCircularConeFrustrum()
+            {
+                Height = 1.0,
+                LargeFaceRadius = 2.0,
+                SmallFaceRadius = 3.0
+            };
+            VerifyEntity(cone, @"
+     156       1       0       0       0                        00000000D      1
+     156       0       0       1       0                                D      2
+156,1.,2.,3.,0.,0.,0.,0.,0.,1.;                                        1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSphereTest()
         {
             // regular case

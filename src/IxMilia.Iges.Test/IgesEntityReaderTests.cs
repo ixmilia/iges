@@ -932,6 +932,19 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadRightCircularConeFrustrumTest()
+        {
+            var cone = (IgesRightCircularConeFrustrum)ParseSingleEntity(@"
+     156       1       0       0       0                        00000000D      1
+     156       0       0       1       0                                D      2
+156,1.,2.,3.,0.,0.,0.,0.,0.,1.;                                        1P      1
+");
+            Assert.Equal(1.0, cone.Height);
+            Assert.Equal(2.0, cone.LargeFaceRadius);
+            Assert.Equal(3.0, cone.SmallFaceRadius);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSphereTest()
         {
             // fully-specified values
