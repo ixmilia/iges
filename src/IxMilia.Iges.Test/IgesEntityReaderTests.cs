@@ -907,6 +907,19 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadRightAngularWedgeTest()
+        {
+            var wedge = (IgesRightAngularWedge)ParseSingleEntity(@"
+     152       1       0       0       0                        00000000D      1
+     152       0       0       1       0                                D      2
+152,1.,2.,3.,0.,0.,0.,0.,1.,0.,0.,0.,0.,1.;                            1P      1
+");
+            Assert.Equal(1.0, wedge.XAxisSize);
+            Assert.Equal(2.0, wedge.YAxisSize);
+            Assert.Equal(3.0, wedge.ZAxisSize);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSphereTest()
         {
             // fully-specified values

@@ -557,6 +557,22 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteRightAngularWedgeTest()
+        {
+            var wedge = new IgesRightAngularWedge()
+            {
+                XAxisSize = 1.0,
+                YAxisSize = 2.0,
+                ZAxisSize = 3.0
+            };
+            VerifyEntity(wedge, @"
+     152       1       0       0       0                        00000000D      1
+     152       0       0       1       0                                D      2
+152,1.,2.,3.,0.,0.,0.,0.,1.,0.,0.,0.,0.,1.;                            1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSphereTest()
         {
             // regular case

@@ -125,6 +125,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.RationalBSplineSurface:
                     entity = new IgesRationalBSplineSurface();
                     break;
+                case IgesEntityType.RightAngularWedge:
+                    entity = new IgesRightAngularWedge();
+                    break;
                 case IgesEntityType.RuledSurface:
                     entity = new IgesRuledSurface();
                     break;

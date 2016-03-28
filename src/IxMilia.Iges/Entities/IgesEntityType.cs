@@ -35,6 +35,7 @@ namespace IxMilia.Iges.Entities
         NodalResults = 146,
         ElementResults = 148,
         Block = 150,
+        RightAngularWedge = 152,
         Sphere = 158,
         Torus = 160,
         GeneralNote = 212,
