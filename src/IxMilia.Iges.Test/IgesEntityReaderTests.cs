@@ -920,6 +920,18 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadRightCircularCylinderTest()
+        {
+            var cylinder = (IgesRightCircularCylinder)ParseSingleEntity(@"
+     154       1       0       0       0                        00000000D      1
+     154       0       0       1       0                                D      2
+154,1.,2.,0.,0.,0.,0.,0.,1.;                                           1P      1
+");
+            Assert.Equal(1.0, cylinder.Height);
+            Assert.Equal(2.0, cylinder.Radius);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSphereTest()
         {
             // fully-specified values

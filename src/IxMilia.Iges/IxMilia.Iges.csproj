@@ -100,6 +100,7 @@
     <Compile Include="Entities\IgesRationalBSplineSurface.cs" />
     <Compile Include="Entities\IgesResultType.cs" />
     <Compile Include="Entities\IgesRightAngularWedge.cs" />
+    <Compile Include="Entities\IgesRightCircularCylinder.cs" />
     <Compile Include="Entities\IgesRigidBody.cs" />
     <Compile Include="Entities\IgesRuledSurface.cs" />
     <Compile Include="Entities\IgesSphere.cs" />

@@ -573,6 +573,21 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteRightCircularCylinderTest()
+        {
+            var cylinder = new IgesRightCircularCylinder()
+            {
+                Height = 1.0,
+                Radius = 2.0
+            };
+            VerifyEntity(cylinder, @"
+     154       1       0       0       0                        00000000D      1
+     154       0       0       1       0                                D      2
+154,1.,2.,0.,0.,0.,0.,0.,1.;                                           1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteSphereTest()
         {
             // regular case
