@@ -40,6 +40,7 @@ namespace IxMilia.Iges.Entities
         RightCircularConeFrustrum = 156,
         Sphere = 158,
         Torus = 160,
+        SolidOfRevolution = 162,
         GeneralNote = 212,
         Leader = 214,
         LineFontDefinition = 304,

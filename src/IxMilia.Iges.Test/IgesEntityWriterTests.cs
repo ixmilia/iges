@@ -656,6 +656,23 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteSolidOfRevolutionTest()
+        {
+            var solid = new IgesSolidOfRevolution()
+            {
+                Curve = new IgesLine()
+            };
+            VerifyEntity(solid, @"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     162       2       0       0       0                        00000000D      3
+     162       0       0       1       0                                D      4
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+162,1,1.,0.,0.,0.,0.,0.,1.;                                            3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteGeneralNoteTest()
         {
             // regular case with font code

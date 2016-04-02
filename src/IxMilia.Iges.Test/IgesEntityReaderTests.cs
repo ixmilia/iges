@@ -993,6 +993,22 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadSolidOfRevolutionTest()
+        {
+            var solid = (IgesSolidOfRevolution)ParseSingleEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     162       2       0       0       0                        00000000D      3
+     162       0       0       1       0                                D      4
+110,1.,2.,3.,0.,0.,0.;                                                 1P      1
+162,1,0.5,0.,0.,0.,1.,0.,0.;                                           3P      2
+");
+            Assert.Equal(new IgesPoint(1.0, 2.0, 3.0), ((IgesLine)solid.Curve).P1);
+            Assert.Equal(0.5, solid.RevolutionAmount);
+            Assert.Equal(IgesVector.XAxis, solid.AxisDirection);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadGeneralNoteTest()
         {
             // fully-specified values
