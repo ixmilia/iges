@@ -104,6 +104,7 @@
     <Compile Include="Entities\IgesRightCircularCylinder.cs" />
     <Compile Include="Entities\IgesRigidBody.cs" />
     <Compile Include="Entities\IgesRuledSurface.cs" />
+    <Compile Include="Entities\IgesSolidOfLinearExtrusion.cs" />
     <Compile Include="Entities\IgesSolidOfRevolution.cs" />
     <Compile Include="Entities\IgesSphere.cs" />
     <Compile Include="Entities\IgesSpring.cs" />

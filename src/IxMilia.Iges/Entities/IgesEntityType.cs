@@ -41,6 +41,7 @@ namespace IxMilia.Iges.Entities
         Sphere = 158,
         Torus = 160,
         SolidOfRevolution = 162,
+        SolidOfLinearExtrusion = 164,
         GeneralNote = 212,
         Leader = 214,
         LineFontDefinition = 304,

@@ -673,6 +673,24 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteSolidOfLinearExtrusionTest()
+        {
+            var solid = new IgesSolidOfLinearExtrusion()
+            {
+                Curve = new IgesCircularArc(),
+                ExtrusionLength = 3.0
+            };
+            VerifyEntity(solid, @"
+     100       1       0       0       0                        00000000D      1
+     100       0       0       1       0                                D      2
+     164       2       0       0       0                        00000000D      3
+     164       0       0       1       0                                D      4
+100,0.,0.,0.,0.,0.,0.,0.;                                              1P      1
+164,1,3.,0.,0.,1.;                                                     3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteGeneralNoteTest()
         {
             // regular case with font code

@@ -137,6 +137,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.RuledSurface:
                     entity = new IgesRuledSurface();
                     break;
+                case IgesEntityType.SolidOfLinearExtrusion:
+                    entity = new IgesSolidOfLinearExtrusion();
+                    break;
                 case IgesEntityType.SolidOfRevolution:
                     entity = new IgesSolidOfRevolution();
                     break;

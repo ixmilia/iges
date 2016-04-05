@@ -1009,6 +1009,21 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadSolidOfLinearExtrusionTest()
+        {
+            var solid = (IgesSolidOfLinearExtrusion)ParseSingleEntity(@"
+     100       1       0       0       0                        00000000D      1
+     100       0       0       1       0                                D      2
+     164       2       0       0       0                        00000000D      3
+     164       0       0       1       0                                D      4
+100,0.,0.,0.,0.,0.,0.,0.;                                              1P      1
+164,1,3.,0.,0.,1.;                                                     3P      2
+");
+            Assert.IsType<IgesCircularArc>(solid.Curve);
+            Assert.Equal(3.0, solid.ExtrusionLength);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadGeneralNoteTest()
         {
             // fully-specified values
