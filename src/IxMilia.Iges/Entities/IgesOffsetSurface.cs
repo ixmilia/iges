@@ -25,33 +25,28 @@ namespace IxMilia.Iges.Entities
             Surface = surface;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             Direction.X = Double(parameters, 0);
             Direction.Y = Double(parameters, 1);
             Direction.Z = Double(parameters, 2);
             Distance = Double(parameters, 3);
-            SubEntityIndices.Add(Integer(parameters, 4));
+            binder.BindEntity(Integer(parameters, 4), e => Surface = e);
             return 5;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            Surface = SubEntities[0];
+            yield return Surface;
         }
 
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.Add(Surface);
-        }
-
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(Direction.X);
             parameters.Add(Direction.Y);
             parameters.Add(Direction.Z);
             parameters.Add(Distance);
-            parameters.Add(SubEntityIndices[0]);
+            parameters.Add(binder.GetEntityId(Surface));
         }
     }
 }

@@ -18,7 +18,7 @@ namespace IxMilia.Iges.Entities
             SegmentLengths = new List<double>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             var segmentCount = Integer(parameters, 0);
             for (int i = 0; i < segmentCount; i++)
@@ -30,7 +30,7 @@ namespace IxMilia.Iges.Entities
             return segmentCount + 2;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(SegmentLengths.Count);
             parameters.AddRange(SegmentLengths.Cast<object>());

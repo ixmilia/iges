@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -42,11 +41,11 @@ namespace IxMilia.Iges.Entities
             EntityNormal = IgesVector.ZAxis;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            SubEntityIndices.Add(Integer(parameters, 0));
+            binder.BindEntity(Integer(parameters, 0), e => CurveToOffset = e);
             DistanceType = (IgesOffsetDistanceType)Integer(parameters, 1);
-            SubEntityIndices.Add(Integer(parameters, 2));
+            binder.BindEntity(Integer(parameters, 2), e => EntityOffsetCurveFunction = e);
             ParameterIndexOfFunctionEntityCurve = Integer(parameters, 3);
             TaperedOffsetType = (IgesTaperedOffsetType)Integer(parameters, 4);
             FirstOffsetDistance = Double(parameters, 5);
@@ -59,11 +58,17 @@ namespace IxMilia.Iges.Entities
             return 14;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            parameters.Add(SubEntityIndices[0]);
+            yield return CurveToOffset;
+            yield return EntityOffsetCurveFunction;
+        }
+
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
+        {
+            parameters.Add(binder.GetEntityId(CurveToOffset));
             parameters.Add((int)DistanceType);
-            parameters.Add(SubEntityIndices[1]);
+            parameters.Add(binder.GetEntityId(EntityOffsetCurveFunction));
             parameters.Add(ParameterIndexOfFunctionEntityCurve);
             parameters.Add((int)TaperedOffsetType);
             parameters.Add(FirstOffsetDistance);
@@ -75,23 +80,6 @@ namespace IxMilia.Iges.Entities
             parameters.Add(EntityNormal?.Z ?? 0.0);
             parameters.Add(StartingParameterValue);
             parameters.Add(EndingParameterValue);
-        }
-
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.Add(CurveToOffset);
-            SubEntities.Add(EntityOffsetCurveFunction);
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            Debug.Assert(FormNumber == 0);
-            CurveToOffset = SubEntities[0];
-            EntityOffsetCurveFunction = SubEntities[1];
-
-            Debug.Assert(DistanceType == IgesOffsetDistanceType.FunctionSpecified ^ EntityOffsetCurveFunction == null);
-            Debug.Assert(DistanceType == IgesOffsetDistanceType.FunctionSpecified ^ ParameterIndexOfFunctionEntityCurve == 0);
-            Debug.Assert((DistanceType == IgesOffsetDistanceType.VaryingLinearly || DistanceType == IgesOffsetDistanceType.FunctionSpecified) ^ TaperedOffsetType == IgesTaperedOffsetType.None);
         }
     }
 }

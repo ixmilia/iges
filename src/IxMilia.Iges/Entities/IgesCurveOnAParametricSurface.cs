@@ -30,36 +30,29 @@ namespace IxMilia.Iges.Entities
         public IgesEntity CurveDefinitionC { get; set; }
         public IgesCurvePreferredRepresentation PreferredRepresentation { get; set; }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             CurveCreationType = (IgesCurveCreationType)Integer(parameters, 0);
-            SubEntityIndices.Add(Integer(parameters, 1)); // Surface
-            SubEntityIndices.Add(Integer(parameters, 2)); // CurveDefinitionB
-            SubEntityIndices.Add(Integer(parameters, 3)); // CurveDefinitionC
+            binder.BindEntity(Integer(parameters, 1), e => Surface = e);
+            binder.BindEntity(Integer(parameters, 2), e => CurveDefinitionB = e);
+            binder.BindEntity(Integer(parameters, 3), e => CurveDefinitionC = e);
             PreferredRepresentation = (IgesCurvePreferredRepresentation)Integer(parameters, 4);
             return 5;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            Surface = SubEntities[0];
-            CurveDefinitionB = SubEntities[1];
-            CurveDefinitionC = SubEntities[2];
+            yield return Surface;
+            yield return CurveDefinitionB;
+            yield return CurveDefinitionC;
         }
 
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.Add(Surface);
-            SubEntities.Add(CurveDefinitionB);
-            SubEntities.Add(CurveDefinitionC);
-        }
-
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add((int)CurveCreationType);
-            parameters.Add(SubEntityIndices[0]); // Surface
-            parameters.Add(SubEntityIndices[1]); // CurveDefinitionB
-            parameters.Add(SubEntityIndices[2]); // CurveDefinitionC
+            parameters.Add(binder.GetEntityId(Surface));
+            parameters.Add(binder.GetEntityId(CurveDefinitionB));
+            parameters.Add(binder.GetEntityId(CurveDefinitionC));
             parameters.Add((int)PreferredRepresentation);
         }
     }

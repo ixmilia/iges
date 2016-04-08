@@ -44,7 +44,7 @@ namespace IxMilia.Iges.Entities
             ControlPoints = new List<IgesPoint>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             int index = 0;
             var k = Integer(parameters, index++); // upper index of sum
@@ -82,7 +82,7 @@ namespace IxMilia.Iges.Entities
             return index;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             var k = ControlPoints.Count - 1;
             var a = KnotValues.Count - 1;

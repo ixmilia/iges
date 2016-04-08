@@ -33,29 +33,24 @@ namespace IxMilia.Iges.Entities
             ScaleFactor = scaleFactor;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.Orientation = (IgesTemplateLineFontOrientation)Integer(parameters, 0);
-            SubEntityIndices.Add(Integer(parameters, 1));
+            binder.BindEntity(Integer(parameters, 1), e => Template = e as IgesSubfigureDefinition);
             this.CommonArcLength = Double(parameters, 2);
             this.ScaleFactor = Double(parameters, 3);
             return 4;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            Template = SubEntities[0] as IgesSubfigureDefinition;
+            yield return Template;
         }
 
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.Add(Template);
-        }
-
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add((int)Orientation);
-            parameters.Add(SubEntityIndices[0]);
+            parameters.Add(binder.GetEntityId(Template));
             parameters.Add(CommonArcLength);
             parameters.Add(ScaleFactor);
         }

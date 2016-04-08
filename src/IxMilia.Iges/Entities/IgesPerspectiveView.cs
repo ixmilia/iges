@@ -66,9 +66,9 @@ namespace IxMilia.Iges.Entities
         public double ClippingWindowBackCoordinate { get; set; }
         public double ClippingWindowFrontCoordinate { get; set; }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            var nextIndex = base.ReadParameters(parameters);
+            var nextIndex = base.ReadParameters(parameters, binder);
             this.ViewPlaneNormal.X = Double(parameters, nextIndex);
             this.ViewPlaneNormal.Y = Double(parameters, nextIndex + 1);
             this.ViewPlaneNormal.Z = Double(parameters, nextIndex + 2);
@@ -92,9 +92,9 @@ namespace IxMilia.Iges.Entities
             return nextIndex + 20;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            base.WriteParameters(parameters);
+            base.WriteParameters(parameters, binder);
             parameters.Add(ViewPlaneNormal.X);
             parameters.Add(ViewPlaneNormal.Y);
             parameters.Add(ViewPlaneNormal.Z);

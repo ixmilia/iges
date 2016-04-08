@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace IxMilia.Iges.Entities
@@ -26,37 +25,30 @@ namespace IxMilia.Iges.Entities
             Entities = new List<IgesEntity>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.Depth = Integer(parameters, 0);
             this.Name = String(parameters, 1);
             var entityCount = Integer(parameters, 2);
             for (int i = 0; i < entityCount; i++)
             {
-                this.SubEntityIndices.Add(Integer(parameters, i + 3));
+                binder.BindEntity(Integer(parameters, i + 3), e => Entities.Add(e));
             }
 
             return entityCount + 3;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Definition);
-            Entities.Clear();
-            Entities.AddRange(SubEntities);
+            return Entities;
         }
 
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.AddRange(Entities);
-        }
-
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(this.Depth);
             parameters.Add(this.Name);
             parameters.Add(this.Entities.Count);
-            parameters.AddRange(this.SubEntityIndices.Cast<object>());
+            parameters.AddRange(Entities.Select(binder.GetEntityId).Cast<object>());
         }
     }
 }

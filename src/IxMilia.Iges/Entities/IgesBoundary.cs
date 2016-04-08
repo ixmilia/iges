@@ -1,6 +1,7 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace IxMilia.Iges.Entities
 {
@@ -12,7 +13,7 @@ namespace IxMilia.Iges.Entities
         EqualPreference = 3
     }
 
-    public class IgesBounaryItem
+    public class IgesBoundaryItem
     {
         public IgesEntity Entity { get; set; }
         public bool IsReversed { get; set; }
@@ -20,7 +21,12 @@ namespace IxMilia.Iges.Entities
 
         internal int AssociatedParameterCurvesCount = 0;
 
-        public IgesBounaryItem(IgesEntity entity, bool isReversed, IEnumerable<IgesEntity> associatedParameterCurves)
+        internal IgesBoundaryItem()
+        {
+            AssociatedParameterCurves = new List<IgesEntity>();
+        }
+
+        public IgesBoundaryItem(IgesEntity entity, bool isReversed, IEnumerable<IgesEntity> associatedParameterCurves)
         {
             Entity = entity;
             IsReversed = isReversed;
@@ -35,7 +41,7 @@ namespace IxMilia.Iges.Entities
         public bool IsBounaryParametric { get; set; }
         public IgesTrimCurvePreference TrimCurvePreference { get; set; }
         public IgesEntity Entity { get; set; }
-        public List<IgesBounaryItem> BoundaryItems { get; private set; }
+        public List<IgesBoundaryItem> BoundaryItems { get; private set; }
 
         private int _curveCount = 0;
 
@@ -45,75 +51,58 @@ namespace IxMilia.Iges.Entities
             IsBounaryParametric = false;
             TrimCurvePreference = IgesTrimCurvePreference.Unspecified;
             Entity = null;
-            BoundaryItems = new List<IgesBounaryItem>();
+            BoundaryItems = new List<IgesBoundaryItem>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             var index = 0;
             this.IsBounaryParametric = Boolean(parameters, index++);
             this.TrimCurvePreference = (IgesTrimCurvePreference)Integer(parameters, index++);
-            SubEntityIndices.Add(Integer(parameters, index++));
+            binder.BindEntity(Integer(parameters, index++), e => Entity = e);
             _curveCount = Integer(parameters, index++);
             for (int i = 0; i < _curveCount; i++)
             {
-                SubEntityIndices.Add(Integer(parameters, index++));
-                var isReversed = Integer(parameters, index++) == 2;
+                var boundaryItem = new IgesBoundaryItem();
+                binder.BindEntity(Integer(parameters, index++), e => boundaryItem.Entity = e);
+                boundaryItem.IsReversed = Integer(parameters, index++) == 2;
                 var associatedParameterCurvesCount = Integer(parameters, index++);
                 for (int j = 0; j < associatedParameterCurvesCount; j++)
                 {
-                    SubEntityIndices.Add(Integer(parameters, index++));
+                    binder.BindEntity(Integer(parameters, index++), e => boundaryItem.AssociatedParameterCurves.Add(e));
                 }
 
-                BoundaryItems.Add(new IgesBounaryItem(null, isReversed, new IgesEntity[0]) { AssociatedParameterCurvesCount = associatedParameterCurvesCount });
+                BoundaryItems.Add(boundaryItem);
             }
 
             return index;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            int index = 0;
-            Entity = SubEntities[index++];
-            for (int i = 0; i < _curveCount; i++)
-            {
-                BoundaryItems[i].Entity = SubEntities[index++];
-                for (int j = 0; j < BoundaryItems[i].AssociatedParameterCurvesCount; j++)
-                {
-                    BoundaryItems[i].AssociatedParameterCurves.Add(SubEntities[index++]);
-                }
-            }
-        }
-
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.Add(Entity);
+            yield return Entity;
             foreach (var boundaryItem in BoundaryItems)
             {
-                SubEntities.Add(boundaryItem.Entity);
-                foreach (var parameterCurve in boundaryItem.AssociatedParameterCurves)
+                yield return boundaryItem.Entity;
+                foreach (var associated in boundaryItem.AssociatedParameterCurves)
                 {
-                    SubEntities.Add(parameterCurve);
+                    yield return associated;
                 }
             }
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            int index = 0;
             parameters.Add(IsBounaryParametric);
             parameters.Add((int)TrimCurvePreference);
-            parameters.Add(SubEntityIndices[index++]);
+            parameters.Add(binder.GetEntityId(Entity));
             parameters.Add(BoundaryItems.Count);
             foreach (var boundaryItem in BoundaryItems)
             {
-                parameters.Add(SubEntityIndices[index++]);
+                parameters.Add(binder.GetEntityId(boundaryItem.Entity));
                 parameters.Add(boundaryItem.IsReversed);
                 parameters.Add(boundaryItem.AssociatedParameterCurves.Count);
-                foreach (var parameterCurve in boundaryItem.AssociatedParameterCurves)
-                {
-                    parameters.Add(SubEntities[index++]);
-                }
+                parameters.AddRange(boundaryItem.AssociatedParameterCurves.Select(binder.GetEntityId).Cast<object>());
             }
         }
     }

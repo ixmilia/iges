@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -12,6 +11,10 @@ namespace IxMilia.Iges.Entities
         public IgesLeader Leader { get; set; }
         public int Level { get; set; }
         public IgesEntity Label { get; set; }
+
+        internal IgesLabelPlacement()
+        {
+        }
 
         public IgesLabelPlacement(IgesViewBase view, IgesPoint location, IgesLeader leader, int level, IgesEntity label)
         {
@@ -25,9 +28,6 @@ namespace IxMilia.Iges.Entities
 
     public class IgesLabelDisplayAssociativity : IgesAssociativity
     {
-        private List<IgesPoint> _labelLocations;
-        private List<int> _labelLevels;
-
         public List<IgesLabelPlacement> LabelPlacements { get; private set; }
         public IgesEntity AssociatedEntity { get; internal set; }
 
@@ -35,94 +35,53 @@ namespace IxMilia.Iges.Entities
             : base()
         {
             FormNumber = 5;
-            _labelLocations = new List<IgesPoint>();
-            _labelLevels = new List<int>();
             LabelPlacements = new List<IgesLabelPlacement>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             int index = 0;
             var labelPlacementCount = Integer(parameters, index++);
             for (int i = 0; i < labelPlacementCount; i++)
             {
-                SubEntityIndices.Add(Integer(parameters, index++)); // pointer to view
+                var labelPlacement = new IgesLabelPlacement();
+                binder.BindEntity(Integer(parameters, index++), e => labelPlacement.View = e as IgesViewBase);
                 var x = Double(parameters, index++);
                 var y = Double(parameters, index++);
                 var z = Double(parameters, index++);
-                _labelLocations.Add(new IgesPoint(x, y, z));
-                SubEntityIndices.Add(Integer(parameters, index++)); // pointer to leader
-                _labelLevels.Add(Integer(parameters, index++));
-                SubEntityIndices.Add(Integer(parameters, index++)); // pointer to entity
+                labelPlacement.Location = new IgesPoint(x, y, z);
+                binder.BindEntity(Integer(parameters, index++), e => labelPlacement.Leader = e as IgesLeader);
+                labelPlacement.Level = Integer(parameters, index++);
+                binder.BindEntity(Integer(parameters, index++), e => labelPlacement.Label = e);
+                LabelPlacements.Add(labelPlacement);
             }
 
             return index;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            base.OnAfterRead(directoryData);
-            AssertCollections();
-            LabelPlacements.Clear();
-            for (int i = 0; i < _labelLocations.Count; i++)
+            foreach (var labelPlacement in LabelPlacements)
             {
-                LabelPlacements.Add(
-                    new IgesLabelPlacement(
-                        SubEntities[i * 3] as IgesViewBase,
-                        _labelLocations[i],
-                        SubEntities[i * 3 + 1] as IgesLeader,
-                        _labelLevels[i],
-                        SubEntities[i * 3 + 2]));
-            }
-
-            _labelLevels.Clear();
-            _labelLocations.Clear();
-        }
-
-        internal override void OnBeforeWrite()
-        {
-            _labelLocations.Clear();
-            _labelLevels.Clear();
-            for (int i = 0; i < LabelPlacements.Count; i++)
-            {
-                SubEntities.Add(LabelPlacements[i].View);
-                _labelLocations.Add(LabelPlacements[i].Location);
-                SubEntities.Add(LabelPlacements[i].Leader);
-                _labelLevels.Add(LabelPlacements[i].Level);
-                SubEntities.Add(LabelPlacements[i].Label);
+                yield return labelPlacement.View;
+                yield return labelPlacement.Leader;
+                yield return labelPlacement.Label;
             }
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            AssertCollections();
-            parameters.Add(_labelLocations.Count);
-            for (int i = 0; i < _labelLocations.Count; i++)
+            parameters.Add(LabelPlacements.Count);
+            foreach (var labelPlacement in LabelPlacements)
             {
-                parameters.Add(SubEntityIndices[i * 3]); // pointer to view
-                parameters.Add(_labelLocations[i].X);
-                parameters.Add(_labelLocations[i].Y);
-                parameters.Add(_labelLocations[i].Z);
-                parameters.Add(SubEntityIndices[i * 3 + 1]); // pointer to leader
-                parameters.Add(_labelLevels[i]);
-                parameters.Add(SubEntityIndices[i * 3 + 2]); // pointer to entity
+                parameters.Add(binder.GetEntityId(labelPlacement.View));
+                parameters.Add(labelPlacement.Location.X);
+                parameters.Add(labelPlacement.Location.Y);
+                parameters.Add(labelPlacement.Location.Z);
+                parameters.Add(binder.GetEntityId(labelPlacement.Leader));
+                parameters.Add(labelPlacement.Level);
+                parameters.Add(binder.GetEntityId(labelPlacement.Label));
             }
-        }
-
-        internal override void UnMarkEntitiesForTrimming(HashSet<int> entitiesToTrim)
-        {
-            base.UnMarkEntitiesForTrimming(entitiesToTrim);
-            for (int i = 0; i < _labelLocations.Count; i++)
-            {
-                // don't trim the actual entity
-                entitiesToTrim.Remove(SubEntityIndices[i * 3 + 2]);
-            }
-        }
-
-        private void AssertCollections()
-        {
-            Debug.Assert(_labelLocations.Count == _labelLevels.Count);
-            Debug.Assert(_labelLocations.Count * 3 == SubEntityIndices.Count);
         }
     }
 }

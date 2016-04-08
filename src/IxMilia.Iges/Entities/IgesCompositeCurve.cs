@@ -18,32 +18,26 @@ namespace IxMilia.Iges.Entities
             Entities = new List<IgesEntity>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             var entityCount = Integer(parameters, 0);
             for (int i = 0; i < entityCount; i++)
             {
-                this.SubEntityIndices.Add(Integer(parameters, i + 1));
+                binder.BindEntity(Integer(parameters, i + 1), e => Entities.Add(e));
             }
 
             return entityCount + 1;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            Entities.Clear();
-            Entities.AddRange(SubEntities);
+            return Entities;
         }
 
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.AddRange(Entities);
-        }
-
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(this.Entities.Count);
-            parameters.AddRange(this.SubEntityIndices.Cast<object>());
+            parameters.AddRange(Entities.Select(binder.GetEntityId).Cast<object>());
         }
     }
 }

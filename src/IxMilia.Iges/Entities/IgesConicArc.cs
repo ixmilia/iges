@@ -78,7 +78,7 @@ namespace IxMilia.Iges.Entities
             }
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.CoefficientA = Double(parameters, 0);
             this.CoefficientB = Double(parameters, 1);
@@ -96,7 +96,7 @@ namespace IxMilia.Iges.Entities
             return 11;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(CoefficientA);
             parameters.Add(CoefficientB);
@@ -109,12 +109,6 @@ namespace IxMilia.Iges.Entities
             parameters.Add(StartPoint.Y);
             parameters.Add(EndPoint.X);
             parameters.Add(EndPoint.Y);
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            base.OnAfterRead(directoryData);
-            Debug.Assert(FormNumber == (int)ArcType);
         }
 
         internal override void OnBeforeWrite()

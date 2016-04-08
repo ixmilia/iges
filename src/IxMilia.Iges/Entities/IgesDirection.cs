@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -29,7 +28,7 @@ namespace IxMilia.Iges.Entities
             this.Z = z;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.X = Double(parameters, 0);
             this.Y = Double(parameters, 1);
@@ -37,19 +36,11 @@ namespace IxMilia.Iges.Entities
             return 3;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(this.X);
             parameters.Add(this.Y);
             parameters.Add(this.Z);
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            Debug.Assert(directoryData.TransformationMatrixPointer == 0);
-            Debug.Assert(FormNumber == 0);
-            Debug.Assert(SubordinateEntitySwitchType == IgesSubordinateEntitySwitchType.PhysicallyDependent);
-            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Definition);
         }
     }
 }

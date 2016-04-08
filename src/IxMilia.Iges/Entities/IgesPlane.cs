@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace IxMilia.Iges.Entities
 {
@@ -51,7 +50,7 @@ namespace IxMilia.Iges.Entities
             return (PlaneCoefficientA * point.X) + (PlaneCoefficientB * point.Y) + (PlaneCoefficientC * point.Z) == PlaneCoefficientD;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.PlaneCoefficientA = Double(parameters, 0);
             this.PlaneCoefficientB = Double(parameters, 1);
@@ -63,7 +62,7 @@ namespace IxMilia.Iges.Entities
             Debug.Assert((FormNumber == 0 && closedCurvePointer == 0) || (FormNumber != 0 && closedCurvePointer != 0), "Form 0 should have no pointer, form (+/-)1 should");
             if (closedCurvePointer != 0)
             {
-                SubEntityIndices.Add(closedCurvePointer);
+                binder.BindEntity(closedCurvePointer, e => ClosedCurveBoundingEntity = e);
             }
 
             this.DisplaySymbolLocation.X = Double(parameters, 5);
@@ -74,23 +73,18 @@ namespace IxMilia.Iges.Entities
             return 9;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            this.ClosedCurveBoundingEntity = SubEntities.Count > 0 ? SubEntities[0] : null;
+            yield return ClosedCurveBoundingEntity;
         }
 
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.Add(ClosedCurveBoundingEntity);
-        }
-
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(PlaneCoefficientA);
             parameters.Add(PlaneCoefficientB);
             parameters.Add(PlaneCoefficientC);
             parameters.Add(PlaneCoefficientD);
-            parameters.Add(SubEntityIndices[0]);
+            parameters.Add(binder.GetEntityId(ClosedCurveBoundingEntity));
             parameters.Add(DisplaySymbolLocation.X);
             parameters.Add(DisplaySymbolLocation.Y);
             parameters.Add(DisplaySymbolLocation.Z);

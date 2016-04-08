@@ -14,42 +14,38 @@ namespace IxMilia.Iges.Entities
         public List<IgesEntity> BoundaryEntities { get; private set; }
         public IgesEntity OuterBoundary { get; set; }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             int index = 0;
-            SubEntityIndices.Add(Integer(parameters, index++)); // Surface
+            binder.BindEntity(Integer(parameters, index++), e => Surface = e);
             IsOuterBoundaryD = !Boolean(parameters, index++);
             var boundaryEntityCount = Integer(parameters, index++);
-            SubEntityIndices.Add(Integer(parameters, index++)); // OuterBoundary
+            binder.BindEntity(Integer(parameters, index++), e => OuterBoundary = e);
             for (int i = 0; i < boundaryEntityCount; i++)
             {
-                SubEntityIndices.Add(Integer(parameters, index++));
+                binder.BindEntity(Integer(parameters, index++), e => BoundaryEntities.Add(e));
             }
 
             return index;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            Surface = SubEntities[0];
-            OuterBoundary = SubEntities[1];
-            BoundaryEntities.AddRange(SubEntities.Skip(2));
+            yield return Surface;
+            yield return OuterBoundary;
+            foreach (var boundary in BoundaryEntities)
+            {
+                yield return boundary;
+            }
         }
 
-        internal override void OnBeforeWrite()
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            SubEntities.Add(Surface);
-            SubEntities.Add(OuterBoundary);
-            SubEntities.AddRange(BoundaryEntities);
-        }
-
-        protected override void WriteParameters(List<object> parameters)
-        {
-            parameters.Add(SubEntityIndices[0]); // Surface
+            parameters.Add(binder.GetEntityId(Surface));
             parameters.Add(!IsOuterBoundaryD);
             parameters.Add(BoundaryEntities.Count);
-            parameters.Add(SubEntityIndices[1]); // OuterBoundary
-            parameters.AddRange(SubEntityIndices.Skip(2).Cast<object>());
+            parameters.Add(binder.GetEntityId(OuterBoundary));
+            parameters.AddRange(BoundaryEntities.Select(binder.GetEntityId).Cast<object>());
         }
     }
 }

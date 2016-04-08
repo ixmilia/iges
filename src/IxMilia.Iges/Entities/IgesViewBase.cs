@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -21,22 +20,17 @@ namespace IxMilia.Iges.Entities
             this.ScaleFactor = scaleFactor;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.ViewNumber = Integer(parameters, 0);
             this.ScaleFactor = Double(parameters, 1);
             return 2;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(ViewNumber);
             parameters.Add(ScaleFactor);
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Annotation);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using IxMilia.Iges.Entities;
@@ -23,10 +24,15 @@ namespace IxMilia.Iges.Test
             }
         }
 
-        internal static IgesEntity ParseSingleEntity(string content)
+        internal static List<IgesEntity> ParseEntities(string content)
         {
             var file = CreateFile(content);
-            return file.Entities.Single();
+            return file.Entities;
+        }
+
+        internal static IgesEntity ParseLastEntity(string content)
+        {
+            return ParseEntities(content).Last();
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
@@ -206,14 +212,14 @@ S      0G      0D      0P      0                                        T      1
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadStructureFromEntityTest()
         {
-            var line = (IgesLine)ParseSingleEntity(@"
+            var line = (IgesLine)ParseEntities(@"
      110       1      -3       0       0                               0D      1
      110       0       0       1       0                                D      2
      110       2       0       0       0                               0D      3
      110       0       0       1       0                                D      4
 110,11,22,33,44,55,66;                                                 1P      1
 110,77,88,99,10,20,30;                                                 3P      2
-");
+").First();
             Assert.Equal(new IgesPoint(11, 22, 33), line.P1);
             var structure = (IgesLine)line.StructureEntity;
             Assert.Equal(new IgesPoint(77, 88, 99), structure.P1);
@@ -227,7 +233,7 @@ S      0G      0D      0P      0                                        T      1
             Assert.Equal(IgesLineFontPattern.Default, line.LineFont);
 
             // read enumerated value
-            line = (IgesLine)ParseSingleEntity(@"
+            line = (IgesLine)ParseLastEntity(@"
      110       1       0       3       0                        00000000D      1
      110       0       0       1       0                                D      2
 110,0.,0.,0.,0.,0.,0.;                                                 1P      1
@@ -235,7 +241,7 @@ S      0G      0D      0P      0                                        T      1
             Assert.Equal(IgesLineFontPattern.Phantom, line.LineFont);
 
             // read custom value
-            line = (IgesLine)ParseSingleEntity(@"
+            line = (IgesLine)ParseLastEntity(@"
      304       1       0       0       0                        00000200D      1
      304       0       0       1       2                                D      2
      110       2       0      -1       0                        00000000D      3
@@ -251,7 +257,7 @@ S      0G      0D      0P      0                                        T      1
         public void ReadLineWithLevelsTest()
         {
             // single specified value
-            var line = (IgesLine)ParseSingleEntity(@"
+            var line = (IgesLine)ParseLastEntity(@"
      110       1       0       0      13                        00000000D      1
      110       0       0       1       0                                D      2
 110,0.,0.,0.,0.,0.,0.;                                                 1P      1
@@ -259,7 +265,7 @@ S      0G      0D      0P      0                                        T      1
             Assert.Equal(13, line.Levels.Single());
 
             // multiple values
-            line = (IgesLine)ParseSingleEntity(@"
+            line = (IgesLine)ParseLastEntity(@"
      406       1       0       0       0                        00000000D      1
      406       0       0       1       1                                D      2
      110       2       0       0      -1                        00000000D      3
@@ -276,7 +282,7 @@ S      0G      0D      0P      0                                        T      1
         public void ReadLineWithAssociatedLabelDisplayTest()
         {
             // specified pointer
-            var line = (IgesLine)ParseSingleEntity(@"
+            var line = (IgesLine)ParseLastEntity(@"
      410       1       0       0       0                        00000100D      1
      410       0       0       2       1                                D      2
      214       3       0       0       0                        00000100D      3
@@ -302,7 +308,7 @@ S      0G      0D      0P      0                                        T      1
             Assert.IsType<IgesLocation>(placement.Label);
 
             // no label display pointer
-            line = (IgesLine)ParseSingleEntity(@"
+            line = (IgesLine)ParseLastEntity(@"
      110       1       0       0       0                        00000000D      1
      110       0       0       1       0                                D      2
 110,0.,0.,0.,0.,0.,0.;                                                 1P      1
@@ -313,7 +319,7 @@ S      0G      0D      0P      0                                        T      1
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadLineWithEntityLabelAndSubscriptTest()
         {
-            var line = (IgesLine)ParseSingleEntity(@"
+            var line = (IgesLine)ParseLastEntity(@"
      110       1       0       0       0                        00000000D      1
      110       0       0       1       0                abcdefgh      15D      2
 110,0.,0.,0.,0.,0.,0.;                                                 1P      1
@@ -325,7 +331,7 @@ S      0G      0D      0P      0                                        T      1
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadCommentFromEntityTest()
         {
-            var line = (IgesLine)ParseSingleEntity(@"
+            var line = (IgesLine)ParseLastEntity(@"
      110       1       0       0       0                        00000000D      1
      110       0       0       3       0                                D      2
 110,0.,0.,0.,0.,0.,0.;This is a really long comment that should        1P      1
@@ -334,7 +340,7 @@ also contains things that look like 7Hstrings and records;             1P      3
 ");
             Assert.Equal("This is a really long comment that should be ignored.\nIt also contains things that look like fields, and also contains things that look like 7Hstrings and records;", line.Comment);
 
-            line = (IgesLine)ParseSingleEntity(@"
+            line = (IgesLine)ParseLastEntity(@"
      110       1       0       0       0                        00000000D      1
      110       0       0       1       0                                D      2
 110,0.,0.,0.,0.,0.,0.;                                                  P      1
@@ -346,7 +352,7 @@ also contains things that look like 7Hstrings and records;             1P      3
         public void ReadViewFromEntityTest()
         {
             // read view
-            var line = (IgesLine)ParseSingleEntity(@"
+            var line = (IgesLine)ParseLastEntity(@"
      410       1       0       0       0                        00000100D      1
      410       0       0       1       0                                D      2
      110       2       0       0       0       1                00000000D      3
@@ -357,7 +363,7 @@ also contains things that look like 7Hstrings and records;             1P      3
             Assert.Equal(2.0, line.View.ScaleFactor);
 
             // ensure null view if not specified
-            line = (IgesLine)ParseSingleEntity(@"
+            line = (IgesLine)ParseLastEntity(@"
      110       1       0       0       0                        00000000D      1
      110       0       0       1       0                                D      2
 110,0.,0.,0.,0.,0.,0.;                                                 1P      1
@@ -368,7 +374,7 @@ also contains things that look like 7Hstrings and records;             1P      3
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadLineWeightFromEntityTest()
         {
-            var line = (IgesLine)ParseSingleEntity(@"
+            var line = (IgesLine)ParseLastEntity(@"
      110       1       0       0       0                        00000000D      1
      110      42       0       1       0                                D      2
 110,0.,0.,0.,0.,0.,0.;                                                 1P      1
@@ -379,7 +385,7 @@ also contains things that look like 7Hstrings and records;             1P      3
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadTransformationMatrixFromEntityTest()
         {
-            var line = (IgesLine)ParseSingleEntity(@"
+            var line = (IgesLine)ParseLastEntity(@"
      124       1       0       0       0                               0D      1
      124       0       0       1       0                               0D      2
      110       2       0       0       0               1               0D      3

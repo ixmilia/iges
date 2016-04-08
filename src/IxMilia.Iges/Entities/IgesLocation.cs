@@ -26,7 +26,7 @@ namespace IxMilia.Iges.Entities
             this.Z = z;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.X = Double(parameters, 0);
             this.Y = Double(parameters, 1);
@@ -34,7 +34,7 @@ namespace IxMilia.Iges.Entities
             return 3;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(this.X);
             parameters.Add(this.Y);

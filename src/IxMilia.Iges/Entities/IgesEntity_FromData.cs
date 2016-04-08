@@ -6,7 +6,7 @@ namespace IxMilia.Iges.Entities
 {
     public abstract partial class IgesEntity
     {
-        internal static IgesEntity FromData(IgesDirectoryData directoryData, List<string> parameters)
+        internal static IgesEntity FromData(IgesDirectoryData directoryData, List<string> parameters, IgesReaderBinder binder)
         {
             IgesEntity entity = null;
             switch (directoryData.EntityType)
@@ -186,8 +186,8 @@ namespace IxMilia.Iges.Entities
             if (entity != null)
             {
                 entity.PopulateDirectoryData(directoryData);
-                int nextIndex = entity.ReadParameters(parameters);
-                entity.ReadCommonPointers(parameters, nextIndex);
+                int nextIndex = entity.ReadParameters(parameters, binder);
+                entity.ReadCommonPointers(parameters, nextIndex, binder);
             }
 
             return entity;

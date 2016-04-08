@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -46,7 +45,7 @@ namespace IxMilia.Iges.Entities
             LineSegments = new List<IgesPoint>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             var index = 0;
             var segmentCount = Integer(parameters, index++);
@@ -66,7 +65,7 @@ namespace IxMilia.Iges.Entities
             return segmentCount * 2 + 6;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(LineSegments.Count);
             parameters.Add(ArrowHeight);
@@ -79,12 +78,6 @@ namespace IxMilia.Iges.Entities
                 parameters.Add(p.X);
                 parameters.Add(p.Y);
             }
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            base.OnAfterRead(directoryData);
-            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Annotation);
         }
     }
 }

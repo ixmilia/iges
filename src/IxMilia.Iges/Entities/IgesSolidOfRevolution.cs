@@ -32,9 +32,9 @@ namespace IxMilia.Iges.Entities
             AxisDirection = IgesVector.ZAxis;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            SubEntityIndices.Add(Integer(parameters, 0));
+            binder.BindEntity(Integer(parameters, 0), e => Curve = e);
             RevolutionAmount = Double(parameters, 1);
             PointOnAxis.X = Double(parameters, 2);
             PointOnAxis.Y = Double(parameters, 3);
@@ -45,19 +45,14 @@ namespace IxMilia.Iges.Entities
             return 8;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            Curve = SubEntities[0];
+            yield return Curve;
         }
 
-        internal override void OnBeforeWrite()
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            SubEntities.Add(Curve);
-        }
-
-        protected override void WriteParameters(List<object> parameters)
-        {
-            parameters.Add(SubEntityIndices[0]);
+            parameters.Add(binder.GetEntityId(Curve));
             parameters.Add(RevolutionAmount);
             parameters.Add(PointOnAxis?.X ?? 0.0);
             parameters.Add(PointOnAxis?.Y ?? 0.0);

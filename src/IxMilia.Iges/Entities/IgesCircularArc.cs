@@ -59,7 +59,7 @@ namespace IxMilia.Iges.Entities
             this.EndPoint = new IgesPoint(end.X, end.Y, 0.0);
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.PlaneDisplacement = Double(parameters, 0);
             this.Center.X = Double(parameters, 1);
@@ -71,7 +71,7 @@ namespace IxMilia.Iges.Entities
             return 7;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(this.PlaneDisplacement);
             parameters.Add(this.Center.X);

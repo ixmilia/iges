@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -41,19 +40,18 @@ namespace IxMilia.Iges.Entities
             LocationOrOffset = IgesVector.Zero;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.CharacterBoxWidth = Double(parameters, 0);
             this.CharacterBoxHeight = Double(parameters, 1);
             var fontCode = Integer(parameters, 2);
             if (fontCode < 0)
             {
-                SubEntityIndices.Add(-fontCode);
+                binder.BindEntity(-fontCode, e => TextFontDefinition = e as IgesTextFontDefinition);
                 this.FontCode = 0;
             }
             else
             {
-                SubEntityIndices.Add(0);
                 this.FontCode = fontCode;
             }
 
@@ -67,21 +65,12 @@ namespace IxMilia.Iges.Entities
             return 10;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            base.OnAfterRead(directoryData);
-            Debug.Assert(SubordinateEntitySwitchType == IgesSubordinateEntitySwitchType.Independent);
-            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Definition);
-            Debug.Assert(Hierarchy == IgesHierarchy.GlobalTopDown);
-            TextFontDefinition = SubEntities[0] as IgesTextFontDefinition;
+            yield return TextFontDefinition;
         }
 
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.Add(TextFontDefinition);
-        }
-
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(CharacterBoxWidth);
             parameters.Add(CharacterBoxHeight);
@@ -91,7 +80,7 @@ namespace IxMilia.Iges.Entities
             }
             else
             {
-                parameters.Add(-SubEntityIndices[0]);
+                parameters.Add(-binder.GetEntityId(TextFontDefinition));
             }
 
             parameters.Add(SlantAngle);

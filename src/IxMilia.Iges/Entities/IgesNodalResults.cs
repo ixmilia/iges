@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace IxMilia.Iges.Entities
 {
@@ -33,12 +32,12 @@ namespace IxMilia.Iges.Entities
         public DateTime AnalysisTime { get; set; }
         public List<IgesNodalResult> Results { get; } = new List<IgesNodalResult>();
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             Results.Clear();
 
             int index = 0;
-            SubEntityIndices.Add(Integer(parameters, index++));
+            binder.BindEntity(Integer(parameters, index++), e => GeneralNote = e as IgesGeneralNote);
             AnalysisSubcase = Integer(parameters, index++);
             AnalysisTime = DateTime(parameters, index++);
             var valueCount = Integer(parameters, index++);
@@ -47,7 +46,7 @@ namespace IxMilia.Iges.Entities
             {
                 var result = new IgesNodalResult();
                 int nodeNumber = Integer(parameters, index++); // not used
-                SubEntityIndices.Add(Integer(parameters, index++));
+                binder.BindEntity(Integer(parameters, index++), e => result.Node = e as IgesNode);
                 for (int j = 0; j < valueCount; j++)
                 {
                     result.Values.Add(Double(parameters, index++));
@@ -59,24 +58,18 @@ namespace IxMilia.Iges.Entities
             return index;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            GeneralNote = SubEntities[0] as IgesGeneralNote;
-            for (int i = 0; i < Results.Count; i++)
+            yield return GeneralNote;
+            foreach (var result in Results)
             {
-                Results[i].Node = SubEntities[i + 1] as IgesNode;
+                yield return result.Node;
             }
         }
 
-        internal override void OnBeforeWrite()
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            SubEntities.Add(GeneralNote);
-            SubEntities.AddRange(Results.Select(r => r.Node));
-        }
-
-        protected override void WriteParameters(List<object> parameters)
-        {
-            parameters.Add(SubEntityIndices[0]);
+            parameters.Add(binder.GetEntityId(GeneralNote));
             parameters.Add(AnalysisSubcase);
             parameters.Add(IgesFileWriter.ParameterToString(AnalysisTime));
             parameters.Add(ExpectedValueCount);
@@ -84,7 +77,7 @@ namespace IxMilia.Iges.Entities
             for (int i = 0; i < Results.Count; i++)
             {
                 parameters.Add(i); // node number
-                parameters.Add(SubEntityIndices[i + 1]); // node pointer
+                parameters.Add(binder.GetEntityId(Results[i].Node)); // node pointer
                 foreach (var value in Results[i].Values)
                 {
                     parameters.Add(value);

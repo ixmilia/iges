@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -26,7 +25,7 @@ namespace IxMilia.Iges.Entities
             this.Center = center;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.Radius = Double(parameters, 0);
             this.Center.X = Double(parameters, 1);
@@ -35,7 +34,7 @@ namespace IxMilia.Iges.Entities
             return 4;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(this.Radius);
             if (Center != IgesPoint.Origin)
@@ -44,11 +43,6 @@ namespace IxMilia.Iges.Entities
                 parameters.Add(this.Center.Y);
                 parameters.Add(this.Center.Z);
             }
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Geometry);
         }
     }
 }

@@ -75,7 +75,7 @@ namespace IxMilia.Iges.Entities
             VBreakpoints = new List<double>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             int index = 0;
             this.SplineType = (IgesSplineType)Integer(parameters, index++);
@@ -156,7 +156,7 @@ namespace IxMilia.Iges.Entities
             return index;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add((int)SplineType);
             parameters.Add(IsCartesianProduct);

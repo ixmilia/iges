@@ -1,6 +1,5 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,6 +22,8 @@ namespace IxMilia.Iges.Entities
 
             public char RecordDelimiter { get; private set; }
 
+            public IgesWriterBinder WriterBinder { get; private set; }
+
             private Dictionary<HashSet<int>, int> _levelsPointers;
 
             public WriterState(Dictionary<IgesEntity, int> entityMap, List<string> directoryLines, List<string> parameterLines, char fieldDelimiter, char recordDelimiter)
@@ -32,18 +33,33 @@ namespace IxMilia.Iges.Entities
                 ParameterLines = parameterLines;
                 FieldDelimiter = fieldDelimiter;
                 RecordDelimiter = recordDelimiter;
+                WriterBinder = new IgesWriterBinder(entityMap);
                 _levelsPointers = new Dictionary<HashSet<int>, int>(new HashSetComparer());
             }
 
             public int GetOrWriteEntityIndex(IgesEntity entity)
             {
-                if (!EntityMap.ContainsKey(entity))
+                if (entity == null)
                 {
-                    return entity.AddDirectoryAndParameterLines(this);
+                    return 0;
+                }
+                else if (!EntityMap.ContainsKey(entity))
+                {
+                    var index = entity.AddDirectoryAndParameterLines(this);
+                    EntityMap[entity] = index;
+                    return index;
                 }
                 else
                 {
                     return EntityMap[entity];
+                }
+            }
+
+            public void ReportReferencedEntities(IEnumerable<IgesEntity> entities)
+            {
+                foreach (var entity in entities)
+                {
+                    GetOrWriteEntityIndex(entity);
                 }
             }
 

@@ -134,32 +134,21 @@ namespace IxMilia.Iges.Entities
             }
         }
         
-        protected internal List<int> SubEntityIndices { get; private set; }
 
         private int _viewPointer;
         private int _transformationMatrixPointer;
-        protected internal List<IgesEntity> SubEntities { get; private set; }
 
-        private List<int> _associatedEntityIndices;
-        public AssociatedEntityCollection AssociatedEntities { get; private set; }
-
-        private List<int> _propertyIndices;
-        public List<IgesEntity> Properties { get; private set; } // should this collection be restricted like AssociatedEntities?
+        public List<IgesEntity> AssociatedEntities { get; }
+        public List<IgesEntity> Properties { get; }
 
         protected IgesEntity()
         {
-            SubEntities = new List<IgesEntity>();
-            SubEntityIndices = new List<int>();
-            AssociatedEntities = new AssociatedEntityCollection();
-            _associatedEntityIndices = new List<int>();
-            Properties = new List<IgesEntity>();
-            _propertyIndices = new List<int>();
             Levels = new HashSet<int>();
+            AssociatedEntities = new List<IgesEntity>();
+            Properties = new List<IgesEntity>();
         }
 
-        protected abstract int ReadParameters(List<string> parameters);
-
-        protected abstract void WriteParameters(List<object> parameters);
+        internal abstract int ReadParameters(List<string> parameters, IgesReaderBinder binder);
 
         internal virtual void OnAfterRead(IgesDirectoryData directoryData)
         {
@@ -167,6 +156,13 @@ namespace IxMilia.Iges.Entities
 
         internal virtual void OnBeforeWrite()
         {
+        }
+
+        internal abstract void WriteParameters(List<object> parameters, IgesWriterBinder binder);
+
+        internal virtual IEnumerable<IgesEntity> GetReferencedEntities()
+        {
+            yield break;
         }
 
         internal virtual void UnMarkEntitiesForTrimming(HashSet<int> entitiesToTrim)
@@ -178,22 +174,29 @@ namespace IxMilia.Iges.Entities
             return this;
         }
 
-        internal void ReadCommonPointers(List<string>parameters, int nextIndex)
+        internal void ReadCommonPointers(List<string>parameters, int nextIndex, IgesReaderBinder binder)
         {
             var associatedPointerCount = Integer(parameters, nextIndex++);
             for (int i = 0; i < associatedPointerCount; i++)
             {
-                _associatedEntityIndices.Add(Integer(parameters, nextIndex++));
+                binder.BindEntity(Integer(parameters, nextIndex++), e =>
+                {
+                    if (e != null)
+                    {
+                        Debug.Assert(e.EntityType == IgesEntityType.AssociativityInstance || e.EntityType == IgesEntityType.GeneralNote || e.EntityType == IgesEntityType.TextDisplayTemplate);
+                        AssociatedEntities.Add(e);
+                    }
+                });
             }
 
             var propertyPointerCount = Integer(parameters, nextIndex++);
             for (int i = 0; i < propertyPointerCount; i++)
             {
-                _propertyIndices.Add(Integer(parameters, nextIndex++));
+                binder.BindEntity(Integer(parameters, nextIndex++), e => Properties.Add(e));
             }
         }
 
-        internal void BindPointers(IgesDirectoryData dir, Dictionary<int, IgesEntity> entityMap, HashSet<int> entitiesToTrim)
+        internal void BindPointers(IgesDirectoryData dir, IgesReaderBinder binder)
         {
             if (EntityType == IgesEntityType.Null)
             {
@@ -204,44 +207,30 @@ namespace IxMilia.Iges.Entities
             // link to structure entities (field 3)
             if (_structurePointer < 0)
             {
-                StructureEntity = entityMap[-_structurePointer];
-                entitiesToTrim.Add(-_structurePointer);
+                binder.BindEntity(-_structurePointer, e => StructureEntity = e);
             }
 
             // line font definition (field 4)
             if (dir.LineFontPattern < 0)
             {
-                var custom = entityMap[-dir.LineFontPattern] as IgesLineFontDefinitionBase;
-                if (custom != null)
-                {
-                    CustomLineFont = custom;
-                    entitiesToTrim.Add(-dir.LineFontPattern);
-                }
-                else
-                {
-                    Debug.Assert(false, "line font pointer was not an IgesLineFontDefinitionBase");
-                    LineFont = IgesLineFontPattern.Default;
-                }
+                binder.BindEntity(-dir.LineFontPattern, e => CustomLineFont = e as IgesLineFontDefinitionBase);
             }
 
             // level (field 5)
             Levels.Clear();
             if (_levelsPointer < 0)
             {
-                var customLevels = entityMap[-_levelsPointer] as IgesDefinitionLevelsProperty;
-                if (customLevels != null)
+                binder.BindEntity(-_levelsPointer, e =>
                 {
-                    foreach (var customLevel in customLevels.DefinedLevels)
+                    var customLevels = e as IgesDefinitionLevelsProperty;
+                    if (customLevels != null)
                     {
-                        Levels.Add(customLevel);
+                        foreach (var customLevel in customLevels.DefinedLevels)
+                        {
+                            Levels.Add(customLevel);
+                        }
                     }
-
-                    entitiesToTrim.Add(-_levelsPointer);
-                }
-                else
-                {
-                    Debug.Assert(false, "level pointer was not an IgesDefinitionLevelsProperty");
-                }
+                });
             }
             else
             {
@@ -251,15 +240,13 @@ namespace IxMilia.Iges.Entities
             // populate view (field 6)
             if (_viewPointer > 0)
             {
-                View = entityMap[_viewPointer] as IgesViewBase;
-                entitiesToTrim.Add(_viewPointer);
+                binder.BindEntity(_viewPointer, e => View = e as IgesViewBase);
             }
 
             // populate transformation matrix (field 7)
             if (_transformationMatrixPointer > 0)
             {
-                TransformationMatrix = entityMap[_transformationMatrixPointer] as IgesTransformationMatrix;
-                entitiesToTrim.Add(_transformationMatrixPointer);
+                binder.BindEntity(_transformationMatrixPointer, e => TransformationMatrix = e as IgesTransformationMatrix);
             }
             else
             {
@@ -269,53 +256,14 @@ namespace IxMilia.Iges.Entities
             // label display (field 8)
             if (dir.LableDisplay > 0)
             {
-                var labelDisplay = entityMap[dir.LableDisplay] as IgesLabelDisplayAssociativity;
-                Debug.Assert(labelDisplay != null, "label display pointer was not an IgesLabelDisplayAssociativity");
-                LabelDisplay = labelDisplay;
-                entitiesToTrim.Add(dir.LableDisplay);
+                binder.BindEntity(dir.LableDisplay, e => LabelDisplay = e as IgesLabelDisplayAssociativity);
             }
 
             // link to custom colors (field 13)
             if (dir.Color < 0)
             {
-                var custom = entityMap[-dir.Color] as IgesColorDefinition;
-                if (custom != null)
-                {
-                    CustomColor = custom;
-                    entitiesToTrim.Add(-dir.Color);
-                }
-                else
-                {
-                    Debug.Assert(false, "color pointer was not an IgesColorDefinition");
-                    Color = IgesColorNumber.Default;
-                }
+                binder.BindEntity(-dir.Color, e => CustomColor = e as IgesColorDefinition);
             }
-
-            // link sub entities
-            SubEntities.Clear();
-            foreach (var pointer in SubEntityIndices)
-            {
-                if (entityMap.ContainsKey(pointer))
-                {
-                    SubEntities.Add(entityMap[pointer]);
-                    entitiesToTrim.Add(pointer);
-                }
-                else
-                {
-                    SubEntities.Add(null);
-                }
-            }
-
-            // link common pointers
-            AssociatedEntities.Clear();
-            foreach (var pointer in _associatedEntityIndices)
-            {
-                var entity = entityMap[pointer];
-                Debug.Assert(entity.EntityType == IgesEntityType.AssociativityInstance || entity.EntityType == IgesEntityType.GeneralNote || entity.EntityType == IgesEntityType.TextDisplayTemplate);
-                AssociatedEntities.Add(entity);
-            }
-
-            Properties = _propertyIndices.Select(pointer => entityMap[pointer]).ToList();
         }
 
         private string GetStatusNumber()
@@ -405,8 +353,8 @@ namespace IxMilia.Iges.Entities
 
         internal int AddDirectoryAndParameterLines(WriterState writerState)
         {
-            SubEntities.Clear();
             OnBeforeWrite();
+            writerState.ReportReferencedEntities(GetReferencedEntities());
 
             // write structure entity (field 3)
             if (StructureEntity != null)
@@ -480,52 +428,26 @@ namespace IxMilia.Iges.Entities
                 color = (int)Color;
             }
 
-            // write sub-entities
-            SubEntityIndices.Clear();
-            foreach (var subEntity in SubEntities)
-            {
-                var index = subEntity == null
-                    ? 0
-                    : writerState.GetOrWriteEntityIndex(subEntity);
-                SubEntityIndices.Add(index);
-            }
+            var parameters = new List<object>();
+            parameters.Add((int)EntityType);
+            this.WriteParameters(parameters, writerState.WriterBinder);
 
-            SubEntities.Clear();
-
-            // write common pointers
-            _associatedEntityIndices.Clear();
-            foreach (var assoc in AssociatedEntities)
+            if (AssociatedEntities.Any() || Properties.Any())
             {
-                var index = writerState.GetOrWriteEntityIndex(assoc);
-                _associatedEntityIndices.Add(index);
-            }
+                writerState.ReportReferencedEntities(AssociatedEntities);
+                writerState.ReportReferencedEntities(Properties);
+                parameters.Add(AssociatedEntities.Count);
+                parameters.AddRange(AssociatedEntities.Select(writerState.WriterBinder.GetEntityId).Cast<object>());
 
-            _propertyIndices.Clear();
-            foreach (var prop in Properties)
-            {
-                var index = writerState.GetOrWriteEntityIndex(prop);
-                _propertyIndices.Add(index);
+                if (Properties.Any())
+                {
+                    parameters.Add(Properties.Count);
+                    parameters.AddRange(Properties.Select(writerState.WriterBinder.GetEntityId).Cast<object>());
+                }
             }
 
             var nextDirectoryIndex = writerState.DirectoryLines.Count + 1;
             var nextParameterIndex = writerState.ParameterLines.Count + 1;
-            var parameters = new List<object>();
-            parameters.Add((int)EntityType);
-            this.WriteParameters(parameters);
-            SubEntityIndices.Clear();
-
-            if (_associatedEntityIndices.Any() || _propertyIndices.Any())
-            {
-                parameters.Add(_associatedEntityIndices.Count);
-                parameters.AddRange(_associatedEntityIndices.Cast<object>());
-
-                if (_propertyIndices.Any())
-                {
-                    parameters.Add(_propertyIndices.Count);
-                    parameters.AddRange(_propertyIndices.Cast<object>());
-                }
-            }
-
             this._lineCount = IgesFileWriter.AddParametersToStringList(parameters.ToArray(), writerState.ParameterLines, writerState.FieldDelimiter, writerState.RecordDelimiter,
                 lineSuffix: string.Format(" {0,7}", nextDirectoryIndex),
                 comment: Comment);

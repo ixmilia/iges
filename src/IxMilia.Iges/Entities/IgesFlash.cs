@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -55,36 +54,36 @@ namespace IxMilia.Iges.Entities
             Hierarchy = IgesHierarchy.GlobalTopDown;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             XOffset = Double(parameters, 0);
             YOffset = Double(parameters, 1);
             SizeParameter1 = Double(parameters, 2);
             SizeParameter2 = Double(parameters, 3);
             RotationAngle = Double(parameters, 4);
-            SubEntityIndices.Add(Integer(parameters, 5));
+            binder.BindEntity(Integer(parameters, 5), e =>
+            {
+                if (e != null)
+                {
+                    ReferenceEntity = e;
+                }
+            });
             return 6;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
+        {
+            yield return ReferenceEntity;
+        }
+
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(XOffset);
             parameters.Add(YOffset);
             parameters.Add(SizeParameter1);
             parameters.Add(SizeParameter2);
             parameters.Add(RotationAngle);
-            parameters.Add(SubEntityIndices[0]);
-        }
-
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.Add(ReferenceEntity);
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            Debug.Assert(Hierarchy == IgesHierarchy.GlobalTopDown);
-            _referenceEntity = SubEntities[0];
+            parameters.Add(binder.GetEntityId(ReferenceEntity));
         }
     }
 }

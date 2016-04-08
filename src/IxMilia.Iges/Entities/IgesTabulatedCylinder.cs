@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -12,9 +11,9 @@ namespace IxMilia.Iges.Entities
         public IgesEntity Directrix { get; set; }
         public IgesPoint GeneratrixTerminatePoint { get; set; }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            SubEntityIndices.Add(Integer(parameters, 0));
+            binder.BindEntity(Integer(parameters, 0), e => Directrix = e);
             var x = Double(parameters, 1);
             var y = Double(parameters, 2);
             var z = Double(parameters, 3);
@@ -22,23 +21,17 @@ namespace IxMilia.Iges.Entities
             return 4;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            parameters.Add(SubEntityIndices[0]);
+            yield return Directrix;
+        }
+
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
+        {
+            parameters.Add(binder.GetEntityId(Directrix));
             parameters.Add(GeneratrixTerminatePoint?.X ?? 0.0);
             parameters.Add(GeneratrixTerminatePoint?.Y ?? 0.0);
             parameters.Add(GeneratrixTerminatePoint?.Z ?? 0.0);
-        }
-
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.Add(Directrix);
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            Debug.Assert(FormNumber == 0);
-            Directrix = SubEntities[0];
         }
     }
 }

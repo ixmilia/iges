@@ -44,7 +44,7 @@ namespace IxMilia.Iges.Entities
             this.P2 = p2;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.P1.X = Double(parameters, 0);
             this.P1.Y = Double(parameters, 1);
@@ -55,7 +55,7 @@ namespace IxMilia.Iges.Entities
             return 6;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(this.P1.X);
             parameters.Add(this.P1.Y);

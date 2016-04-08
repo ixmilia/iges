@@ -101,7 +101,7 @@ namespace IxMilia.Iges.Entities
             DataVectors = new List<IgesVector>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             var index = 0;
             _pointFormat = (IgesCopiousDataPointFormat)Integer(parameters, index++);
@@ -148,7 +148,7 @@ namespace IxMilia.Iges.Entities
             return index;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add((int)PointFormat);
             switch (PointFormat)

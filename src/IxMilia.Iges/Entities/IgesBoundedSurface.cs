@@ -19,38 +19,36 @@ namespace IxMilia.Iges.Entities
             BoundaryEntities = new List<IgesEntity>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             int index = 0;
             AreBoundaryEntitiesOnlyInModelSpace = !Boolean(parameters, index++);
-            SubEntityIndices.Add(Integer(parameters, index++)); // Surface
+            binder.BindEntity(Integer(parameters, index++), e => Surface = e);
             var boundaryItemCount = Integer(parameters, index++);
             for (int i = 0; i < boundaryItemCount; i++)
             {
-                SubEntityIndices.Add(Integer(parameters, index++));
+                binder.BindEntity(Integer(parameters, index++), e => BoundaryEntities.Add(e));
             }
 
             return index;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            Surface = SubEntities[0];
-            BoundaryEntities.AddRange(SubEntities.Skip(1));
+            yield return Surface;
+            foreach (var boundary in BoundaryEntities)
+            {
+                yield return boundary;
+            }
         }
 
-        internal override void OnBeforeWrite()
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            SubEntities.Add(Surface);
-            SubEntities.AddRange(BoundaryEntities);
-        }
-
-        protected override void WriteParameters(List<object> parameters)
-        {
+            
             parameters.Add(!AreBoundaryEntitiesOnlyInModelSpace);
-            parameters.Add(SubEntityIndices[0]);
+            parameters.Add(binder.GetEntityId(Surface));
             parameters.Add(BoundaryEntities.Count);
-            parameters.AddRange(SubEntityIndices.Skip(1).Cast<object>());
+            parameters.AddRange(BoundaryEntities.Select(binder.GetEntityId).Cast<object>());
         }
     }
 }

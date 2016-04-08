@@ -15,9 +15,9 @@ namespace IxMilia.Iges.Entities
             DefinedLevels = new HashSet<int>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            var nextIndex = base.ReadParameters(parameters);
+            var nextIndex = base.ReadParameters(parameters, binder);
             for (int i = 0; i < PropertyCount; i++)
             {
                 DefinedLevels.Add(Integer(parameters, nextIndex + i));
@@ -26,10 +26,10 @@ namespace IxMilia.Iges.Entities
             return nextIndex + PropertyCount;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             PropertyCount = DefinedLevels.Count;
-            base.WriteParameters(parameters);
+            base.WriteParameters(parameters, binder);
             foreach (var level in DefinedLevels)
             {
                 parameters.Add(level);

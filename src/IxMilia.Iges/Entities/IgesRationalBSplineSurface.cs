@@ -52,7 +52,7 @@ namespace IxMilia.Iges.Entities
             SecondKnotValueSequence = new List<double>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             int index = 0;
             var k1 = Integer(parameters, index++);
@@ -110,7 +110,7 @@ namespace IxMilia.Iges.Entities
             return index;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             Debug.Assert(Weights != null);
             Debug.Assert(ControlPoints != null);

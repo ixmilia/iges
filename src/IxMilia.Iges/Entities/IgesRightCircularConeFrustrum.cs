@@ -14,7 +14,7 @@ namespace IxMilia.Iges.Entities
         public IgesPoint LargeFaceCenter { get; set; } = IgesPoint.Origin;
         public IgesVector AxisDirection { get; set; } = IgesVector.ZAxis;
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             Height = Double(parameters, 0);
             LargeFaceRadius = Double(parameters, 1);
@@ -28,7 +28,7 @@ namespace IxMilia.Iges.Entities
             return 9;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(Height);
             parameters.Add(LargeFaceRadius);

@@ -12,9 +12,14 @@ namespace IxMilia.Iges.Test
 
         #region Private methods
 
-        private static IgesEntity ParseSingleEntity(string content)
+        private static List<IgesEntity> ParseEntities(string content)
         {
-            return IgesReaderTests.ParseSingleEntity(content);
+            return IgesReaderTests.ParseEntities(content);
+        }
+
+        private static IgesEntity ParseLastEntity(string content)
+        {
+            return ParseEntities(content).Last();
         }
 
         private static IgesFile CreateFile(string content)
@@ -50,7 +55,7 @@ namespace IxMilia.Iges.Test
         public void ReadCircularArcTest()
         {
             // read specified values
-            var circle = (IgesCircularArc)ParseSingleEntity(@"
+            var circle = (IgesCircularArc)ParseLastEntity(@"
      100       1       0       0       0                               0D      1
      100       0       3       1       0                               0D      2
 100,11,22,33,44,55,66,77;                                              1P      1
@@ -71,7 +76,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(IgesColorNumber.Green, circle.Color);
 
             // read type-default values
-            circle = (IgesCircularArc)ParseSingleEntity(@"
+            circle = (IgesCircularArc)ParseLastEntity(@"
      100       1       0       0       0                               0D      1
      100       0       3       1       0                               0D      2
 100;                                                                   1P      1"
@@ -94,7 +99,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadCompositeCurve()
         {
-            var entity = ParseSingleEntity(@"
+            var entity = ParseEntities(@"
 // The curve has two lines; one defined before and one after.           S      1
      110       1       0       0       0                               0D      1
      110       0       0       1       0                               0D      2
@@ -105,7 +110,7 @@ namespace IxMilia.Iges.Test
 110,1.0,2.0,3.0,4.0,5.0,6.0;                                            P      1
 102,2,1,5;                                                              P      2
 100,11,22,33,44,55,66,77;                                               P      3
-");
+")[1];
             Assert.Equal(IgesEntityType.CompositeCurve, entity.EntityType);
             var compositeCurve = (IgesCompositeCurve)entity;
             Assert.Equal(2, compositeCurve.Entities.Count);
@@ -131,7 +136,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(0.0, circle.EndPoint.Z);
 
             // read type-default values
-            compositeCurve = (IgesCompositeCurve)ParseSingleEntity(@"
+            compositeCurve = (IgesCompositeCurve)ParseLastEntity(@"
      102       1       0       0       0                               0D      1
      102       0       0       1       0                               0D      2
 102;                                                                    P      1
@@ -143,7 +148,7 @@ namespace IxMilia.Iges.Test
         public void ReadConicArcTest()
         {
             // fully-specified values
-            var arc = (IgesConicArc)ParseSingleEntity(@"
+            var arc = (IgesConicArc)ParseLastEntity(@"
      104       1       0       0       0                        00000000D      1
      104       0       0       1       1                                D      2
 104,16.,0.,4.,0.,0.,-64.,7.,8.,9.,10.,11.;                             1P      1
@@ -159,7 +164,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(new IgesPoint(10, 11, 7), arc.EndPoint);
 
             // type-default values
-            arc = (IgesConicArc)ParseSingleEntity(@"
+            arc = (IgesConicArc)ParseLastEntity(@"
      104       1       0       0       0                        00000000D      1
      104       0       0       1       0                                D      2
 104;                                                                   1P      1
@@ -175,21 +180,21 @@ namespace IxMilia.Iges.Test
             Assert.Equal(IgesPoint.Origin, arc.EndPoint);
 
             // real-world examples
-            arc = (IgesConicArc)ParseSingleEntity(@"
+            arc = (IgesConicArc)ParseLastEntity(@"
      104       1       0       1       0       0               000000000D      1
      104       2       3       1       1                               9D      2
 104,0.5,0.,1.,0.,0.,-0.5,0.,0.7575,-0.4616,-0.8971,0.3125;             1P      1
 ");
             Assert.Equal(IgesArcType.Ellipse, arc.ArcType);
 
-            arc = (IgesConicArc)ParseSingleEntity(@"
+            arc = (IgesConicArc)ParseLastEntity(@"
      104       1       0       1       0       0               000000000D      1
      104       2       4       1       2                              44D      2
 104,-0.49,0.,1.96,0.,0.,0.9603999,0.,1.9799,-0.7,1.9799,0.7;           1P      1
 ");
             Assert.Equal(IgesArcType.Hyperbola, arc.ArcType);
 
-            arc = (IgesConicArc)ParseSingleEntity(@"
+            arc = (IgesConicArc)ParseLastEntity(@"
      104       1       0       1       0       0               000000000D      1
      104       2       2       1       3                              28D      2
 104,0.,0.,1.,-4.,0.,0.,0.,0.25,-1.,0.25,1.;                            1P      1
@@ -200,7 +205,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadCopiousDataTest()
         {
-            var cd = (IgesCopiousData)ParseSingleEntity(@"
+            var cd = (IgesCopiousData)ParseLastEntity(@"
      106       1       0       0       0                        00000100D      1
      106       0       0       1      40                                D      2
 106,1,3,3.,1.,2.,4.,5.,6.,7.;                                          1P      1
@@ -217,7 +222,7 @@ namespace IxMilia.Iges.Test
         public void ReadPlaneTest()
         {
             // unbounded
-            var plane = (IgesPlane)ParseSingleEntity(@"
+            var plane = (IgesPlane)ParseLastEntity(@"
      108       1       0       0       0                        00000000D      1
      108       0       0       1       0                                D      2
 108,11.,22.,33.,44.,0,55.,66.,77.,88.;                                 1P      1
@@ -232,7 +237,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(88, plane.DisplaySymbolSize);
 
             // bounded
-            plane = (IgesPlane)ParseSingleEntity(@"
+            plane = (IgesPlane)ParseLastEntity(@"
      100       1       0       0       0                        00000000D      1
      100       0       0       1       0                                D      2
      108       2       0       0       0                        00000000D      3
@@ -250,7 +255,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(88, plane.DisplaySymbolSize);
 
             // default values
-            plane = (IgesPlane)ParseSingleEntity(@"
+            plane = (IgesPlane)ParseLastEntity(@"
      108       1       0       0       0                        00000000D      1
      108       0       0       1       0                                D      2
 108;                                                                   1P      1
@@ -268,7 +273,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadLineTest()
         {
-            var line = (IgesLine)ParseSingleEntity(@"
+            var line = (IgesLine)ParseLastEntity(@"
      110       1       0       0       0                               0D      1
      110       0       3       1       0                               0D      2
 110,11,22,33,44,55,66;                                                 1P      1
@@ -296,7 +301,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(0.0, line.TransformationMatrix.T3);
 
             // read type-default values
-            line = (IgesLine)ParseSingleEntity(@"
+            line = (IgesLine)ParseLastEntity(@"
      110       1       0       0       0                               0D      1
      110       0       3       1       0                               0D      2
 110;                                                                   1P      1
@@ -312,7 +317,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadLineWithNonStandardDelimitersTest()
         {
-            var line = (IgesLine)ParseSingleEntity(@"
+            var line = (IgesLine)ParseLastEntity(@"
 1H//1H##                                                                G      1
      110       1       0       0       0                               0D      1
      110       0       3       1       0                               0D      2
@@ -330,7 +335,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadParametricSplineCurveTest()
         {
-            var psc = (IgesParametricSplineCurve)ParseSingleEntity(@"
+            var psc = (IgesParametricSplineCurve)ParseLastEntity(@"
      112       1       0       0       0                        00000000D      1
      112       0       0       2       0                                D      2
 112,6,1,2,1,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.,13.,14.,15.,16.,          1P      1
@@ -370,7 +375,7 @@ namespace IxMilia.Iges.Test
         [Fact(Skip = "need additional spec"), Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadParametricSplineSurfaceTest()
         {
-            var pss = (IgesParametricSplineSurface)ParseSingleEntity(@"
+            var pss = (IgesParametricSplineSurface)ParseLastEntity(@"
      114       1       0       1       0       0       0       000000001D      1
      114       2       2      77       0                                D      2
 114,3,1,1,3,0.,1.,0.,1.,2.,3.,10.5,0.,0.,0.,-0.166666,                 1P      1
@@ -456,7 +461,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadLocationTest()
         {
-            var location = (IgesLocation)ParseSingleEntity(@"
+            var location = (IgesLocation)ParseLastEntity(@"
      116       1       0       0       0                               0D      1
      116       0       0       1       0                                D      2
 116,11.,22.,33.;                                                       1P      1
@@ -467,7 +472,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(IgesColorNumber.Default, location.Color);
 
             // read type-default values
-            location = (IgesLocation)ParseSingleEntity(@"
+            location = (IgesLocation)ParseLastEntity(@"
      116       1       0       0       0                               0D      1
      116       0       0       1       0                                D      2
 116;                                                                   1P      1
@@ -480,7 +485,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadRuledSurfaceTest()
         {
-            var ruledSurface = (IgesRuledSurface)ParseSingleEntity(@"
+            var ruledSurface = (IgesRuledSurface)ParseLastEntity(@"
      110       1       0       0       0                        00000000D      1
      110       0       0       1       0                                D      2
      110       2       0       0       0                        00000000D      3
@@ -497,7 +502,7 @@ namespace IxMilia.Iges.Test
             Assert.True(ruledSurface.IsDevelopable);
 
             // read type-default values
-            ruledSurface = (IgesRuledSurface)ParseSingleEntity(@"
+            ruledSurface = (IgesRuledSurface)ParseLastEntity(@"
      118       1       0       0       0                        00000000D      1
      118       0       0       1       0                                D      2
 118;                                                                   1P      1
@@ -511,7 +516,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSurfaceOfRevolutionTest()
         {
-            var surface = (IgesSurfaceOfRevolution)ParseSingleEntity(@"
+            var surface = (IgesSurfaceOfRevolution)ParseLastEntity(@"
      110       1       0       0       0                        00000000D      1
      110       0       0       1       0                                D      2
      110       2       0       0       0                        00000000D      3
@@ -528,7 +533,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(4.0, surface.EndAngle);
 
             // read type-default values
-            surface = (IgesSurfaceOfRevolution)ParseSingleEntity(@"
+            surface = (IgesSurfaceOfRevolution)ParseLastEntity(@"
      120       1       0       0       0                        00000000D      1
      120       0       0       1       0                                D      2
 120;                                                                   1P      1
@@ -542,7 +547,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadTabulatedCylinderTest()
         {
-            var tab = (IgesTabulatedCylinder)ParseSingleEntity(@"
+            var tab = (IgesTabulatedCylinder)ParseLastEntity(@"
      110       1       0       0       0                        00000000D      1
      110       0       0       1       0                                D      2
      122       2       0       0       0                        00000000D      3
@@ -554,7 +559,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(new IgesPoint(1, 2, 3), tab.GeneratrixTerminatePoint);
 
             // read type-default values
-            tab = (IgesTabulatedCylinder)ParseSingleEntity(@"
+            tab = (IgesTabulatedCylinder)ParseLastEntity(@"
      122       1       0       0       0                        00000000D      1
      122       0       0       1       0                                D      2
 122;                                                                   1P      1
@@ -566,7 +571,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadDirectionTest()
         {
-            var direction = (IgesDirection)ParseSingleEntity(@"
+            var direction = (IgesDirection)ParseLastEntity(@"
      123       1       0       0       0                        00010200D      1
      123       0       0       1       0                                D      2
 123,11.,22.,33.;                                                       1P      1
@@ -576,7 +581,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(33.0, direction.Z);
 
             // read type-default values
-            direction = (IgesDirection)ParseSingleEntity(@"
+            direction = (IgesDirection)ParseLastEntity(@"
      123       1       0       0       0                        00010200D      1
      123       0       0       1       0                                D      2
 123;                                                                   1P      1
@@ -589,7 +594,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadTransformationMatrixTest()
         {
-            var matrix = (IgesTransformationMatrix)ParseSingleEntity(@"
+            var matrix = (IgesTransformationMatrix)ParseLastEntity(@"
      124       1       0       0       0                               0D      1
      124       0       0       1       0                               0D      2
 124,1,2,3,4,5,6,7,8,9,10,11,12;                                        1P      1
@@ -608,7 +613,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(12.0, matrix.T3);
 
             // read type-default values
-            matrix = (IgesTransformationMatrix)ParseSingleEntity(@"
+            matrix = (IgesTransformationMatrix)ParseLastEntity(@"
      124       1       0       0       0                               0D      1
      124       0       0       1       0                               0D      2
 124;                                                                   1P      1
@@ -631,7 +636,7 @@ namespace IxMilia.Iges.Test
         public void ReadFlashTest()
         {
             // regular case
-            var flash = (IgesFlash)ParseSingleEntity(@"
+            var flash = (IgesFlash)ParseLastEntity(@"
      125       1       0       0       0                        00000000D      1
      125       0       0       1       3                                D      2
 125,1.,2.,3.,4.,5.,0;                                                  1P      1
@@ -645,7 +650,7 @@ namespace IxMilia.Iges.Test
             Assert.Null(flash.ReferenceEntity);
 
             // referenced entity case
-            flash = (IgesFlash)ParseSingleEntity(@"
+            flash = (IgesFlash)ParseLastEntity(@"
      100       1       0       0       0                        00000000D      1
      100       0       0       1       0                                D      2
      125       2       0       0       0                        00000000D      3
@@ -657,7 +662,7 @@ namespace IxMilia.Iges.Test
             Assert.IsType<IgesCircularArc>(flash.ReferenceEntity);
 
             // read type-default values
-            flash = (IgesFlash)ParseSingleEntity(@"
+            flash = (IgesFlash)ParseLastEntity(@"
      125       1       0       0       0                        00000000D      1
      125       0       0       1       3                                D      2
 125;                                                                   1P      1
@@ -674,7 +679,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadRationalBSplineCurveTest()
         {
-            var curve = (IgesRationalBSplineCurve)ParseSingleEntity(@"
+            var curve = (IgesRationalBSplineCurve)ParseLastEntity(@"
      126       1       0       1       2       0       0       000000001D      1
      126       3       2       3       0                                D      2
 126,5,3,1,0,1,0,0.,0.,0.,0.,0.333333,0.666667,1.,1.,1.,1.,1.,1.,       1P      1
@@ -699,7 +704,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadRationalBSplineSurfaceTest()
         {
-            var surface = (IgesRationalBSplineSurface)ParseSingleEntity(@"
+            var surface = (IgesRationalBSplineSurface)ParseLastEntity(@"
      128       1       0       0       0                        00000000D      1
      128       0       0       2       0                                D      2
 128,1,1,-2,-2,1,1,1,0,0,-1.,-2.,1.,3.,2.,4.,5.,6.,0.,9.,10.,0.,        1P      1
@@ -732,7 +737,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadOffsetCurveTest()
         {
-            var curve = (IgesOffsetCurve)ParseSingleEntity(@"
+            var curve = (IgesOffsetCurve)ParseLastEntity(@"
      110       1       0       0       0                        00000000D      1
      110       0       0       1       0                                D      2
      130       2       0       0       0                        00000000D      3
@@ -757,7 +762,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadConnectPointTest()
         {
-            var point = (IgesConnectPoint)ParseSingleEntity(@"
+            var point = (IgesConnectPoint)ParseLastEntity(@"
      132       1       0       0       0                        00000400D      1
      132       0       0       1       0                                D      2
 132,1.,2.,3.,0,102,1,7Hfunc-id,0,9Hfunc-name,0,42,20,0,0;              1P      1
@@ -779,7 +784,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadNodeTest()
         {
-            var node = (IgesNode)ParseSingleEntity(@"
+            var node = (IgesNode)ParseLastEntity(@"
      134       1       0       0       0                        00000400D      1
      134       0       0       1       0                              17D      2
 134,1.,2.,3.,0;                                                        1P      1
@@ -792,7 +797,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadFiniteElementBeamTest()
         {
-            var beam = (IgesBeam)ParseSingleEntity(@"
+            var beam = (IgesBeam)ParseLastEntity(@"
      134       1       0       0       0                        00000400D      1
      134       0       0       1       0                                D      2
      134       2       0       0       0                        00000400D      3
@@ -811,7 +816,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadCustomFiniteElementTest()
         {
-            var custom = (IgesCustomFiniteElement)ParseSingleEntity(@"
+            var custom = (IgesCustomFiniteElement)ParseLastEntity(@"
      134       1       0       0       0                        00000400D      1
      134       0       0       1       0                                D      2
      136       2       0       0       0                        00000000D      3
@@ -845,7 +850,6 @@ namespace IxMilia.Iges.Test
 136,1,2,3,5,;                                                          7P      4
 138,1,1,1,42,7,2.,3.,4.,5.,6.,7.;                                      9P      5
 ");
-            Assert.Equal(2, file.Entities.Count);
             Assert.Equal(1, file.Entities.OfType<IgesBeam>().Count());
             Assert.Equal(1, file.Entities.OfType<IgesNodalDisplacementAndRotation>().Count());
         }
@@ -853,7 +857,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadOffsetSurfaceTest()
         {
-            var offset = (IgesOffsetSurface)ParseSingleEntity(@"
+            var offset = (IgesOffsetSurface)ParseLastEntity(@"
      118       1       0       0       0                        00000000D      1
      118       0       0       1       0                                D      2
      140       2       0       0       0                        00000000D      3
@@ -869,7 +873,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadNodalResultsTest()
         {
-            var nodalResults = (IgesNodalResults)ParseSingleEntity(@"
+            var nodalResults = (IgesNodalResults)ParseLastEntity(@"
      146       1       0       0       0                        00000000D      1
      146       0       0       1       1                                D      2
 146,0,0,18H15H20000101.000000,1,1,0,0,42.;                             1P      1
@@ -882,7 +886,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadElementResultsTest()
         {
-            var elementResults = (IgesElementResults)ParseSingleEntity(@"
+            var elementResults = (IgesElementResults)ParseLastEntity(@"
      148       1       0       0       0                        00000000D      1
      148       0       0       1       0                                D      2
 148,0,0,15H00010101.000000,0,1,0;                                      1P      1
@@ -893,7 +897,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadBlockTest()
         {
-            var block = (IgesBlock)ParseSingleEntity(@"
+            var block = (IgesBlock)ParseLastEntity(@"
      150       1       0       0       0                        00000000D      1
      150       0       0       1       0                                D      2
 150,1.,2.,3.,4.,5.,6.,1.,0.,0.,0.,0.,1.;                               1P      1
@@ -909,7 +913,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadRightAngularWedgeTest()
         {
-            var wedge = (IgesRightAngularWedge)ParseSingleEntity(@"
+            var wedge = (IgesRightAngularWedge)ParseLastEntity(@"
      152       1       0       0       0                        00000000D      1
      152       0       0       1       0                                D      2
 152,1.,2.,3.,0.,0.,0.,0.,1.,0.,0.,0.,0.,1.;                            1P      1
@@ -922,7 +926,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadRightCircularCylinderTest()
         {
-            var cylinder = (IgesRightCircularCylinder)ParseSingleEntity(@"
+            var cylinder = (IgesRightCircularCylinder)ParseLastEntity(@"
      154       1       0       0       0                        00000000D      1
      154       0       0       1       0                                D      2
 154,1.,2.,0.,0.,0.,0.,0.,1.;                                           1P      1
@@ -934,7 +938,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadRightCircularConeFrustrumTest()
         {
-            var cone = (IgesRightCircularConeFrustrum)ParseSingleEntity(@"
+            var cone = (IgesRightCircularConeFrustrum)ParseLastEntity(@"
      156       1       0       0       0                        00000000D      1
      156       0       0       1       0                                D      2
 156,1.,2.,3.,0.,0.,0.,0.,0.,1.;                                        1P      1
@@ -948,7 +952,7 @@ namespace IxMilia.Iges.Test
         public void ReadSphereTest()
         {
             // fully-specified values
-            var sphere = (IgesSphere)ParseSingleEntity(@"
+            var sphere = (IgesSphere)ParseLastEntity(@"
      158       1       0       0       0                            0000D      1
      158       0       0       1       0                                D      2
 158,11.,22.,33.,44.;                                                   1P      1
@@ -957,7 +961,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(new IgesPoint(22, 33, 44), sphere.Center);
 
             // read type-default values
-            sphere = (IgesSphere)ParseSingleEntity(@"
+            sphere = (IgesSphere)ParseLastEntity(@"
      158       1       0       0       0                            0000D      1
      158       0       0       1       0                                D      2
 158;                                                                   1P      1
@@ -970,7 +974,7 @@ namespace IxMilia.Iges.Test
         public void ReadTorusTest()
         {
             // fully-specified values
-            var torus = (IgesTorus)ParseSingleEntity(@"
+            var torus = (IgesTorus)ParseLastEntity(@"
      160       1       0       0       0                        00000000D      1
      160       0       0       1       0                                D      2
 160,11.,22.,33.,44.,55.,66.,77.,88.;                                   1P      1
@@ -981,7 +985,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(new IgesVector(66, 77, 88), torus.Normal);
 
             // read type-default values
-            torus = (IgesTorus)ParseSingleEntity(@"
+            torus = (IgesTorus)ParseLastEntity(@"
      160       1       0       0       0                        00000000D      1
      160       0       0       1       0                                D      2
 160;                                                                   1P      1
@@ -995,7 +999,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSolidOfRevolutionTest()
         {
-            var solid = (IgesSolidOfRevolution)ParseSingleEntity(@"
+            var solid = (IgesSolidOfRevolution)ParseLastEntity(@"
      110       1       0       0       0                        00000000D      1
      110       0       0       1       0                                D      2
      162       2       0       0       0                        00000000D      3
@@ -1011,7 +1015,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSolidOfLinearExtrusionTest()
         {
-            var solid = (IgesSolidOfLinearExtrusion)ParseSingleEntity(@"
+            var solid = (IgesSolidOfLinearExtrusion)ParseLastEntity(@"
      100       1       0       0       0                        00000000D      1
      100       0       0       1       0                                D      2
      164       2       0       0       0                        00000000D      3
@@ -1027,7 +1031,7 @@ namespace IxMilia.Iges.Test
         public void ReadGeneralNoteTest()
         {
             // fully-specified values
-            var note = (IgesGeneralNote)ParseSingleEntity(@"
+            var note = (IgesGeneralNote)ParseLastEntity(@"
      212       1       0       0       0                        00000100D      1
      212       0       0       1       6                                D      2
 212,1,11,1.,2.,3,4.,5.,1,1,6.,7.,8.,11Htest string;                    1P      1
@@ -1048,7 +1052,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal("test string", str.Value);
 
             // with a text font definition
-            note = (IgesGeneralNote)ParseSingleEntity(@"
+            note = (IgesGeneralNote)ParseLastEntity(@"
      310       1       0       0       0                        00000200D      1
      310       0       0       1       0                                D      2
      212       2       0       0       0                        00000100D      3
@@ -1059,7 +1063,7 @@ namespace IxMilia.Iges.Test
             Assert.NotNull(note.Strings.Single().TextFontDefinition);
 
             // type-default values
-            note = (IgesGeneralNote)ParseSingleEntity(@"
+            note = (IgesGeneralNote)ParseLastEntity(@"
      212       1       0       0       0                        00000100D      1
      212       0       0       1       0                                D      2
 212;                                                                   1P      1
@@ -1072,7 +1076,7 @@ namespace IxMilia.Iges.Test
         public void ReadTextDisplayTemplateTest()
         {
             // fully-specified values
-            var tdt = (IgesTextDisplayTemplate)ParseSingleEntity(@"
+            var tdt = (IgesTextDisplayTemplate)ParseLastEntity(@"
      312       1       0       0       0                        00000200D      1
      312       0       0       1       0                                D      2
 312,1.,2.,3,4.,5.,1,1,6.,7.,8.;                                        1P      1
@@ -1090,7 +1094,7 @@ namespace IxMilia.Iges.Test
             Assert.True(tdt.IsAbsoluteDisplayTemplate);
 
             // with a text font definition and incremental display
-            tdt = (IgesTextDisplayTemplate)ParseSingleEntity(@"
+            tdt = (IgesTextDisplayTemplate)ParseLastEntity(@"
      310       1       0       0       0                        00000200D      1
      310       0       0       1       0                                D      2
      312       2       0       0       0                        00000200D      3
@@ -1104,7 +1108,7 @@ namespace IxMilia.Iges.Test
             Assert.False(tdt.IsAbsoluteDisplayTemplate);
 
             // type-default values
-            tdt = (IgesTextDisplayTemplate)ParseSingleEntity(@"
+            tdt = (IgesTextDisplayTemplate)ParseLastEntity(@"
      312       1       0       0       0                        00000200D      1
      312       0       0       1       0                                D      2
 312;                                                                   1P      1
@@ -1124,7 +1128,7 @@ namespace IxMilia.Iges.Test
         public void ReadLeaderTest()
         {
             // fully-specified values
-            var leader = (IgesLeader)ParseSingleEntity(@"
+            var leader = (IgesLeader)ParseLastEntity(@"
      214       1       0       0       0                        00000100D      1
      214       0       0       1       6                                D      2
 214,2,8.,9.,3.,1.,2.,4.,5.,6.,7.;                                      1P      1
@@ -1138,7 +1142,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(new IgesPoint(6, 7, 3), leader.LineSegments.Last());
 
             // read type-default values
-            leader = (IgesLeader)ParseSingleEntity(@"
+            leader = (IgesLeader)ParseLastEntity(@"
      214       1       0       0       0                        00000100D      1
      214       0       0       1       1                                D      2
 214;                                                                   1P      1
@@ -1153,7 +1157,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadTemplateLineFontDefinitionTest()
         {
-            var lfd = (IgesTemplateLineFontDefinition)ParseSingleEntity(@"
+            var lfd = (IgesTemplateLineFontDefinition)ParseLastEntity(@"
        0       1       0       0       0                        00000000D      1
        0       0       0       1       0                                D      2
      308       2       0       0       0                        00000200D      3
@@ -1173,7 +1177,7 @@ namespace IxMilia.Iges.Test
         public void ReadPatternLineFontDefinitionTest()
         {
             // fully-specified values
-            var lfd = (IgesPatternLineFontDefinition)ParseSingleEntity(@"
+            var lfd = (IgesPatternLineFontDefinition)ParseLastEntity(@"
      304       1       0       0       0                        00000200D      1
      304       0       0       1       2                                D      2
 304,2,1.,2.,2H34;                                                      1P      1
@@ -1184,7 +1188,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(0x34, lfd.DisplayMask);
 
             // default values
-            lfd = (IgesPatternLineFontDefinition)ParseSingleEntity(@"
+            lfd = (IgesPatternLineFontDefinition)ParseLastEntity(@"
      304       1       0       0       0                        00000200D      1
      304       0       0       1       2                                D      2
 304;                                                                   1P      1
@@ -1196,7 +1200,7 @@ namespace IxMilia.Iges.Test
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadSubfigureTest()
         {
-            var entity = ParseSingleEntity(@"
+            var entity = ParseEntities(@"
 // The subfigure has two lines; one defined before and one after.       S      1
      110       1       0       0       0                               0D      1
      110       0       0       1       0                                D      2
@@ -1208,7 +1212,7 @@ namespace IxMilia.Iges.Test
 308,0,                                           22Hthis,is;the         P      2
 subfigureH,2,1,5;                                                       P      3
 110,7.0,8.0,9.0,10.0,11.0,12.0;                                         P      4
-");
+")[1];
             Assert.Equal(IgesEntityType.SubfigureDefinition, entity.EntityType);
             var subfigure = (IgesSubfigureDefinition)entity;
             Assert.Equal(0, subfigure.Depth);
@@ -1232,7 +1236,7 @@ subfigureH,2,1,5;                                                       P      3
             Assert.Equal(12.0, line2.P2.Z);
 
             // read type-default values
-            subfigure = (IgesSubfigureDefinition)ParseSingleEntity(@"
+            subfigure = (IgesSubfigureDefinition)ParseLastEntity(@"
      308       1       0       0       0                        00000200D      1
      308       0       0       1       0                                D      2
 308;                                                                    P      1
@@ -1246,7 +1250,7 @@ subfigureH,2,1,5;                                                       P      3
         public void ReadTextFontDefinitionTest()
         {
             // fully-specified values with supercedes code
-            var tfd = (IgesTextFontDefinition)ParseSingleEntity(@"
+            var tfd = (IgesTextFontDefinition)ParseLastEntity(@"
      310       1       0       0       0                        00000200D      1
      310       0       0       1       0                                D      2
 310,1,8HSTANDARD,42,8,1,65,11,0,4,,4,8,,8,0,1,2,4,,6,4;                1P      1
@@ -1274,7 +1278,7 @@ subfigureH,2,1,5;                                                       P      3
             Assert.Equal(4, character.CharacterMovements[3].Location.Y);
 
             // with no supercedes value
-            tfd = (IgesTextFontDefinition)ParseSingleEntity(@"
+            tfd = (IgesTextFontDefinition)ParseLastEntity(@"
      310       1       0       0       0                        00000200D      1
      310       0       0       1       0                                D      2
 310,1,8HSTANDARD,,8,1,65,11,0,4,,4,8,,8,0,1,2,4,,6,4;                  1P      1
@@ -1282,7 +1286,7 @@ subfigureH,2,1,5;                                                       P      3
             Assert.Equal(0, tfd.SupercedesCode);
 
             // with supercedes pointer
-            tfd = (IgesTextFontDefinition)ParseSingleEntity(@"
+            tfd = (IgesTextFontDefinition)ParseLastEntity(@"
      310       1       0       0       0                        00000200D      1
      310       0       0       1       0                                D      2
      310       2       0       0       0                        00000200D      3
@@ -1293,7 +1297,7 @@ subfigureH,2,1,5;                                                       P      3
             Assert.IsType<IgesTextFontDefinition>(tfd.SupercedesFont);
 
             // type-default values
-            tfd = (IgesTextFontDefinition)ParseSingleEntity(@"
+            tfd = (IgesTextFontDefinition)ParseLastEntity(@"
      310       1       0       0       0                        00000200D      1
      310       0       0       1       0                                D      2
 310;                                                                   1P      1
@@ -1309,7 +1313,7 @@ subfigureH,2,1,5;                                                       P      3
         public void ReadColorDefinitionTest()
         {
             // fully-specified values
-            var color = (IgesColorDefinition)ParseSingleEntity(@"
+            var color = (IgesColorDefinition)ParseLastEntity(@"
      314       1       0       0       0                        00000200D      1
      314       0       0       1       0                                D      2
 314,11.,22.,33.,4Hname;                                                1P      1
@@ -1320,7 +1324,7 @@ subfigureH,2,1,5;                                                       P      3
             Assert.Equal("name", color.Name);
 
             // read type-default values
-            color = (IgesColorDefinition)ParseSingleEntity(@"
+            color = (IgesColorDefinition)ParseLastEntity(@"
      314       1       0       0       0                        00000200D      1
      314       0       0       1       0                                D      2
 314;                                                                   1P      1
@@ -1331,7 +1335,7 @@ subfigureH,2,1,5;                                                       P      3
             Assert.Null(color.Name);
 
             // read line with custom color
-            var line = (IgesLine)ParseSingleEntity(@"
+            var line = (IgesLine)ParseLastEntity(@"
      314       1       0       0       0                        00000200D      1
      314       0       0       1       0                               0D      2
      110       2       0       0       0                               0D      3
@@ -1379,7 +1383,7 @@ subfigureH,2,1,5;                                                       P      3
 //            Assert.Equal(new IgesPoint(4, 5, 6), line.P2);
 
             // read type-defaule values
-            var disp = (IgesLabelDisplayAssociativity)ParseSingleEntity(@"
+            var disp = (IgesLabelDisplayAssociativity)ParseLastEntity(@"
      402       1       0       0       0                        00000000D      1
      402       0       0       1       5                                D      2
 402;                                                                   1P      1
@@ -1391,7 +1395,7 @@ subfigureH,2,1,5;                                                       P      3
         public void ReadViewTest()
         {
             // fully-specified values
-            var view = (IgesView)ParseSingleEntity(@"
+            var view = (IgesView)ParseLastEntity(@"
      108       1       0       0       0                        00000000D      1
      108       0       0       1       0                                D      2
      108       2       0       0       0                        00000000D      3
@@ -1424,7 +1428,7 @@ subfigureH,2,1,5;                                                       P      3
             Assert.Equal(8.0, view.ViewVolumeFront.PlaneCoefficientA);
 
             // null pointers
-            view = (IgesView)ParseSingleEntity(@"
+            view = (IgesView)ParseLastEntity(@"
      410       1       0       0       0                        00000100D      1
      410       0       0       1       0                                D      2
 410,0,0.,0,0,0,0,0,0;                                                  1P      1
@@ -1437,7 +1441,7 @@ subfigureH,2,1,5;                                                       P      3
             Assert.Null(view.ViewVolumeFront);
 
             // type-default values
-            view = (IgesView)ParseSingleEntity(@"
+            view = (IgesView)ParseLastEntity(@"
      410       1       0       0       0                        00000100D      1
      410       0       0       1       0                                D      2
 410;                                                                   1P      1
@@ -1456,7 +1460,7 @@ subfigureH,2,1,5;                                                       P      3
         public void ReadPerspectiveViewTest()
         {
             // fully-specified values
-            var view = (IgesPerspectiveView)ParseSingleEntity(@"
+            var view = (IgesPerspectiveView)ParseLastEntity(@"
      410       1       0       0       0                        00000100D      1
      410       0       0       2       1                                D      2
 410,1,2.,3.,0.,0.,4.,0.,0.,5.,0.,0.,6.,0.,0.,7.,8.,9.,10.,11.,1,       1P      1
@@ -1478,7 +1482,7 @@ subfigureH,2,1,5;                                                       P      3
             Assert.Equal(13.0, view.ClippingWindowFrontCoordinate);
 
             // type-default values
-            view = (IgesPerspectiveView)ParseSingleEntity(@"
+            view = (IgesPerspectiveView)ParseLastEntity(@"
      410       1       0       0       0                        00000100D      1
      410       0       0       1       1                                D      2
 410;                                                                   1P      1

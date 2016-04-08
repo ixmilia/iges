@@ -122,6 +122,7 @@
     <Compile Include="Entities\IgesTrimmedParametricSurface.cs" />
     <Compile Include="Entities\IgesView.cs" />
     <Compile Include="Entities\IgesViewBase.cs" />
+    <Compile Include="IgesReaderBinder.cs" />
     <Compile Include="IgesColorNumber.cs" />
     <Compile Include="IgesDirectoryData.cs" />
     <Compile Include="IgesDraftingStandard.cs" />
@@ -134,6 +135,7 @@
     <Compile Include="IgesSectionType.cs" />
     <Compile Include="IgesUnits.cs" />
     <Compile Include="IgesVersion.cs" />
+    <Compile Include="IgesWriterBinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

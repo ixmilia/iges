@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -37,34 +36,27 @@ namespace IxMilia.Iges.Entities
             SecondCurve = secondCurve;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            SubEntityIndices.Add(Integer(parameters, 0));
-            SubEntityIndices.Add(Integer(parameters, 1));
+            binder.BindEntity(Integer(parameters, 0), e => FirstCurve = e);
+            binder.BindEntity(Integer(parameters, 1), e => SecondCurve = e);
             Direction = (IgesRuledSurfaceDirection)Integer(parameters, 2);
             IsDevelopable = Boolean(parameters, 3);
             return 4;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            parameters.Add(SubEntityIndices[0]);
-            parameters.Add(SubEntityIndices[1]);
+            yield return FirstCurve;
+            yield return SecondCurve;
+        }
+
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
+        {
+            parameters.Add(binder.GetEntityId(FirstCurve));
+            parameters.Add(binder.GetEntityId(SecondCurve));
             parameters.Add((int)Direction);
             parameters.Add(IsDevelopable ? 1 : 0);
-        }
-
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.Add(FirstCurve);
-            SubEntities.Add(SecondCurve);
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            Debug.Assert(FormNumber == 0 || FormNumber == 1);
-            FirstCurve = SubEntities[0];
-            SecondCurve = SubEntities[1];
         }
     }
 }

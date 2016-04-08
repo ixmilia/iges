@@ -213,50 +213,26 @@ namespace IxMilia.Iges
 
         private static void PopulateEntities(IgesFile file, List<IgesDirectoryData> directoryEntries, Dictionary<int, Tuple<List<string>, string>> parameterMap)
         {
-            var entityMap = new Dictionary<int, IgesEntity>();
+            var binder = new IgesReaderBinder();
             for (int i = 0; i < directoryEntries.Count; i++)
             {
                 var dir = directoryEntries[i];
                 var parameterValues = parameterMap[dir.ParameterPointer].Item1;
                 var comment = parameterMap[dir.ParameterPointer].Item2;
-                var entity = IgesEntity.FromData(dir, parameterValues);
+                var entity = IgesEntity.FromData(dir, parameterValues, binder);
                 if (entity != null)
                 {
                     entity.Comment = comment;
                     var directoryIndex = (i * 2) + 1;
-                    entityMap[directoryIndex] = entity;
-                    file.Entities.Add(entity);
+                    entity.BindPointers(dir, binder);
+                    entity.OnAfterRead(dir);
+                    var postProcessed = entity.PostProcess();
+                    binder.EntityMap[directoryIndex] = postProcessed;
+                    file.Entities.Add(postProcessed);
                 }
             }
 
-            var entitiesToTrim = new HashSet<int>();
-            for (int i = 0; i < directoryEntries.Count; i++)
-            {
-                IgesEntity entity = null;
-                var lineNumber = (i * 2) + 1;
-                if (entityMap.TryGetValue(lineNumber, out entity))
-                {
-                    entity.BindPointers(directoryEntries[i], entityMap, entitiesToTrim);
-                    entity.OnAfterRead(directoryEntries[i]);
-                    var processedEntity = entity.PostProcess();
-                    entity.SubEntities.Clear();
-                    entity.SubEntityIndices.Clear();
-                    entityMap[lineNumber] = processedEntity;
-                    file.Entities[(lineNumber - 1) / 2] = processedEntity;
-                }
-            }
-
-            foreach (var entity in file.Entities)
-            {
-                entity.UnMarkEntitiesForTrimming(entitiesToTrim);
-            }
-
-            for (int i = file.Entities.Count - 1; i >= 0; i--)
-            {
-                var deIndex = i * 2 + 1;
-                if (entitiesToTrim.Contains(deIndex))
-                    file.Entities.RemoveAt(i);
-            }
+            binder.BindRemainingEntities();
         }
 
         private static void ParseGlobalLines(IgesFile file, List<string> globalLines)

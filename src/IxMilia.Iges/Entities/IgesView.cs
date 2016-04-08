@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -36,47 +35,37 @@ namespace IxMilia.Iges.Entities
 
         public IgesPlane ViewVolumeFront { get; set; }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            var nextIndex = base.ReadParameters(parameters);
-            SubEntityIndices.Add(Integer(parameters, nextIndex)); // xvminp
-            SubEntityIndices.Add(Integer(parameters, nextIndex + 1)); // yvmaxp
-            SubEntityIndices.Add(Integer(parameters, nextIndex + 2)); // xvmaxp
-            SubEntityIndices.Add(Integer(parameters, nextIndex + 3)); // yvminp
-            SubEntityIndices.Add(Integer(parameters, nextIndex + 4)); // zvminp
-            SubEntityIndices.Add(Integer(parameters, nextIndex + 5)); // zvmaxp
+            var nextIndex = base.ReadParameters(parameters, binder);
+            binder.BindEntity(Integer(parameters, nextIndex), e => ViewVolumeLeft = e as IgesPlane);
+            binder.BindEntity(Integer(parameters, nextIndex + 1), e => ViewVolumeTop = e as IgesPlane);
+            binder.BindEntity(Integer(parameters, nextIndex + 2), e => ViewVolumeRight = e as IgesPlane);
+            binder.BindEntity(Integer(parameters, nextIndex + 3), e => ViewVolumeBottom = e as IgesPlane);
+            binder.BindEntity(Integer(parameters, nextIndex + 4), e => ViewVolumeBack = e as IgesPlane);
+            binder.BindEntity(Integer(parameters, nextIndex + 5), e => ViewVolumeFront = e as IgesPlane);
             return nextIndex + 6;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            base.OnAfterRead(directoryData);
-            ViewVolumeLeft = SubEntities[0] as IgesPlane;
-            ViewVolumeTop = SubEntities[1] as IgesPlane;
-            ViewVolumeRight = SubEntities[2] as IgesPlane;
-            ViewVolumeBottom = SubEntities[3] as IgesPlane;
-            ViewVolumeBack = SubEntities[4] as IgesPlane;
-            ViewVolumeFront = SubEntities[5] as IgesPlane;
+            yield return ViewVolumeLeft;
+            yield return ViewVolumeTop;
+            yield return ViewVolumeRight;
+            yield return ViewVolumeBottom;
+            yield return ViewVolumeBack;
+            yield return ViewVolumeFront;
         }
 
-        internal override void OnBeforeWrite()
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            SubEntities.Add(ViewVolumeLeft);
-            SubEntities.Add(ViewVolumeTop);
-            SubEntities.Add(ViewVolumeRight);
-            SubEntities.Add(ViewVolumeBottom);
-            SubEntities.Add(ViewVolumeBack);
-            SubEntities.Add(ViewVolumeFront);
-        }
-
-        protected override void WriteParameters(List<object> parameters)
-        {
-            base.WriteParameters(parameters);
-            Debug.Assert(SubEntityIndices.Count == 6);
-            for (int i = 0; i < SubEntityIndices.Count; i++)
-            {
-                parameters.Add(SubEntityIndices[i]);
-            }
+            base.WriteParameters(parameters, binder);
+            parameters.Add(binder.GetEntityId(ViewVolumeLeft));
+            parameters.Add(binder.GetEntityId(ViewVolumeTop));
+            parameters.Add(binder.GetEntityId(ViewVolumeRight));
+            parameters.Add(binder.GetEntityId(ViewVolumeBottom));
+            parameters.Add(binder.GetEntityId(ViewVolumeBack));
+            parameters.Add(binder.GetEntityId(ViewVolumeFront));
         }
     }
 }

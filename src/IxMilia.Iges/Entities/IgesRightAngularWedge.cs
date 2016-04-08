@@ -16,7 +16,7 @@ namespace IxMilia.Iges.Entities
         public IgesVector XAxis { get; set; } = IgesVector.XAxis;
         public IgesVector ZAxis { get; set; } = IgesVector.ZAxis;
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             XAxisSize = Double(parameters, 0);
             YAxisSize = Double(parameters, 1);
@@ -34,7 +34,7 @@ namespace IxMilia.Iges.Entities
             return 13;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(XAxisSize);
             parameters.Add(YAxisSize);

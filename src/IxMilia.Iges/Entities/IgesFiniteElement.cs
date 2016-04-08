@@ -74,29 +74,29 @@ namespace IxMilia.Iges.Entities
             TopologyType = topologyType;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             throw new NotImplementedException();
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
+        {
+            InternalNodes.Clear();
+            AddNodes();
+            return InternalNodes;
+        }
+
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(this.TopologyNumber);
             parameters.Add(this.InternalNodes.Count);
-            parameters.AddRange(this.SubEntityIndices.Cast<object>());
+            parameters.AddRange(InternalNodes.Select(binder.GetEntityId).Cast<object>());
             parameters.Add(ElementTypeName);
 
             InternalNodes.Clear();
         }
 
         protected abstract void AddNodes();
-
-        internal override void OnBeforeWrite()
-        {
-            InternalNodes.Clear();
-            AddNodes();
-            SubEntities.AddRange(InternalNodes);
-        }
 
         internal static IgesPoint GetNodeOffset(IgesFiniteElementDummy dummy, int index)
         {

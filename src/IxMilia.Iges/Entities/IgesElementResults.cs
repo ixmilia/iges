@@ -51,12 +51,12 @@ namespace IxMilia.Iges.Entities
         public IgesResultsReportingType ReportingType { get; set; }
         public List<IgesElementResult> Elements { get; } = new List<IgesElementResult>();
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             Elements.Clear();
 
             int index = 0;
-            SubEntityIndices.Add(Integer(parameters, index++));
+            binder.BindEntity(Integer(parameters, index++), e => GeneralNote = e as IgesGeneralNote);
             AnalysisSubcase = Integer(parameters, index++);
             AnalysisTime = DateTime(parameters, index++);
             var valueCount = Integer(parameters, index++);
@@ -66,7 +66,7 @@ namespace IxMilia.Iges.Entities
             {
                 var result = new IgesElementResult();
                 result.Identifier = Integer(parameters, index++);
-                SubEntityIndices.Add(Integer(parameters, index++));
+                binder.BindEntity(Integer(parameters, index++), e => result.Entity = e);
                 result.ElementTopologyType = Integer(parameters, index++);
                 result.LayerCount = Integer(parameters, index++);
                 result.DataLayerType = (IgesDataLayerType)Integer(parameters, index++);
@@ -89,34 +89,27 @@ namespace IxMilia.Iges.Entities
             return index;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            GeneralNote = SubEntities[0] as IgesGeneralNote;
-            for (int i = 0; i < Elements.Count; i++)
+            yield return GeneralNote;
+            foreach (var element in Elements)
             {
-                Elements[i].Entity = SubEntities[i + 1];
+                yield return element.Entity;
             }
         }
 
-        internal override void OnBeforeWrite()
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            SubEntities.Add(GeneralNote);
-            SubEntities.AddRange(Elements.Select(e => e.Entity));
-        }
-
-        protected override void WriteParameters(List<object> parameters)
-        {
-            parameters.Add(SubEntityIndices[0]);
+            parameters.Add(binder.GetEntityId(GeneralNote));
             parameters.Add(AnalysisSubcase);
             parameters.Add(AnalysisTime);
             parameters.Add(Elements.Count);
             parameters.Add((int)ReportingType);
             parameters.Add(Elements.Count);
-            for (int i = 0; i < Elements.Count; i++)
+            foreach (var element in Elements)
             {
-                var element = Elements[i];
                 parameters.Add(element.Identifier);
-                parameters.Add(SubEntityIndices[i + 1]);
+                parameters.Add(binder.GetEntityId(element.Entity));
                 parameters.Add(element.ElementTopologyType);
                 parameters.Add(element.LayerCount);
                 parameters.Add((int)element.DataLayerType);

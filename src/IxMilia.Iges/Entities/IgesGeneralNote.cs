@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace IxMilia.Iges.Entities
 {
@@ -60,7 +61,7 @@ namespace IxMilia.Iges.Entities
             Strings = new List<IgesTextString>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             var index = 0;
             var stringCount = Integer(parameters, index++);
@@ -74,12 +75,11 @@ namespace IxMilia.Iges.Entities
                 var fontCode = IntegerOrDefault(parameters, index++, 1);
                 if (fontCode < 0)
                 {
-                    SubEntityIndices.Add(-fontCode);
+                    binder.BindEntity(-fontCode, e => str.TextFontDefinition = e as IgesTextFontDefinition);
                     str.FontCode = -1;
                 }
                 else
                 {
-                    SubEntityIndices.Add(0);
                     str.FontCode = fontCode;
                 }
 
@@ -98,7 +98,12 @@ namespace IxMilia.Iges.Entities
             return index;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
+        {
+            return Strings.Select(s => s.TextFontDefinition);
+        }
+
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(Strings.Count);
             for (int i = 0; i < Strings.Count; i++)
@@ -110,7 +115,7 @@ namespace IxMilia.Iges.Entities
 
                 if (str.TextFontDefinition != null)
                 {
-                    parameters.Add(-SubEntityIndices[i]);
+                    parameters.Add(-binder.GetEntityId(str.TextFontDefinition));
                 }
                 else
                 {
@@ -125,31 +130,6 @@ namespace IxMilia.Iges.Entities
                 parameters.Add(str.Location.Y);
                 parameters.Add(str.Location.Z);
                 parameters.Add(str.Value);
-            }
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Annotation);
-            Debug.Assert(
-                (FormNumber >= 0 && FormNumber <= 8) ||
-                (FormNumber >= 100 && FormNumber <= 102) ||
-                FormNumber == 105,
-                "form number must be [0,8], [100,102], [105]");
-            for (int i = 0; i < Strings.Count; i++)
-            {
-                if (Strings[i].FontCode == -1)
-                {
-                    Strings[i].TextFontDefinition = SubEntities[i] as IgesTextFontDefinition;
-                }
-            }
-        }
-
-        internal override void OnBeforeWrite()
-        {
-            foreach (var str in Strings)
-            {
-                SubEntities.Add(str.TextFontDefinition);
             }
         }
     }

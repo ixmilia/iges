@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace IxMilia.Iges.Entities
 {
@@ -20,14 +19,14 @@ namespace IxMilia.Iges.Entities
         {
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             int index = 0;
             TopologyType = (IgesTopologyType)Integer(parameters, index++);
             var nodeCount = Integer(parameters, index++);
             for (var i = 0; i < nodeCount; i++)
             {
-                SubEntityIndices.Add(Integer(parameters, index++));
+                binder.BindEntity(Integer(parameters, index++), e => InternalNodes.Add(e as IgesNode));
             }
 
             ElementTypeName = String(parameters, index++);
@@ -39,14 +38,9 @@ namespace IxMilia.Iges.Entities
             throw new NotImplementedException();
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             throw new NotImplementedException();
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            InternalNodes.AddRange(SubEntities.Select(se => se as IgesNode));
         }
 
         internal override IgesEntity PostProcess()

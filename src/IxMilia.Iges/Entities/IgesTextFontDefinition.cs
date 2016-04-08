@@ -1,8 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 
 namespace IxMilia.Iges.Entities
 {
@@ -63,14 +61,14 @@ namespace IxMilia.Iges.Entities
             Characters = new List<IgesTextFontDefinitionCharacter>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.FontCode = Integer(parameters, 0);
             this.Name = String(parameters, 1);
             var supercedes = Integer(parameters, 2);
             if (supercedes < 0)
             {
-                SubEntityIndices.Add(-supercedes);
+                binder.BindEntity(-supercedes, e => SupercedesFont = e as IgesTextFontDefinition);
             }
             else
             {
@@ -102,29 +100,18 @@ namespace IxMilia.Iges.Entities
             return index;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            Debug.Assert(SubordinateEntitySwitchType == IgesSubordinateEntitySwitchType.Independent);
-            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.Definition);
-            Debug.Assert(FormNumber == 0);
-            SupercedesFont = SubEntities.Count > 0 ? SubEntities[0] as IgesTextFontDefinition : null;
+            yield return SupercedesFont;
         }
 
-        internal override void OnBeforeWrite()
-        {
-            if (SupercedesFont != null)
-            {
-                SubEntities.Add(SupercedesFont);
-            }
-        }
-
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(FontCode);
             parameters.Add(Name);
-            if (SubEntityIndices.Any())
+            if (SupercedesFont != null)
             {
-                parameters.Add(-SubEntityIndices[0]);
+                parameters.Add(-binder.GetEntityId(SupercedesFont));
             }
             else if (SupercedesCode == 0)
             {

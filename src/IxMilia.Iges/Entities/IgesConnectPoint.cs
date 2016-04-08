@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -111,66 +110,55 @@ namespace IxMilia.Iges.Entities
             Location = IgesPoint.Origin;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             Location.X = Double(parameters, 0);
             Location.Y = Double(parameters, 1);
             Location.Z = Double(parameters, 2);
-            SubEntityIndices.Add(Integer(parameters, 3));
+            binder.BindEntity(Integer(parameters, 3), e => DisplaySymbolGeometry = e);
             RawConnectionType = Integer(parameters, 4);
             ConnectionType = Enum.IsDefined(typeof(IgesConnectionType), RawConnectionType)
                 ? ConnectionType = (IgesConnectionType)RawConnectionType
                 : ConnectionType = IgesConnectionType.ImplementorDefined;
             FunctionType = (IgesConnectionFunctionType)Integer(parameters, 5);
             FunctionIdentifier = String(parameters, 6);
-            SubEntityIndices.Add(Integer(parameters, 7));
+            binder.BindEntity(Integer(parameters, 7), e => FunctionIdentifierTextDisplayTemplate = e);
             FunctionName = String(parameters, 8);
-            SubEntityIndices.Add(Integer(parameters, 9));
+            binder.BindEntity(Integer(parameters, 9), e => FunctionNameTextDisplayTemplate = e);
             UniqueIdentifier = Integer(parameters, 10);
             RawFunctionCode = Integer(parameters, 11);
             FunctionCode = Enum.IsDefined(typeof(IgesConnectionFunctionCode), RawFunctionCode)
                 ? (IgesConnectionFunctionCode)RawFunctionCode
                 : IgesConnectionFunctionCode.ImplementorDefined;
             ConnectPointMayBeSwapped = !Boolean(parameters, 12);
-            SubEntityIndices.Add(Integer(parameters, 13));
+            binder.BindEntity(Integer(parameters, 13), e => Owner = e);
             return 14;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
+        {
+            yield return DisplaySymbolGeometry;
+            yield return FunctionIdentifierTextDisplayTemplate;
+            yield return FunctionNameTextDisplayTemplate;
+            yield return Owner;
+        }
+
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(Location?.X ?? 0.0);
             parameters.Add(Location?.Y ?? 0.0);
             parameters.Add(Location?.Z ?? 0.0);
-            parameters.Add(SubEntityIndices[0]);
+            parameters.Add(binder.GetEntityId(DisplaySymbolGeometry));
             parameters.Add(ConnectionType == IgesConnectionType.ImplementorDefined ? RawConnectionType : (int)ConnectionType);
             parameters.Add((int)FunctionType);
             parameters.Add(FunctionIdentifier);
-            parameters.Add(SubEntityIndices[1]);
+            parameters.Add(binder.GetEntityId(FunctionIdentifierTextDisplayTemplate));
             parameters.Add(FunctionName);
-            parameters.Add(SubEntityIndices[2]);
+            parameters.Add(binder.GetEntityId(FunctionNameTextDisplayTemplate));
             parameters.Add(UniqueIdentifier);
             parameters.Add(FunctionCode == IgesConnectionFunctionCode.ImplementorDefined ? RawFunctionCode : (int)FunctionCode);
             parameters.Add(ConnectPointMayBeSwapped ? 0 : 1);
-            parameters.Add(SubEntityIndices[3]);
-        }
-
-        internal override void OnBeforeWrite()
-        {
-            base.OnBeforeWrite();
-            SubEntities.Add(DisplaySymbolGeometry);
-            SubEntities.Add(FunctionIdentifierTextDisplayTemplate);
-            SubEntities.Add(FunctionNameTextDisplayTemplate);
-            SubEntities.Add(Owner);
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            base.OnAfterRead(directoryData);
-            Debug.Assert(EntityUseFlag == IgesEntityUseFlag.LogicalOrPositional);
-            DisplaySymbolGeometry = SubEntities[0];
-            FunctionIdentifierTextDisplayTemplate = SubEntities[1];
-            FunctionNameTextDisplayTemplate = SubEntities[2];
-            Owner = SubEntities[3];
+            parameters.Add(binder.GetEntityId(Owner));
         }
     }
 }

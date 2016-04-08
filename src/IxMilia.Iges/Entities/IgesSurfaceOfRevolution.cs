@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -14,34 +13,27 @@ namespace IxMilia.Iges.Entities
         public double StartAngle { get; set; }
         public double EndAngle { get; set; }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            SubEntityIndices.Add(Integer(parameters, 0));
-            SubEntityIndices.Add(Integer(parameters, 1));
+            binder.BindEntity(Integer(parameters, 0), e => AxisOfRevolution = e as IgesLine);
+            binder.BindEntity(Integer(parameters, 1), e => Generatrix = e);
             StartAngle = Double(parameters, 2);
             EndAngle = Double(parameters, 3);
             return 4;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            parameters.Add(SubEntityIndices[0]);
-            parameters.Add(SubEntityIndices[1]);
+            yield return AxisOfRevolution;
+            yield return Generatrix;
+        }
+
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
+        {
+            parameters.Add(binder.GetEntityId(AxisOfRevolution));
+            parameters.Add(binder.GetEntityId(Generatrix));
             parameters.Add(StartAngle);
             parameters.Add(EndAngle);
-        }
-
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.Add(AxisOfRevolution);
-            SubEntities.Add(Generatrix);
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            Debug.Assert(FormNumber == 0);
-            AxisOfRevolution = SubEntities[0] as IgesLine;
-            Generatrix = SubEntities[1];
         }
     }
 }

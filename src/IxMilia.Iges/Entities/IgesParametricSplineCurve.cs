@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace IxMilia.Iges.Entities
 {
@@ -61,7 +60,7 @@ namespace IxMilia.Iges.Entities
             Segments = new List<IgesSplinePolynomialSegment>();
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             int index = 0;
             this.SplineType = (IgesSplineType)Integer(parameters, index++);
@@ -109,7 +108,7 @@ namespace IxMilia.Iges.Entities
             return index;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add((int)SplineType);
             parameters.Add(DegreeOfContinuity);
@@ -151,18 +150,6 @@ namespace IxMilia.Iges.Entities
                 parameters.Add(Segments[i].ZSecondDerivative);
                 parameters.Add(Segments[i].ZThirdDerivative);
             }
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            base.OnAfterRead(directoryData);
-            Debug.Assert(NumberOfDimensions == 2 || NumberOfDimensions == 3);
-        }
-
-        internal override void OnBeforeWrite()
-        {
-            base.OnBeforeWrite();
-            Debug.Assert(NumberOfDimensions == 2 || NumberOfDimensions == 3);
         }
     }
 }

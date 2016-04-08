@@ -12,9 +12,9 @@ namespace IxMilia.Iges.Entities
         public double ExtrusionLength { get; set; }
         public IgesVector ExtrusionDirection { get; set; } = IgesVector.ZAxis;
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            SubEntityIndices.Add(Integer(parameters, 0));
+            binder.BindEntity(Integer(parameters, 0), e => Curve = e);
             ExtrusionLength = Double(parameters, 1);
             ExtrusionDirection.X = Double(parameters, 2);
             ExtrusionDirection.Y = Double(parameters, 3);
@@ -22,19 +22,14 @@ namespace IxMilia.Iges.Entities
             return 5;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            Curve = SubEntities[0];
+            yield return Curve;
         }
 
-        internal override void OnBeforeWrite()
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            SubEntities.Add(Curve);
-        }
-
-        protected override void WriteParameters(List<object> parameters)
-        {
-            parameters.Add(SubEntityIndices[0]);
+            parameters.Add(binder.GetEntityId(Curve));
             parameters.Add(ExtrusionLength);
             parameters.Add(ExtrusionDirection?.X ?? 0.0);
             parameters.Add(ExtrusionDirection?.Y ?? 0.0);

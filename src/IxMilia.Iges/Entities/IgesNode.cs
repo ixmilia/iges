@@ -1,7 +1,6 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace IxMilia.Iges.Entities
 {
@@ -32,31 +31,26 @@ namespace IxMilia.Iges.Entities
             Offset = offset;
         }
 
-        protected override int ReadParameters(List<string> parameters)
+        internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             this.Offset.X = Double(parameters, 0);
             this.Offset.Y = Double(parameters, 1);
             this.Offset.Z = Double(parameters, 2);
-            SubEntityIndices.Add(Integer(parameters, 3));
+            binder.BindEntity(Integer(parameters, 3), e => DisplacementCoordinateSystem = e as IgesTransformationMatrix);
             return 4;
         }
 
-        protected override void WriteParameters(List<object> parameters)
+        internal override IEnumerable<IgesEntity> GetReferencedEntities()
+        {
+            yield return DisplacementCoordinateSystem;
+        }
+
+        internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(this.Offset.X);
             parameters.Add(this.Offset.Y);
             parameters.Add(this.Offset.Z);
-            parameters.Add(SubEntityIndices.Single());
-        }
-
-        internal override void OnBeforeWrite()
-        {
-            SubEntities.Add(DisplacementCoordinateSystem);
-        }
-
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            DisplacementCoordinateSystem = SubEntities.Single() as IgesTransformationMatrix;
+            parameters.Add(binder.GetEntityId(DisplacementCoordinateSystem));
         }
     }
 }
