@@ -55,6 +55,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.ElementResults:
                     entity = new IgesElementResults();
                     break;
+                case IgesEntityType.Ellipsoid:
+                    entity = new IgesEllipsoid();
+                    break;
                 case IgesEntityType.Flash:
                     entity = new IgesFlash();
                     break;

@@ -54,6 +54,7 @@
     <Compile Include="Entities\IgesDefinitionLevelsProperty.cs" />
     <Compile Include="Entities\IgesDirection.cs" />
     <Compile Include="Entities\IgesElementResults.cs" />
+    <Compile Include="Entities\IgesEllipsoid.cs" />
     <Compile Include="Entities\IgesEntity.AssociatedEntityCollection.cs" />
     <Compile Include="Entities\IgesEntity.cs" />
     <Compile Include="Entities\IgesEntity_FromData.cs" />

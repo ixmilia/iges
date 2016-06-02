@@ -691,6 +691,25 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteEllipsoidTest()
+        {
+            var el = new IgesEllipsoid()
+            {
+                XAxisLength = 1.0,
+                YAxisLength = 2.0,
+                ZAxisLength = 3.0,
+                Center = new IgesPoint(4.0, 5.0, 6.0),
+                XAxis = new IgesVector(7.0, 8.0, 9.0),
+                ZAxis = new IgesVector(10.0, 11.0, 12.0)
+            };
+            VerifyEntity(el, @"
+     168       1       0       0       0                        00000000D      1
+     168       0       0       1       0                                D      2
+168,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.;                            1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteGeneralNoteTest()
         {
             // regular case with font code

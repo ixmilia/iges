@@ -1028,6 +1028,22 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadEllipsoidTest()
+        {
+            var el = (IgesEllipsoid)ParseLastEntity(@"
+     168       1       0       0       0                        00000000D      1
+     168       0       0       1       0                                D      2
+168,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.;                            1P      1
+");
+            Assert.Equal(1.0, el.XAxisLength);
+            Assert.Equal(2.0, el.YAxisLength);
+            Assert.Equal(3.0, el.ZAxisLength);
+            Assert.Equal(new IgesPoint(4.0, 5.0, 6.0), el.Center);
+            Assert.Equal(new IgesVector(7.0, 8.0, 9.0), el.XAxis);
+            Assert.Equal(new IgesVector(10.0, 11.0, 12.0), el.ZAxis);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadGeneralNoteTest()
         {
             // fully-specified values
