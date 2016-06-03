@@ -32,6 +32,10 @@
     <Compile Include="Entities\IgesBeam.cs" />
     <Compile Include="Entities\IgesBlankStatus.cs" />
     <Compile Include="Entities\IgesBlock.cs" />
+    <Compile Include="Entities\IgesBooleanTree.cs" />
+    <Compile Include="Entities\IgesBooleanTreeEntity.cs" />
+    <Compile Include="Entities\IgesBooleanTreeOperation.cs" />
+    <Compile Include="Entities\IgesBooleanTreeOperationKind.cs" />
     <Compile Include="Entities\IgesBoundary.cs" />
     <Compile Include="Entities\IgesBoundedSurface.cs" />
     <Compile Include="Entities\IgesCircularArc.cs" />
@@ -126,6 +130,7 @@
     <Compile Include="Entities\IgesTrimmedParametricSurface.cs" />
     <Compile Include="Entities\IgesView.cs" />
     <Compile Include="Entities\IgesViewBase.cs" />
+    <Compile Include="Entities\IIgesBooleanTreeItem.cs" />
     <Compile Include="IgesReaderBinder.cs" />
     <Compile Include="IgesColorNumber.cs" />
     <Compile Include="IgesDirectoryData.cs" />

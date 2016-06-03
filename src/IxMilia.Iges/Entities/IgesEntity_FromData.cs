@@ -22,6 +22,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.Block:
                     entity = new IgesBlock();
                     break;
+                case IgesEntityType.BooleanTree:
+                    entity = new IgesBooleanTree();
+                    break;
                 case IgesEntityType.Boundary:
                     entity = new IgesBoundary();
                     break;

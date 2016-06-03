@@ -710,6 +710,52 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteBooleanTreeTest()
+        {
+            //       U
+            //    /     \
+            //   -       I
+            //  / \     / \
+            // A   U   D   E
+            //    / \
+            //   B   C
+            var node = new IgesBooleanTreeOperation(
+                IgesBooleanTreeOperationKind.Union,
+                new IgesBooleanTreeOperation(
+                    IgesBooleanTreeOperationKind.Difference,
+                    new IgesBooleanTreeEntity(new IgesLine() { EntityLabel = "A" }),
+                    new IgesBooleanTreeOperation(
+                        IgesBooleanTreeOperationKind.Union,
+                        new IgesBooleanTreeEntity(new IgesLine() { EntityLabel = "B" }),
+                        new IgesBooleanTreeEntity(new IgesLine() { EntityLabel = "C" }))),
+                new IgesBooleanTreeOperation(
+                    IgesBooleanTreeOperationKind.Intersection,
+                    new IgesBooleanTreeEntity(new IgesLine() { EntityLabel = "D" }),
+                    new IgesBooleanTreeEntity(new IgesLine() { EntityLabel = "E" })));
+            var tree = new IgesBooleanTree(node);
+            VerifyEntity(tree, @"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                       A        D      2
+     110       2       0       0       0                        00000000D      3
+     110       0       0       1       0                       B        D      4
+     110       3       0       0       0                        00000000D      5
+     110       0       0       1       0                       C        D      6
+     110       4       0       0       0                        00000000D      7
+     110       0       0       1       0                       D        D      8
+     110       5       0       0       0                        00000000D      9
+     110       0       0       1       0                       E        D     10
+     180       6       0       0       0                        00000000D     11
+     180       0       0       1       0                                D     12
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+110,0.,0.,0.,0.,0.,0.;                                                 5P      3
+110,0.,0.,0.,0.,0.,0.;                                                 7P      4
+110,0.,0.,0.,0.,0.,0.;                                                 9P      5
+180,9,-1,-3,-5,1,3,-7,-9,2,1;                                         11P      6
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteGeneralNoteTest()
         {
             // regular case with font code

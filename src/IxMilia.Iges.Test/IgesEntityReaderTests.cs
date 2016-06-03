@@ -1044,6 +1044,54 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadBooleanTreeTest()
+        {
+            //       U
+            //    /     \
+            //   -       I
+            //  / \     / \
+            // A   U   D   E
+            //    / \
+            //   B   C
+            var tree = (IgesBooleanTree)ParseLastEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                       A        D      2
+     110       2       0       0       0                        00000000D      3
+     110       0       0       1       0                       B        D      4
+     110       3       0       0       0                        00000000D      5
+     110       0       0       1       0                       C        D      6
+     110       4       0       0       0                        00000000D      7
+     110       0       0       1       0                       D        D      8
+     110       5       0       0       0                        00000000D      9
+     110       0       0       1       0                       E        D     10
+     180       6       0       0       0                        00000000D     11
+     180       0       0       1       0                                D     12
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+110,0.,0.,0.,0.,0.,0.;                                                 5P      3
+110,0.,0.,0.,0.,0.,0.;                                                 7P      4
+110,0.,0.,0.,0.,0.,0.;                                                 9P      5
+180,9,-1,-3,-5,1,3,-7,-9,2,1;                                         11P      6
+");
+            var root = (IgesBooleanTreeOperation)tree.RootNode;
+            Assert.Equal(IgesBooleanTreeOperationKind.Union, root.OperationKind);
+
+            var left = (IgesBooleanTreeOperation)root.LeftChild;
+            Assert.Equal(IgesBooleanTreeOperationKind.Difference, left.OperationKind);
+            Assert.Equal("A", ((IgesBooleanTreeEntity)left.LeftChild).Entity.EntityLabel);
+
+            var leftRight = (IgesBooleanTreeOperation)left.RightChild;
+            Assert.Equal(IgesBooleanTreeOperationKind.Union, leftRight.OperationKind);
+            Assert.Equal("B", ((IgesBooleanTreeEntity)leftRight.LeftChild).Entity.EntityLabel);
+            Assert.Equal("C", ((IgesBooleanTreeEntity)leftRight.RightChild).Entity.EntityLabel);
+
+            var right = (IgesBooleanTreeOperation)root.RightChild;
+            Assert.Equal(IgesBooleanTreeOperationKind.Intersection, right.OperationKind);
+            Assert.Equal("D", ((IgesBooleanTreeEntity)right.LeftChild).Entity.EntityLabel);
+            Assert.Equal("E", ((IgesBooleanTreeEntity)right.RightChild).Entity.EntityLabel);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadGeneralNoteTest()
         {
             // fully-specified values

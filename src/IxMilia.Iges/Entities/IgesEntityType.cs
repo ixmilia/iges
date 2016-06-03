@@ -43,6 +43,7 @@ namespace IxMilia.Iges.Entities
         SolidOfRevolution = 162,
         SolidOfLinearExtrusion = 164,
         Ellipsoid = 168,
+        BooleanTree = 180,
         GeneralNote = 212,
         Leader = 214,
         LineFontDefinition = 304,
