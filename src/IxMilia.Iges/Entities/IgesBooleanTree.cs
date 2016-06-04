@@ -72,14 +72,18 @@ namespace IxMilia.Iges.Entities
                 }
             }
 
-            RootNode = (IIgesBooleanTreeItem)stack.Pop();
+            RootNode = stack.Count == 0
+                ? null
+                : (IIgesBooleanTreeItem)stack.Pop();
 
             return index;
         }
 
         internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            return GetReferencedEntities(RootNode);
+            return RootNode == null
+                ? new IgesEntity[0]
+                : GetReferencedEntities(RootNode);
         }
 
         private IEnumerable<IgesEntity> GetReferencedEntities(IIgesBooleanTreeItem node)
@@ -105,8 +109,15 @@ namespace IxMilia.Iges.Entities
 
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            parameters.Add(GetItemCount(RootNode));
-            WriteParameters(parameters, binder, RootNode);
+            if (RootNode == null)
+            {
+                parameters.Add(0);
+            }
+            else
+            {
+                parameters.Add(GetItemCount(RootNode));
+                WriteParameters(parameters, binder, RootNode);
+            }
         }
 
         private int GetItemCount(IIgesBooleanTreeItem node)

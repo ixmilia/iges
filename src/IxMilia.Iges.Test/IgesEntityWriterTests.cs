@@ -756,6 +756,20 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteSelectedComponentTest()
+        {
+            var selected = new IgesSelectedComponent(new IgesBooleanTree(), new IgesPoint(1.0, 2.0, 3.0));
+            VerifyEntity(selected, @"
+     180       1       0       0       0                        00000000D      1
+     180       0       0       1       0                                D      2
+     182       2       0       0       0                        00000300D      3
+     182       0       0       1       0                                D      4
+180,0;                                                                 1P      1
+182,1,1.,2.,3.;                                                        3P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteGeneralNoteTest()
         {
             // regular case with font code
