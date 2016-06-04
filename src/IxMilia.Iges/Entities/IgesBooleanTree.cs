@@ -18,6 +18,7 @@ namespace IxMilia.Iges.Entities
 
         public IgesBooleanTree(IIgesBooleanTreeItem rootNode)
         {
+            EntityUseFlag = IgesEntityUseFlag.Geometry;
             RootNode = rootNode;
         }
 
