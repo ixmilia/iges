@@ -1152,6 +1152,34 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadPlaneSurfaceTest()
+        {
+            var plane = (IgesPlaneSurface)ParseLastEntity(@"
+     116       1       0       0       0                        00000000D      1
+     116       0       0       1       0                                D      2
+     123       2       0       0       0                        00010200D      3
+     123       0       0       1       0                                D      4
+     123       3       0       0       0                        00010200D      5
+     123       0       0       1       0                                D      6
+     190       4       0       0       0                        00000000D      7
+     190       0       0       1       1                                D      8
+116,1.,2.,3.;                                                          1P      1
+123,0.,0.,1.;                                                          3P      2
+123,1.,0.,0.;                                                          5P      3
+190,1,3,5;                                                             7P      4
+");
+            Assert.Equal(1.0, plane.Point.X);
+            Assert.Equal(2.0, plane.Point.Y);
+            Assert.Equal(3.0, plane.Point.Z);
+            Assert.Equal(0.0, plane.Normal.X);
+            Assert.Equal(0.0, plane.Normal.Y);
+            Assert.Equal(1.0, plane.Normal.Z);
+            Assert.Equal(1.0, plane.ReferenceDirection.X);
+            Assert.Equal(0.0, plane.ReferenceDirection.Y);
+            Assert.Equal(0.0, plane.ReferenceDirection.Z);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadGeneralNoteTest()
         {
             // fully-specified values

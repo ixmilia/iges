@@ -104,6 +104,7 @@
     <Compile Include="Entities\IgesPatternLineFontDefinition.cs" />
     <Compile Include="Entities\IgesPerspectiveView.cs" />
     <Compile Include="Entities\IgesPlane.cs" />
+    <Compile Include="Entities\IgesPlaneSurface.cs" />
     <Compile Include="Entities\IgesProperty.cs" />
     <Compile Include="Entities\IgesRationalBSplineCurve.cs" />
     <Compile Include="Entities\IgesRationalBSplineSurface.cs" />

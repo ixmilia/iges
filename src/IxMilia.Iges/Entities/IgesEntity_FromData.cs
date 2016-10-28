@@ -117,6 +117,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.Plane:
                     entity = new IgesPlane();
                     break;
+                case IgesEntityType.PlaneSurface:
+                    entity = new IgesPlaneSurface();
+                    break;
                 case IgesEntityType.Point:
                     entity = new IgesLocation();
                     break;

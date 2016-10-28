@@ -47,6 +47,7 @@ namespace IxMilia.Iges.Entities
         SelectedComponent = 182,
         SolidAssembly = 184,
         ManifestSolidBRepObject = 186,
+        PlaneSurface = 190,
         GeneralNote = 212,
         Leader = 214,
         LineFontDefinition = 304,

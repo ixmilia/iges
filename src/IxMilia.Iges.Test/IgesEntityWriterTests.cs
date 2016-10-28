@@ -808,6 +808,32 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WritePlaneSurfaceTest()
+        {
+            var plane = new IgesPlaneSurface()
+            {
+                Point = new IgesLocation(1.0, 2.0, 3.0),
+                Normal = new IgesDirection(0.0, 0.0, 1.0),
+                ReferenceDirection = new IgesDirection(1.0, 0.0, 0.0),
+                IsParameterized = true,
+            };
+            VerifyEntity(plane, @"
+     116       1       0       0       0                        00000000D      1
+     116       0       0       1       0                                D      2
+     123       2       0       0       0                        00010200D      3
+     123       0       0       1       0                                D      4
+     123       3       0       0       0                        00010200D      5
+     123       0       0       1       0                                D      6
+     190       4       0       0       0                        00000000D      7
+     190       0       0       1       1                                D      8
+116,1.,2.,3.;                                                          1P      1
+123,0.,0.,1.;                                                          3P      2
+123,1.,0.,0.;                                                          5P      3
+190,1,3,5;                                                             7P      4
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteGeneralNoteTest()
         {
             // regular case with font code
