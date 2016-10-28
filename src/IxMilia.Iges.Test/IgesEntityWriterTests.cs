@@ -770,6 +770,24 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteSolidAssemblyTest()
+        {
+            var solid = new IgesSolidAssembly();
+            solid.Solids.Add(new IgesSolidAndTransformationMatrix(new IgesLine(), IgesTransformationMatrix.Identity));
+            VerifyEntity(solid, @"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     124       2       0       0       0                        00000000D      3
+     124       0       0       1       0                                D      4
+     184       3       0       0       0                        00000200D      5
+     184       0       0       1       0                                D      6
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+124,1.,0.,0.,0.,0.,1.,0.,0.,0.,0.,1.,0.;                               3P      2
+184,1,1,3;                                                             5P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteGeneralNoteTest()
         {
             // regular case with font code

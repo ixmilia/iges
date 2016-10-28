@@ -146,6 +146,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.SelectedComponent:
                     entity = new IgesSelectedComponent();
                     break;
+                case IgesEntityType.SolidAssembly:
+                    entity = new IgesSolidAssembly();
+                    break;
                 case IgesEntityType.SolidOfLinearExtrusion:
                     entity = new IgesSolidOfLinearExtrusion();
                     break;

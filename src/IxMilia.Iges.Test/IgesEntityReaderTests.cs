@@ -1107,6 +1107,30 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadSolidAssemblyTest()
+        {
+            var solid = (IgesSolidAssembly)ParseLastEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     110       2       0       0       0                        00000000D      3
+     110       0       0       1       0                                D      4
+     124       3       0       0       0                        00000000D      5
+     124       0       0       1       0                                D      6
+     184       4       0       0       0                        00000200D      7
+     184       0       0       1       0                                D      8
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+124,1.,0.,0.,0.,0.,1.,0.,0.,0.,0.,1.,0.;                               5P      3
+184,2,1,3,0,5;                                                         7P      4
+");
+            Assert.Equal(2, solid.Solids.Count);
+            Assert.IsType<IgesLine>(solid.Solids[0].Solid);
+            Assert.IsType<IgesLine>(solid.Solids[1].Solid);
+            Assert.True(solid.Solids[0].TransformationMatrix.IsIdentity); // null pointer, defaulted to identity
+            Assert.True(solid.Solids[1].TransformationMatrix.IsIdentity); // actually an identity matrix
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadGeneralNoteTest()
         {
             // fully-specified values

@@ -45,6 +45,7 @@ namespace IxMilia.Iges.Entities
         Ellipsoid = 168,
         BooleanTree = 180,
         SelectedComponent = 182,
+        SolidAssembly = 184,
         GeneralNote = 212,
         Leader = 214,
         LineFontDefinition = 304,
