@@ -55,11 +55,6 @@ namespace IxMilia.Iges.Entities
             return index;
         }
 
-        internal override void OnAfterRead(IgesDirectoryData directoryData)
-        {
-            base.OnAfterRead(directoryData);
-        }
-
         internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
             foreach (var solid in Solids)

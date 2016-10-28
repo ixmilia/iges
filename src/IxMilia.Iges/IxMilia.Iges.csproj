@@ -82,6 +82,7 @@
     <Compile Include="Entities\IgesLinearTriangle.cs" />
     <Compile Include="Entities\IgesLineFontDefinitionBase.cs" />
     <Compile Include="Entities\IgesLocation.cs" />
+    <Compile Include="Entities\IgesManifestSolidBRepObject.cs" />
     <Compile Include="Entities\IgesMass.cs" />
     <Compile Include="Entities\IgesNodalDisplacementAndRotation.cs" />
     <Compile Include="Entities\IgesNodalResults.cs" />

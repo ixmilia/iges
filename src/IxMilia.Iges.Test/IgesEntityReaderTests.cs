@@ -1131,6 +1131,27 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadManifestSolidBRepObjectTest()
+        {
+            var solid = (IgesManifestSolidBRepObject)ParseLastEntity(@"
+     110       1       0       0       0                        00000000D      1
+     110       0       0       1       0                                D      2
+     100       2       0       0       0                        00000000D      3
+     100       0       0       1       0                                D      4
+     186       3       0       0       0                        00000000D      5
+     186       0       0       1       0                                D      6
+110,0.,0.,0.,0.,0.,0.;                                                 1P      1
+100,0.,0.,0.,0.,0.,0.,0.;                                              3P      2
+186,1,1,1,3,1;                                                         5P      3
+");
+            Assert.IsType<IgesLine>(solid.Shell);
+            Assert.True(solid.IsOriented);
+            Assert.Equal(1, solid.Voids.Count);
+            Assert.IsType<IgesCircularArc>(solid.Voids[0].Shell);
+            Assert.True(solid.Voids[0].IsOriented);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadGeneralNoteTest()
         {
             // fully-specified values

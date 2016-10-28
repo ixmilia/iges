@@ -46,6 +46,7 @@ namespace IxMilia.Iges.Entities
         BooleanTree = 180,
         SelectedComponent = 182,
         SolidAssembly = 184,
+        ManifestSolidBRepObject = 186,
         GeneralNote = 212,
         Leader = 214,
         LineFontDefinition = 304,
