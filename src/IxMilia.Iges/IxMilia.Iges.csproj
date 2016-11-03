@@ -132,6 +132,7 @@
     <Compile Include="Entities\IgesTextFontDefinition.cs" />
     <Compile Include="Entities\IgesThreeNodeBeam.cs" />
     <Compile Include="Entities\IgesThreeNodedBeam.cs" />
+    <Compile Include="Entities\IgesToroidalSurface.cs" />
     <Compile Include="Entities\IgesTorus.cs" />
     <Compile Include="Entities\IgesTransformationMatrix.cs" />
     <Compile Include="Entities\IgesTrimmedParametricSurface.cs" />

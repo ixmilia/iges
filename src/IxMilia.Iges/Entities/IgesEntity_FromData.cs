@@ -188,6 +188,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.TextFontDefinition:
                     entity = new IgesTextFontDefinition();
                     break;
+                case IgesEntityType.ToroidalSurface:
+                    entity = new IgesToroidalSurface();
+                    break;
                 case IgesEntityType.Torus:
                     entity = new IgesTorus();
                     break;
