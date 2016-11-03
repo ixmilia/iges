@@ -112,6 +112,7 @@
     <Compile Include="Entities\IgesRightAngularWedge.cs" />
     <Compile Include="Entities\IgesRightCircularConeFrustrum.cs" />
     <Compile Include="Entities\IgesRightCircularCylinder.cs" />
+    <Compile Include="Entities\IgesRightCircularCylindricalSurface.cs" />
     <Compile Include="Entities\IgesRigidBody.cs" />
     <Compile Include="Entities\IgesRuledSurface.cs" />
     <Compile Include="Entities\IgesSelectedComponent.cs" />

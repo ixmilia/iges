@@ -1168,15 +1168,32 @@ namespace IxMilia.Iges.Test
 123,1.,0.,0.;                                                          5P      3
 190,1,3,5;                                                             7P      4
 ");
-            Assert.Equal(1.0, plane.Point.X);
-            Assert.Equal(2.0, plane.Point.Y);
-            Assert.Equal(3.0, plane.Point.Z);
-            Assert.Equal(0.0, plane.Normal.X);
-            Assert.Equal(0.0, plane.Normal.Y);
-            Assert.Equal(1.0, plane.Normal.Z);
-            Assert.Equal(1.0, plane.ReferenceDirection.X);
-            Assert.Equal(0.0, plane.ReferenceDirection.Y);
-            Assert.Equal(0.0, plane.ReferenceDirection.Z);
+            Assert.Equal(new IgesPoint(1.0, 2.0, 3.0), plane.Point.ToPoint());
+            Assert.Equal(IgesVector.ZAxis, plane.Normal.ToVector());
+            Assert.Equal(IgesVector.XAxis, plane.ReferenceDirection.ToVector());
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadRightCircularCylindricalSurfaceTest()
+        {
+            var cylinder = (IgesRightCircularCylindricalSurface)ParseLastEntity(@"
+     116       1       0       0       0                        00000000D      1
+     116       0       0       1       0                                D      2
+     123       2       0       0       0                        00010200D      3
+     123       0       0       1       0                                D      4
+     123       3       0       0       0                        00010200D      5
+     123       0       0       1       0                                D      6
+     192       4       0       0       0                        00000000D      7
+     192       0       0       1       1                                D      8
+116,1.,2.,3.;                                                          1P      1
+123,0.,0.,1.;                                                          3P      2
+123,1.,0.,0.;                                                          5P      3
+192,1,3,13.,5;                                                         7P      4
+");
+            Assert.Equal(new IgesPoint(1.0, 2.0, 3.0), cylinder.Point.ToPoint());
+            Assert.Equal(IgesVector.ZAxis, cylinder.AxisDirection.ToVector());
+            Assert.Equal(13.0, cylinder.Radius);
+            Assert.Equal(IgesVector.XAxis, cylinder.ReferenceDirection.ToVector());
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]

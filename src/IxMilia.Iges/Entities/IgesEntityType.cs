@@ -48,6 +48,7 @@ namespace IxMilia.Iges.Entities
         SolidAssembly = 184,
         ManifestSolidBRepObject = 186,
         PlaneSurface = 190,
+        RightCircularCylindricalSurface = 192,
         GeneralNote = 212,
         Leader = 214,
         LineFontDefinition = 304,

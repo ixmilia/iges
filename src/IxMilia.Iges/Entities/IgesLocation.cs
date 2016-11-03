@@ -40,5 +40,10 @@ namespace IxMilia.Iges.Entities
             parameters.Add(this.Y);
             parameters.Add(this.Z);
         }
+
+        public IgesPoint ToPoint()
+        {
+            return new IgesPoint(X, Y, Z);
+        }
     }
 }
