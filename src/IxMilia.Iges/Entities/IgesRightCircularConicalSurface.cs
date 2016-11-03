@@ -4,13 +4,22 @@ using System.Collections.Generic;
 
 namespace IxMilia.Iges.Entities
 {
-    public class IgesRightCircularCylindricalSurface : IgesEntity
+    public class IgesRightCircularConicalSurface : IgesEntity
     {
-        public override IgesEntityType EntityType { get { return IgesEntityType.RightCircularCylindricalSurface; } }
+        public override IgesEntityType EntityType { get { return IgesEntityType.RightCircularConicalSurface; } }
 
         public IgesLocation Point { get; set; }
         public IgesDirection AxisDirection { get; set; }
+
+        /// <summary>
+        /// The radius of the cone at the <see cref="Point"/>.
+        /// </summary>
         public double Radius { get; set; }
+
+        /// <summary>
+        /// The semi-angle of the code in degrees (0.0, 90.0).
+        /// </summary>
+        public double SemiAngle { get; set; }
         public IgesDirection ReferenceDirection { get; set; }
 
         public bool IsParameterized
@@ -19,7 +28,7 @@ namespace IxMilia.Iges.Entities
             set { FormNumber = value ? 1 : 0; }
         }
 
-        public IgesRightCircularCylindricalSurface()
+        public IgesRightCircularConicalSurface()
         {
             SubordinateEntitySwitchType = IgesSubordinateEntitySwitchType.PhysicallyDependent;
         }
@@ -30,6 +39,7 @@ namespace IxMilia.Iges.Entities
             binder.BindEntity(Integer(parameters, index++), point => Point = point as IgesLocation);
             binder.BindEntity(Integer(parameters, index++), axis => AxisDirection = axis as IgesDirection);
             Radius = Double(parameters, index++);
+            SemiAngle = Double(parameters, index++);
             if (IsParameterized)
             {
                 binder.BindEntity(Integer(parameters, index++), refDir => ReferenceDirection = refDir as IgesDirection);
@@ -50,6 +60,7 @@ namespace IxMilia.Iges.Entities
             parameters.Add(binder.GetEntityId(Point));
             parameters.Add(binder.GetEntityId(AxisDirection));
             parameters.Add(Radius);
+            parameters.Add(SemiAngle);
             if (IsParameterized)
             {
                 parameters.Add(binder.GetEntityId(ReferenceDirection));

@@ -1183,7 +1183,7 @@ namespace IxMilia.Iges.Test
      123       0       0       1       0                                D      4
      123       3       0       0       0                        00010200D      5
      123       0       0       1       0                                D      6
-     192       4       0       0       0                        00000000D      7
+     192       4       0       0       0                        00010000D      7
      192       0       0       1       1                                D      8
 116,1.,2.,3.;                                                          1P      1
 123,0.,0.,1.;                                                          3P      2
@@ -1194,6 +1194,30 @@ namespace IxMilia.Iges.Test
             Assert.Equal(IgesVector.ZAxis, cylinder.AxisDirection.ToVector());
             Assert.Equal(13.0, cylinder.Radius);
             Assert.Equal(IgesVector.XAxis, cylinder.ReferenceDirection.ToVector());
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadRightCircularConicalSurfaceTest()
+        {
+            var cone = (IgesRightCircularConicalSurface)ParseLastEntity(@"
+     116       1       0       0       0                        00000000D      1
+     116       0       0       1       0                                D      2
+     123       2       0       0       0                        00010200D      3
+     123       0       0       1       0                                D      4
+     123       3       0       0       0                        00010200D      5
+     123       0       0       1       0                                D      6
+     194       4       0       0       0                        00010000D      7
+     194       0       0       1       1                                D      8
+116,1.,2.,3.;                                                          1P      1
+123,0.,0.,1.;                                                          3P      2
+123,1.,0.,0.;                                                          5P      3
+194,1,3,13.,45.,5;                                                     7P      4
+");
+            Assert.Equal(new IgesPoint(1.0, 2.0, 3.0), cone.Point.ToPoint());
+            Assert.Equal(IgesVector.ZAxis, cone.AxisDirection.ToVector());
+            Assert.Equal(13.0, cone.Radius);
+            Assert.Equal(45.0, cone.SemiAngle);
+            Assert.Equal(IgesVector.XAxis, cone.ReferenceDirection.ToVector());
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]

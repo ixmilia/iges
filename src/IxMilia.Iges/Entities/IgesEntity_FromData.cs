@@ -143,6 +143,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.RightCircularConeFrustrum:
                     entity = new IgesRightCircularConeFrustrum();
                     break;
+                case IgesEntityType.RightCircularConicalSurface:
+                    entity = new IgesRightCircularConicalSurface();
+                    break;
                 case IgesEntityType.RightCircularCylinder:
                     entity = new IgesRightCircularCylinder();
                     break;
