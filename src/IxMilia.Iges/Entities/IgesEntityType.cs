@@ -50,6 +50,7 @@ namespace IxMilia.Iges.Entities
         PlaneSurface = 190,
         RightCircularCylindricalSurface = 192,
         RightCircularConicalSurface = 194,
+        SphericalSurface = 196,
         GeneralNote = 212,
         Leader = 214,
         LineFontDefinition = 304,

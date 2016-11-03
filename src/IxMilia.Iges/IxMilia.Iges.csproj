@@ -121,6 +121,7 @@
     <Compile Include="Entities\IgesSolidOfLinearExtrusion.cs" />
     <Compile Include="Entities\IgesSolidOfRevolution.cs" />
     <Compile Include="Entities\IgesSphere.cs" />
+    <Compile Include="Entities\IgesSphericalSurface.cs" />
     <Compile Include="Entities\IgesSpring.cs" />
     <Compile Include="Entities\IgesSubfigureDefinition.cs" />
     <Compile Include="Entities\IgesSubordinateEntitySwitchType.cs" />

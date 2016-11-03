@@ -170,6 +170,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.Sphere:
                     entity = new IgesSphere();
                     break;
+                case IgesEntityType.SphericalSurface:
+                    entity = new IgesSphericalSurface();
+                    break;
                 case IgesEntityType.SubfigureDefinition:
                     entity = new IgesSubfigureDefinition();
                     break;
