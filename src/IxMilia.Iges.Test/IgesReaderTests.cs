@@ -141,6 +141,31 @@ S      1G      3D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void RoundTripFileWithNonStandardDelimitersTest()
+        {
+            var file = new IgesFile()
+            {
+                FieldDelimiter = ';', // inverted field and record delimiters
+                RecordDelimiter = ',',
+            };
+            file.Entities.Add(new IgesLine(new IgesPoint(1.0, 2.0, 3.0), new IgesPoint(4.0, 5.0, 6.0)));
+
+            // write then re-read the file
+            using (var ms = new MemoryStream())
+            {
+                file.Save(ms);
+                ms.Flush();
+                ms.Seek(0, SeekOrigin.Begin);
+                var file2 = IgesFile.Load(ms);
+                Assert.Equal(';', file.FieldDelimiter);
+                Assert.Equal(',', file.RecordDelimiter);
+                var line = (IgesLine)file.Entities.Single();
+                Assert.Equal(new IgesPoint(1.0, 2.0, 3.0), line.P1);
+                Assert.Equal(new IgesPoint(4.0, 5.0, 6.0), line.P2);
+            }
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void FileWithEmptyFieldOrRecordSpecifierTest()
         {
             var file = CreateFile(@"

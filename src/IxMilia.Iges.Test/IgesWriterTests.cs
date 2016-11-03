@@ -346,6 +346,22 @@ S      1G      3D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteFileWithNonStandardDelimitersTest()
+        {
+            var file = new IgesFile()
+            {
+                FieldDelimiter = '/',
+                RecordDelimiter = '#',
+            };
+            file.Entities.Add(new IgesLine());
+            // verify global section uses appropriate delimiters
+            VerifyFileContains(file, "1H//1H#/");
+
+            // verify entity writing uses appropriate delimiters
+            VerifyFileContains(file, "110/0./0./0./0./0./0.#                                                 1P      1");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteCommonPointersTest()
         {
             // all other write tests validate the case where there are no common pointers
