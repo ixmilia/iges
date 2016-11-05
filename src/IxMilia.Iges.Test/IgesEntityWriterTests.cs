@@ -944,6 +944,39 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteAngularDimensionTest()
+        {
+            var angular = new IgesAngularDimension();
+            VerifyEntity(angular, @"
+     202       1       0       0       0                        00000100D      1
+     202       0       0       1       0                                D      2
+202,0,0,0,0.,0.,0.,0,0;                                                1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteCurveDimensionTest()
+        {
+            var curve = new IgesCurveDimension();
+            VerifyEntity(curve, @"
+     204       1       0       0       0                        00000100D      1
+     204       0       0       1       0                                D      2
+204,0,0,0,0,0,0,0;                                                     1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteDiameterDimensionTest()
+        {
+            var diameter = new IgesDiameterDimension();
+            VerifyEntity(diameter, @"
+     206       1       0       0       0                        00000100D      1
+     206       0       0       1       0                                D      2
+206,0,0,0,0.,0.;                                                       1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteGeneralNoteTest()
         {
             // regular case with font code

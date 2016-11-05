@@ -1268,6 +1268,36 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadAngularDimensionTest()
+        {
+            var angular = (IgesAngularDimension)ParseLastEntity(@"
+     202       1       0       0       0                        00000100D      1
+     202       0       0       1       0                                D      2
+202,0,0,0,0.,0.,0.,0,0;                                                1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadCurveDimensionTest()
+        {
+            var curve = (IgesCurveDimension)ParseLastEntity(@"
+     204       1       0       0       0                        00000100D      1
+     204       0       0       1       0                                D      2
+204,0,0,0,0,0,0,0;                                                     1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadDiameterDimensionTest()
+        {
+            var diameter = (IgesDiameterDimension)ParseLastEntity(@"
+     206       1       0       0       0                        00000100D      1
+     206       0       0       1       0                                D      2
+206,0,0,0,0.,0.;                                                       1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadGeneralNoteTest()
         {
             // fully-specified values

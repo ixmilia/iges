@@ -21,6 +21,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
   <ItemGroup>
+    <Compile Include="Entities\IgesAngularDimension.cs" />
     <Compile Include="Entities\IgesAssociativity.cs" />
     <Compile Include="Entities\IgesAxisymmetricCubicLine.cs" />
     <Compile Include="Entities\IgesAxisymmetricLinarLine.cs" />
@@ -52,10 +53,13 @@
     <Compile Include="Entities\IgesCubicThickShellWedge.cs" />
     <Compile Include="Entities\IgesCubicTriangle.cs" />
     <Compile Include="Entities\IgesCurvedBeam.cs" />
+    <Compile Include="Entities\IgesCurveDimension.cs" />
     <Compile Include="Entities\IgesCurveOnAParametricSurface.cs" />
     <Compile Include="Entities\IgesCustomFiniteElement.cs" />
     <Compile Include="Entities\IgesDamper.cs" />
     <Compile Include="Entities\IgesDefinitionLevelsProperty.cs" />
+    <Compile Include="Entities\IgesDiameterDimension.cs" />
+    <Compile Include="Entities\IgesDimensionBase.cs" />
     <Compile Include="Entities\IgesDirection.cs" />
     <Compile Include="Entities\IgesElementResults.cs" />
     <Compile Include="Entities\IgesEllipsoid.cs" />

@@ -11,6 +11,9 @@ namespace IxMilia.Iges.Entities
             IgesEntity entity = null;
             switch (directoryData.EntityType)
             {
+                case IgesEntityType.AngularDimension:
+                    entity = new IgesAngularDimension();
+                    break;
                 case IgesEntityType.AssociativityInstance:
                     switch (directoryData.FormNumber)
                     {
@@ -49,8 +52,14 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.CopiousData:
                     entity = new IgesCopiousData();
                     break;
+                case IgesEntityType.CurveDimension:
+                    entity = new IgesCurveDimension();
+                    break;
                 case IgesEntityType.CurveOnAParametricSurface:
                     entity = new IgesCurveOnAParametricSurface();
+                    break;
+                case IgesEntityType.DiameterDimension:
+                    entity = new IgesDiameterDimension();
                     break;
                 case IgesEntityType.Direction:
                     entity = new IgesDirection();
