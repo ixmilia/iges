@@ -977,6 +977,29 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteFlagNoteTest()
+        {
+            var flag = new IgesFlagNote()
+            {
+                Location = new IgesPoint(1.0, 2.0, 3.0),
+                RotationAngle = 0.1,
+                GeneralNote = new IgesGeneralNote()
+            };
+            flag.Leaders.Add(new IgesLeader());
+            VerifyEntity(flag, @"
+     212       1       0       0       0                        00000100D      1
+     212       0       0       1       0                                D      2
+     214       2       0       0       0                        00000100D      3
+     214       0       0       1       1                                D      4
+     208       3       0       0       0                        00000100D      5
+     208       0       0       1       0                                D      6
+212,0;                                                                 1P      1
+214,0,0.,0.,0.,0.,0.;                                                  3P      2
+208,1.,2.,3.,0.1,1,1,3;                                                5P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteGeneralNoteTest()
         {
             // regular case with font code

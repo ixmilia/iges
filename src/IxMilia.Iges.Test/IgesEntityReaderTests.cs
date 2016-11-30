@@ -1298,6 +1298,25 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadFlagNoteTest()
+        {
+            var flag = (IgesFlagNote)ParseLastEntity(@"
+     212       1       0       0       0                        00000100D      1
+     212       0       0       1       0                                D      2
+     214       2       0       0       0                        00000100D      3
+     214       0       0       1       1                                D      4
+     208       3       0       0       0                        00000100D      5
+     208       0       0       1       0                                D      6
+212,0;                                                                 1P      1
+214,0,0.,0.,0.,0.,0.;                                                  3P      2
+208,1.,2.,3.,0.1,1,1,3;                                                5P      3
+");
+            Assert.Equal(new IgesPoint(1.0, 2.0, 3.0), flag.Location);
+            Assert.Equal(0.1, flag.RotationAngle);
+            Assert.Equal(1, flag.Leaders.Count);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadGeneralNoteTest()
         {
             // fully-specified values

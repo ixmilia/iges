@@ -71,6 +71,7 @@
     <Compile Include="Entities\IgesEntityUseFlag.cs" />
     <Compile Include="Entities\IgesFiniteElement.cs" />
     <Compile Include="Entities\IgesFiniteElementDummy.cs" />
+    <Compile Include="Entities\IgesFlagNote.cs" />
     <Compile Include="Entities\IgesFlash.cs" />
     <Compile Include="Entities\IgesGeneralNote.cs" />
     <Compile Include="Entities\IgesGroundedDamper.cs" />

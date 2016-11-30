@@ -70,6 +70,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.Ellipsoid:
                     entity = new IgesEllipsoid();
                     break;
+                case IgesEntityType.FlagNote:
+                    entity = new IgesFlagNote();
+                    break;
                 case IgesEntityType.Flash:
                     entity = new IgesFlash();
                     break;
