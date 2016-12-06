@@ -79,6 +79,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.FiniteElement:
                     entity = new IgesFiniteElementDummy();
                     break;
+                case IgesEntityType.GeneralLabel:
+                    entity = new IgesGeneralLabel();
+                    break;
                 case IgesEntityType.GeneralNote:
                     entity = new IgesGeneralNote();
                     break;

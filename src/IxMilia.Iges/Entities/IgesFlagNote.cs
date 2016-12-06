@@ -61,13 +61,13 @@ namespace IxMilia.Iges.Entities
             Location.Y = Double(parameters, index++);
             Location.Z = Double(parameters, index++);
             RotationAngle = Double(parameters, index++);
-            binder.BindEntity(index++, note => GeneralNote = note as IgesGeneralNote);
+            binder.BindEntity(Integer(parameters, index++), note => GeneralNote = note as IgesGeneralNote);
             var leaderCount = Integer(parameters, index++);
             Leaders = new IgesLeader[leaderCount].ToList();
             for (int i = 0; i < leaderCount; i++)
             {
                 var idx = i;
-                binder.BindEntity(index++, leader => Leaders[idx] = leader as IgesLeader);
+                binder.BindEntity(Integer(parameters, index++), leader => Leaders[idx] = leader as IgesLeader);
             }
 
             return index;

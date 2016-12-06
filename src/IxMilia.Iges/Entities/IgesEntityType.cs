@@ -56,6 +56,7 @@ namespace IxMilia.Iges.Entities
         CurveDimension = 204,
         DiameterDimension = 206,
         FlagNote = 208,
+        GeneralLabel = 210,
         GeneralNote = 212,
         Leader = 214,
         LineFontDefinition = 304,

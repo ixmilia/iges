@@ -16,16 +16,16 @@ namespace IxMilia.Iges.Entities
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             var index = 0;
-            binder.BindEntity(index++, generalNote => GeneralNote = generalNote as IgesGeneralNote);
-            binder.BindEntity(index++, witness => FirstWitnessLine = witness as IgesCopiousData);
-            binder.BindEntity(index++, witness => SecondWitnessLine = witness as IgesCopiousData);
+            binder.BindEntity(Integer(parameters, index++), generalNote => GeneralNote = generalNote as IgesGeneralNote);
+            binder.BindEntity(Integer(parameters, index++), witness => FirstWitnessLine = witness as IgesCopiousData);
+            binder.BindEntity(Integer(parameters, index++), witness => SecondWitnessLine = witness as IgesCopiousData);
             Vertex = new IgesPoint(
                 Double(parameters, index++),
                 Double(parameters, index++),
                 0.0);
             LeaderArcRadius = Double(parameters, index++);
-            binder.BindEntity(index++, leader => FirstLeader = leader as IgesLeader);
-            binder.BindEntity(index++, leader => SecondLeader = leader as IgesLeader);
+            binder.BindEntity(Integer(parameters, index++), leader => FirstLeader = leader as IgesLeader);
+            binder.BindEntity(Integer(parameters, index++), leader => SecondLeader = leader as IgesLeader);
             return index;
         }
 

@@ -1000,6 +1000,27 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteGeneralLabelTest()
+        {
+            var label = new IgesGeneralLabel()
+            {
+                GeneralNote = new IgesGeneralNote()
+            };
+            label.Leaders.Add(new IgesLeader());
+            VerifyEntity(label, @"
+     212       1       0       0       0                        00000100D      1
+     212       0       0       1       0                                D      2
+     214       2       0       0       0                        00000100D      3
+     214       0       0       1       1                                D      4
+     210       3       0       0       0                        00000100D      5
+     210       0       0       1       0                                D      6
+212,0;                                                                 1P      1
+214,0,0.,0.,0.,0.,0.;                                                  3P      2
+210,1,1,3;                                                             5P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteGeneralNoteTest()
         {
             // regular case with font code
