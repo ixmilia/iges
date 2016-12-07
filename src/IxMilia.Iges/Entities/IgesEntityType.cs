@@ -58,6 +58,7 @@ namespace IxMilia.Iges.Entities
         FlagNote = 208,
         GeneralLabel = 210,
         GeneralNote = 212,
+        NewGeneralNote = 213,
         Leader = 214,
         LineFontDefinition = 304,
         SubfigureDefinition = 308,

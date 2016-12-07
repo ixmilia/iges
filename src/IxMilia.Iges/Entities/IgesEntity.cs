@@ -462,91 +462,52 @@ namespace IxMilia.Iges.Entities
 
         protected double Double(List<string> values, int index)
         {
-            return DoubleOrDefault(values, index, 0.0);
+            return IgesParameterReader.Double(values, index);
         }
 
         protected double DoubleOrDefault(List<string> values, int index, double defaultValue)
         {
-            if (index < values.Count)
-            {
-                var result = 0.0;
-                double.TryParse(values[index], out result);
-                return result;
-            }
-            else
-            {
-                return defaultValue;
-            }
+            return IgesParameterReader.DoubleOrDefault(values, index, defaultValue);
         }
 
         protected int Integer(List<string> values, int index)
         {
-            return IntegerOrDefault(values, index, 0);
+            return IgesParameterReader.Integer(values, index);
         }
 
         protected int IntegerOrDefault(List<string> values, int index, int defaultValue)
         {
-            if (index < values.Count)
-            {
-                var result = 0;
-                int.TryParse(values[index], out result);
-                return result;
-            }
-            else
-            {
-                return defaultValue;
-            }
+            return IgesParameterReader.IntegerOrDefault(values, index, defaultValue);
         }
 
         protected string String(List<string> values, int index)
         {
-            return StringOrDefault(values, index, null);
+            return IgesParameterReader.String(values, index);
         }
 
         protected string StringOrDefault(List<string> values, int index, string defaultValue)
         {
-            if (index < values.Count)
-            {
-                return values[index];
-            }
-            else
-            {
-                return defaultValue;
-            }
+            return IgesParameterReader.StringOrDefault(values, index, defaultValue);
         }
 
         protected bool Boolean(List<string> values, int index)
         {
-            return BooleanOrDefault(values, index, false);
+            return IgesParameterReader.Boolean(values, index);
         }
 
         protected bool BooleanOrDefault(List<string> values, int index, bool defaultValue)
         {
-            if (index < values.Count)
-            {
-                return Integer(values, index) != 0;
-            }
-            else
-            {
-                return defaultValue;
-            }
+            return IgesParameterReader.BooleanOrDefault(values, index, defaultValue);
         }
 
         protected DateTime DateTime(List<string> values, int index)
         {
-            return DateTimeOrDefault(values, index, System.DateTime.MinValue);
+            return IgesParameterReader.DateTime(values, index);
         }
 
         protected DateTime DateTimeOrDefault(List<string> values, int index, DateTime defaultValue)
         {
-            if (index < values.Count)
-            {
-                return IgesFileReader.ParseDateTime(values[index], defaultValue);
-            }
-            else
-            {
-                return defaultValue;
-            }
+            return IgesParameterReader.DateTimeOrDefault(values, index, defaultValue);
         }
     }
 }

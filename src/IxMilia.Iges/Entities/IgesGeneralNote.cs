@@ -1,7 +1,7 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace IxMilia.Iges.Entities
@@ -12,8 +12,17 @@ namespace IxMilia.Iges.Entities
         public double BoxHeight { get; set; }
         public int FontCode { get; set; }
         public IgesTextFontDefinition TextFontDefinition { get; set; }
+
+        /// <summary>
+        /// The slant angle in radians.  <see cref="Math.PI"/> / 2.0 is the value for no slant and is the default.
+        /// </summary>
         public double SlantAngle { get; set; }
+
+        /// <summary>
+        /// The rotation angle in radians.
+        /// </summary>
         public double RotationAngle { get; set; }
+
         public IgesTextMirroringAxis MirroringAxis { get; set; }
         public IgesTextRotationType RotationType { get; set; }
         public IgesPoint Location { get; set; }
@@ -21,7 +30,67 @@ namespace IxMilia.Iges.Entities
 
         public IgesTextString()
         {
+            SlantAngle = Math.PI / 2.0;
             Location = IgesPoint.Origin;
+        }
+
+        internal static IgesTextString ReadParameters(List<string> parameters, IgesReaderBinder binder, ref int index)
+        {
+            var str = new IgesTextString();
+            str.PopulateFromParameters(parameters, binder, ref index);
+            return str;
+        }
+
+        internal void PopulateFromParameters(List<string> parameters, IgesReaderBinder binder, ref int index)
+        {
+            var charCount = IgesParameterReader.Integer(parameters, index++);
+            BoxWidth = IgesParameterReader.Double(parameters, index++);
+            BoxHeight = IgesParameterReader.Double(parameters, index++);
+
+            var fontCode = IgesParameterReader.IntegerOrDefault(parameters, index++, 1);
+            if (fontCode < 0)
+            {
+                binder.BindEntity(-fontCode, e => TextFontDefinition = e as IgesTextFontDefinition);
+                FontCode = -1;
+            }
+            else
+            {
+                FontCode = fontCode;
+            }
+
+            SlantAngle = IgesParameterReader.Double(parameters, index++);
+            RotationAngle = IgesParameterReader.Double(parameters, index++);
+            MirroringAxis = (IgesTextMirroringAxis)IgesParameterReader.Integer(parameters, index++);
+            RotationType = (IgesTextRotationType)IgesParameterReader.Integer(parameters, index++);
+            Location.X = IgesParameterReader.Double(parameters, index++);
+            Location.Y = IgesParameterReader.Double(parameters, index++);
+            Location.Z = IgesParameterReader.Double(parameters, index++);
+            Value = IgesParameterReader.String(parameters, index++);
+        }
+
+        internal virtual void WriteParameters(List<object> parameters, IgesWriterBinder binder)
+        {
+            parameters.Add(Value?.Length ?? 0);
+            parameters.Add(BoxWidth);
+            parameters.Add(BoxHeight);
+
+            if (TextFontDefinition != null)
+            {
+                parameters.Add(-binder.GetEntityId(TextFontDefinition));
+            }
+            else
+            {
+                parameters.Add(FontCode);
+            }
+
+            parameters.Add(SlantAngle);
+            parameters.Add(RotationAngle);
+            parameters.Add((int)MirroringAxis);
+            parameters.Add((int)RotationType);
+            parameters.Add(Location?.X ?? 0.0);
+            parameters.Add(Location?.Y ?? 0.0);
+            parameters.Add(Location?.Z ?? 0.0);
+            parameters.Add(Value);
         }
     }
 
@@ -67,32 +136,7 @@ namespace IxMilia.Iges.Entities
             var stringCount = Integer(parameters, index++);
             for (int i = 0; i < stringCount; i++)
             {
-                var str = new IgesTextString();
-                var charCount = Integer(parameters, index++);
-                str.BoxWidth = Double(parameters, index++);
-                str.BoxHeight = Double(parameters, index++);
-
-                var fontCode = IntegerOrDefault(parameters, index++, 1);
-                if (fontCode < 0)
-                {
-                    binder.BindEntity(-fontCode, e => str.TextFontDefinition = e as IgesTextFontDefinition);
-                    str.FontCode = -1;
-                }
-                else
-                {
-                    str.FontCode = fontCode;
-                }
-
-                str.SlantAngle = Double(parameters, index++);
-                str.RotationAngle = Double(parameters, index++);
-                str.MirroringAxis = (IgesTextMirroringAxis)Integer(parameters, index++);
-                str.RotationType = (IgesTextRotationType)Integer(parameters, index++);
-                str.Location.X = Double(parameters, index++);
-                str.Location.Y = Double(parameters, index++);
-                str.Location.Z = Double(parameters, index++);
-                str.Value = String(parameters, index++);
-                Debug.Assert(str.Value.Length == charCount);
-                Strings.Add(str);
+                Strings.Add(IgesTextString.ReadParameters(parameters, binder, ref index));
             }
 
             return index;
@@ -100,7 +144,7 @@ namespace IxMilia.Iges.Entities
 
         internal override IEnumerable<IgesEntity> GetReferencedEntities()
         {
-            return Strings.Select(s => s.TextFontDefinition);
+            return Strings.Select(s => s?.TextFontDefinition);
         }
 
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
@@ -108,28 +152,7 @@ namespace IxMilia.Iges.Entities
             parameters.Add(Strings.Count);
             for (int i = 0; i < Strings.Count; i++)
             {
-                var str = Strings[i];
-                parameters.Add(str.Value?.Length ?? 0);
-                parameters.Add(str.BoxWidth);
-                parameters.Add(str.BoxHeight);
-
-                if (str.TextFontDefinition != null)
-                {
-                    parameters.Add(-binder.GetEntityId(str.TextFontDefinition));
-                }
-                else
-                {
-                    parameters.Add(str.FontCode);
-                }
-
-                parameters.Add(str.SlantAngle);
-                parameters.Add(str.RotationAngle);
-                parameters.Add((int)str.MirroringAxis);
-                parameters.Add((int)str.RotationType);
-                parameters.Add(str.Location.X);
-                parameters.Add(str.Location.Y);
-                parameters.Add(str.Location.Z);
-                parameters.Add(str.Value);
+                Strings[i].WriteParameters(parameters, binder);
             }
         }
     }

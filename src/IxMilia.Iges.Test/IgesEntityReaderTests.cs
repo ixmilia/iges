@@ -1381,6 +1381,42 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadNewGeneralNoteTest()
+        {
+            var note = (IgesNewGeneralNote)ParseLastEntity(@"
+     213       1       0       0       0                        00000100D      1
+     213       0       0       2       0                                D      2
+213,1.,2.,2,0.,0.,0.,3.,4.,5.,6.,7.,1,1,11.,12.,13.,14.,3,15.,,        1P      1
+3,16.,17.,3,18.,19.,0,0,20.,21.,22.,3Hfoo;                             1P      2
+");
+            Assert.Equal(1.0, note.TextContainmentAreaWidth);
+            Assert.Equal(2.0, note.TextContainmentAreaHeight);
+            Assert.Equal(IgesTextJustification.Center, note.TextJustification);
+            Assert.Equal(IgesPoint.Origin, note.TextContainmentAreaLocation);
+            Assert.Equal(3.0, note.TextContainmentAreaRotation);
+            Assert.Equal(new IgesPoint(4.0, 5.0, 6.0), note.FirstBaseLineLocation);
+            Assert.Equal(7.0, note.NormalInterLineSpacing);
+            var str = note.Strings.Single();
+            Assert.Equal(IgesCharacterDisplay.Variable, str.CharacterDisplay);
+            Assert.Equal(11.0, str.CharacterWidth);
+            Assert.Equal(12.0, str.CharacterHeight);
+            Assert.Equal(13.0, str.InterCharacterSpacing);
+            Assert.Equal(14.0, str.InterLineSpacing);
+            Assert.Equal(IgesFontStyle.Futura, str.FontStyle);
+            Assert.Equal(15.0, str.CharacterAngle);
+            Assert.Equal(string.Empty, str.ControlCode);
+            Assert.Equal(16.0, str.BoxWidth);
+            Assert.Equal(17.0, str.BoxHeight);
+            Assert.Equal(3, str.FontCode);
+            Assert.Equal(18.0, str.SlantAngle);
+            Assert.Equal(19.0, str.RotationAngle);
+            Assert.Equal(IgesTextMirroringAxis.None, str.MirroringAxis);
+            Assert.Equal(IgesTextRotationType.Horizontal, str.RotationType);
+            Assert.Equal(new IgesPoint(20.0, 21.0, 22.0), str.Location);
+            Assert.Equal("foo", str.Value);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadTextDisplayTemplateTest()
         {
             // fully-specified values

@@ -1066,6 +1066,47 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteNewGeneralNoteTest()
+        {
+            var note = new IgesNewGeneralNote()
+            {
+                TextContainmentAreaWidth = 1.0,
+                TextContainmentAreaHeight = 2.0,
+                TextJustification = IgesTextJustification.Center,
+                TextContainmentAreaLocation = null,
+                TextContainmentAreaRotation = 3.0,
+                FirstBaseLineLocation = new IgesPoint(4.0, 5.0, 6.0),
+                NormalInterLineSpacing = 7.0
+            };
+            note.Strings.Add(new IgesNewTextString()
+            {
+                CharacterDisplay = IgesCharacterDisplay.Variable,
+                CharacterWidth = 11.0,
+                CharacterHeight = 12.0,
+                InterCharacterSpacing = 13.0,
+                InterLineSpacing = 14.0,
+                FontStyle = IgesFontStyle.Futura,
+                CharacterAngle = 15.0,
+                ControlCode = null,
+                BoxWidth = 16.0,
+                BoxHeight = 17.0,
+                FontCode = 3,
+                SlantAngle = 18.0,
+                RotationAngle = 19.0,
+                MirroringAxis = IgesTextMirroringAxis.None,
+                RotationType = IgesTextRotationType.Horizontal,
+                Location = new IgesPoint(20.0, 21.0, 22.0),
+                Value = "foo"
+            });
+            VerifyEntity(note, @"
+     213       1       0       0       0                        00000100D      1
+     213       0       0       2       0                                D      2
+213,1.,2.,2,0.,0.,0.,3.,4.,5.,6.,7.,1,1,11.,12.,13.,14.,3,15.,,        1P      1
+3,16.,17.,3,18.,19.,0,0,20.,21.,22.,3Hfoo;                             1P      2
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteTextDisplayTemplateTest()
         {
             // regular case with font code

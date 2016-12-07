@@ -105,6 +105,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.ManifestSolidBRepObject:
                     entity = new IgesManifestSolidBRepObject();
                     break;
+                case IgesEntityType.NewGeneralNote:
+                    entity = new IgesNewGeneralNote();
+                    break;
                 case IgesEntityType.NodalDisplacementAndRotation:
                     entity = new IgesNodalDisplacementAndRotation();
                     break;
