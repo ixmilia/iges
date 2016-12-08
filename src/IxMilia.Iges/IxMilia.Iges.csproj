@@ -81,6 +81,7 @@
     <Compile Include="Entities\IgesLabelDisplayAssociativity.cs" />
     <Compile Include="Entities\IgesLeader.cs" />
     <Compile Include="Entities\IgesLine.cs" />
+    <Compile Include="Entities\IgesLinearDimension.cs" />
     <Compile Include="Entities\IgesLinearQuadrilateral.cs" />
     <Compile Include="Entities\IgesLinearSolid.cs" />
     <Compile Include="Entities\IgesLinearSolidTetrahedron.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="Entities\IgesOffsetCurve.cs" />
     <Compile Include="Entities\IgesOffsetMass.cs" />
     <Compile Include="Entities\IgesOffsetSurface.cs" />
+    <Compile Include="Entities\IgesOrdinateDimension.cs" />
     <Compile Include="Entities\IgesParabolicQuadrilateral.cs" />
     <Compile Include="Entities\IgesParabolicSolid.cs" />
     <Compile Include="Entities\IgesParabolicSolidTetrahedron.cs" />
@@ -112,7 +114,9 @@
     <Compile Include="Entities\IgesPerspectiveView.cs" />
     <Compile Include="Entities\IgesPlane.cs" />
     <Compile Include="Entities\IgesPlaneSurface.cs" />
+    <Compile Include="Entities\IgesPointDimension.cs" />
     <Compile Include="Entities\IgesProperty.cs" />
+    <Compile Include="Entities\IgesRadiusDimension.cs" />
     <Compile Include="Entities\IgesRationalBSplineCurve.cs" />
     <Compile Include="Entities\IgesRationalBSplineSurface.cs" />
     <Compile Include="Entities\IgesResultType.cs" />

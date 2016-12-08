@@ -91,6 +91,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.Line:
                     entity = new IgesLine();
                     break;
+                case IgesEntityType.LinearDimension:
+                    entity = new IgesLinearDimension();
+                    break;
                 case IgesEntityType.LineFontDefinition:
                     switch (directoryData.FormNumber)
                     {
@@ -126,6 +129,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.OffsetSurface:
                     entity = new IgesOffsetSurface();
                     break;
+                case IgesEntityType.OrdinateDimension:
+                    entity = new IgesOrdinateDimension();
+                    break;
                 case IgesEntityType.ParametricSplineCurve:
                     entity = new IgesParametricSplineCurve();
                     break;
@@ -141,6 +147,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.Point:
                     entity = new IgesLocation();
                     break;
+                case IgesEntityType.PointDimension:
+                    entity = new IgesPointDimension();
+                    break;
                 case IgesEntityType.Property:
                     switch (directoryData.FormNumber)
                     {
@@ -148,6 +157,9 @@ namespace IxMilia.Iges.Entities
                             entity = new IgesDefinitionLevelsProperty();
                             break;
                     }
+                    break;
+                case IgesEntityType.RadiusDimension:
+                    entity = new IgesRadiusDimension();
                     break;
                 case IgesEntityType.RationalBSplineCurve:
                     entity = new IgesRationalBSplineCurve();

@@ -1107,6 +1107,50 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteLinearDimensionTest()
+        {
+            var linear = new IgesLinearDimension();
+            VerifyEntity(linear, @"
+     216       1       0       0       0                        00000100D      1
+     216       0       0       1       0                                D      2
+216,0,0,0,0,0;                                                         1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteOrdinateDimensionTest()
+        {
+            var ord = new IgesOrdinateDimension();
+            VerifyEntity(ord, @"
+     218       1       0       0       0                        00000100D      1
+     218       0       0       1       0                                D      2
+218,0,0;                                                               1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WritePointDimensionTest()
+        {
+            var point = new IgesPointDimension();
+            VerifyEntity(point, @"
+     220       1       0       0       0                        00000100D      1
+     220       0       0       1       0                                D      2
+220,0,0,0;                                                             1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteRadiusDimensinoTest()
+        {
+            var rad = new IgesRadiusDimension();
+            VerifyEntity(rad, @"
+     222       1       0       0       0                        00000100D      1
+     222       0       0       1       0                                D      2
+222,0,0,0.,0.;                                                         1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteTextDisplayTemplateTest()
         {
             // regular case with font code

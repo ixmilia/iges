@@ -19,7 +19,9 @@ namespace IxMilia.Iges.Test
 
         private static IgesEntity ParseLastEntity(string content)
         {
-            return ParseEntities(content).Last();
+            var last = ParseEntities(content).Last();
+            Assert.NotNull(last);
+            return last;
         }
 
         private static IgesFile CreateFile(string content)
@@ -1414,6 +1416,46 @@ namespace IxMilia.Iges.Test
             Assert.Equal(IgesTextRotationType.Horizontal, str.RotationType);
             Assert.Equal(new IgesPoint(20.0, 21.0, 22.0), str.Location);
             Assert.Equal("foo", str.Value);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadLinearDimensionTest()
+        {
+            var linear = (IgesLinearDimension)ParseLastEntity(@"
+     216       1       0       0       0                        00000100D      1
+     216       0       0       1       0                                D      2
+216,0,0,0,0,0;                                                         1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadOrdinateDimensionTest()
+        {
+            var ord = (IgesOrdinateDimension)ParseLastEntity(@"
+     218       1       0       0       0                        00000100D      1
+     218       0       0       1       0                                D      2
+218,0,0;                                                               1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadPointDimensionTest()
+        {
+            var point = (IgesPointDimension)ParseLastEntity(@"
+     220       1       0       0       0                        00000100D      1
+     220       0       0       1       0                                D      2
+220,0,0,0;                                                             1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadRadiusDimensionTest()
+        {
+            var rad = (IgesRadiusDimension)ParseLastEntity(@"
+     222       1       0       0       0                        00000100D      1
+     222       0       0       1       0                                D      2
+222,0,0,0.,0.;                                                         1P      1
+");
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
