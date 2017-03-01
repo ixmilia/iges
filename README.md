@@ -54,7 +54,7 @@ using (FileStream fs = new FileStream(@"C:\Path\To\File.iges", FileMode.Open))
 
 Requirements to build locally are:
 
-- [Latest .NET Core SDK](https://github.com/dotnet/cli/release)  As of this writing the following was also required on Ubuntu 14.04:
+- [Latest .NET Core SDK](https://github.com/dotnet/cli/releases)  As of this writing the following was also required on Ubuntu 14.04:
 
 `sudo apt-get install dotnet-sharedframework-microsoft.netcore.app-1.0.3`
 
