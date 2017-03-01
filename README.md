@@ -3,7 +3,7 @@
 
 A portable .NET library for reading and writing IGES files.
 
-### Usage
+## Usage
 
 Open an IGES file:
 
@@ -50,11 +50,20 @@ using (FileStream fs = new FileStream(@"C:\Path\To\File.iges", FileMode.Open))
 }
 ```
 
-### IGES reference
+## Building locally
+
+Requirements to build locally are:
+
+- [Latest .NET Core SDK](https://github.com/dotnet/cli/release)  As of this writing the following was also required on Ubuntu 14.04:
+
+`sudo apt-get install dotnet-sharedframework-microsoft.netcore.app-1.0.3`
+
+
+## IGES reference
 
 [Full specification (from uspro.org)](http://www.uspro.org/documents/IGES5-3_forDownload.pdf)
 
-### Sample files
+## Sample files
 
 Sample files can be found [here](http://www.wiz-worx.com/iges5x/).  Of particular note are the following categories:
 
