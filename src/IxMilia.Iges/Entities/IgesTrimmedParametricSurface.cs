@@ -14,6 +14,11 @@ namespace IxMilia.Iges.Entities
         public List<IgesEntity> BoundaryEntities { get; private set; }
         public IgesEntity OuterBoundary { get; set; }
 
+        public IgesTrimmedParametricSurface()
+        {
+            BoundaryEntities = new List<IgesEntity>();
+        }
+
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             int index = 0;

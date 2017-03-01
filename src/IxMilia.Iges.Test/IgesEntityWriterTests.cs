@@ -514,6 +514,32 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteTrimmedParametricSurfaceTest()
+        {
+            var surface = new IgesTrimmedParametricSurface()
+            {
+                Surface = new IgesRuledSurface(),
+                IsOuterBoundaryD = false,
+                OuterBoundary = new IgesRuledSurface(),
+            };
+            surface.BoundaryEntities.Add(new IgesRuledSurface());
+            VerifyEntity(surface, @"
+     118       1       0       0       0                        00000000D      1
+     118       0       0       1       0                                D      2
+     118       2       0       0       0                        00000000D      3
+     118       0       0       1       0                                D      4
+     118       3       0       0       0                        00000000D      5
+     118       0       0       1       0                                D      6
+     144       4       0       0       0                        00000000D      7
+     144       0       0       1       0                                D      8
+118,0,0,0,0;                                                           1P      1
+118,0,0,0,0;                                                           3P      2
+118,0,0,0,0;                                                           5P      3
+144,1,1,1,3,5;                                                         7P      4
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteNodalResultsTest()
         {
             var nodalResults = new IgesNodalResults();

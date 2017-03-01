@@ -873,6 +873,29 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadTrimmedParametricSurfaceTest()
+        {
+            var surface = (IgesTrimmedParametricSurface)ParseLastEntity(@"
+     118       1       0       0       0                        00000000D      1
+     118       0       0       1       0                                D      2
+     118       2       0       0       0                        00000000D      3
+     118       0       0       1       0                                D      4
+     118       3       0       0       0                        00000000D      5
+     118       0       0       1       0                                D      6
+     144       4       0       0       0                        00000000D      7
+     144       0       0       1       0                                D      8
+118,0,0,0,0;                                                           1P      1
+118,0,0,0,0;                                                           3P      2
+118,0,0,0,0;                                                           5P      3
+144,1,1,1,3,5;                                                         7P      4
+");
+            Assert.IsType<IgesRuledSurface>(surface.Surface);
+            Assert.False(surface.IsOuterBoundaryD);
+            Assert.IsType<IgesRuledSurface>(surface.OuterBoundary);
+            Assert.IsType<IgesRuledSurface>(surface.BoundaryEntities.Single());
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadNodalResultsTest()
         {
             var nodalResults = (IgesNodalResults)ParseLastEntity(@"
