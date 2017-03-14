@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 TEST_PROJECT=./src/IxMilia.Iges.Test/IxMilia.Iges.Test.csproj
 dotnet restore $TEST_PROJECT
