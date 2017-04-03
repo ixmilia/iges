@@ -228,6 +228,16 @@ S      0G      0D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void IgnoreTextAfterTerminateLineTest()
+        {
+            var file = CreateFile(@"
+S      0G      0D      0P      0                                        T      1
+
+012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void EmptyFileTest()
         {
             var file = CreateFile(string.Empty);
