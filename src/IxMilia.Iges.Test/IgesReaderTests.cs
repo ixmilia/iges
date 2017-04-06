@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using IxMilia.Iges.Entities;
 using Xunit;
 
@@ -469,6 +470,60 @@ also contains things that look like 7Hstrings and records;             1P      3
             Assert.IsType<IgesGeneralNote>(line.AssociatedEntities[1]);
             Assert.IsType<IgesTextDisplayTemplate>(line.AssociatedEntities[2]);
             Assert.IsType<IgesLocation>(line.Properties.Single());
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadWithDifferningNewlinesTest()
+        {
+            var file = new IgesFile();
+            file.Entities.Add(new IgesLine(new IgesPoint(0.0, 0.0, 0.0), new IgesPoint(1.0, 1.0, 1.0)));
+
+            using (var ms = new MemoryStream())
+            {
+                file.Save(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                using (var reader = new StreamReader(ms))
+                {
+                    var text = reader.ReadToEnd();
+
+                    // verify file reading with LF
+                    text = text.Replace("\r", "");
+                    var lengthLF = 0L;
+                    using (var ms2 = new MemoryStream())
+                    {
+                        using (var writer = new StreamWriter(ms2, Encoding.ASCII, bufferSize: 1024, leaveOpen: true))
+                        {
+                            writer.Write(text);
+                        }
+
+                        ms2.Seek(0, SeekOrigin.Begin);
+                        lengthLF = ms2.Length;
+                        var fileLF = IgesFile.Load(ms2);
+                        Assert.Equal(1, fileLF.Entities.Count);
+                    }
+
+                    // verify file reading with CRLF
+                    text = text.Replace("\n", "\r\n");
+                    var lengthCRLF = 0L;
+                    using (var ms2 = new MemoryStream())
+                    {
+                        using (var writer = new StreamWriter(ms2, Encoding.ASCII, bufferSize: 1024, leaveOpen: true))
+                        {
+                            writer.Write(text);
+                        }
+
+                        ms2.Seek(0, SeekOrigin.Begin);
+                        lengthCRLF = ms2.Length;
+                        var fileLF = IgesFile.Load(ms2);
+                        Assert.Equal(1, fileLF.Entities.Count);
+                    }
+
+                    // verify that the file lengths were non-zero and not equal
+                    Assert.NotEqual(0L, lengthLF);
+                    Assert.NotEqual(0L, lengthCRLF);
+                    Assert.NotEqual(lengthLF, lengthCRLF);
+                }
+            }
         }
     }
 }

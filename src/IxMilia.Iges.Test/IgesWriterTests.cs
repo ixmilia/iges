@@ -17,7 +17,7 @@ namespace IxMilia.Iges.Test
             stream.Seek(0, SeekOrigin.Begin);
             var bytes = stream.ToArray();
             var actual = Encoding.ASCII.GetString(bytes);
-            verifier(expected.Trim('\r', '\n'), actual.Trim('\r', '\n'));
+            verifier(expected.Trim('\r', '\n').Replace("\r", ""), actual.Trim('\r', '\n'));
         }
 
         private static void VerifyFileExactly(IgesFile file, string expected)
@@ -418,6 +418,23 @@ S      1G      3D      0P      0                                        T      1
 116,0.,0.,0.;                                                          1P      1
 110,0.,0.,0.,0.,0.,0.,0,1,1;                                           3P      2
 ");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteOnlyNewlinesTest()
+        {
+            var file = new IgesFile();
+            file.Entities.Add(new IgesLine(new IgesPoint(0.0, 0.0, 0.0), new IgesPoint(1.0, 1.0, 1.0)));
+            using (var ms = new MemoryStream())
+            {
+                file.Save(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                using (var reader = new StreamReader(ms))
+                {
+                    var text = reader.ReadToEnd();
+                    Assert.DoesNotContain("\r", text);
+                }
+            }
         }
     }
 }

@@ -52,7 +52,7 @@ namespace IxMilia.Iges
             WriteLines(writer, IgesSectionType.Parameter, writerState.ParameterLines); // TODO: ensure space in column 65 and directory pointer in next 7
 
             // write terminator line
-            writer.WriteLine(MakeFileLine(IgesSectionType.Terminate,
+            writer.Write(MakeFileLine(IgesSectionType.Terminate,
                 string.Format("{0}{1,7}{2}{3,7}{4}{5,7}{6}{7,7}",
                     SectionTypeChar(IgesSectionType.Start),
                     startLines.Count,
@@ -253,7 +253,7 @@ namespace IxMilia.Iges
             for (int i = 0; i < lines.Count; i++)
             {
                 var line = MakeFileLine(sectionType, lines[i], i + 1);
-                writer.WriteLine(line);
+                writer.Write(line);
             }
         }
 
@@ -263,7 +263,7 @@ namespace IxMilia.Iges
             if (line.Length > 72)
                 throw new IgesException("Line is too long");
 
-            var fullLine = string.Format("{0,-72}{1}{2,7}", line, SectionTypeChar(sectionType), lineNumber);
+            var fullLine = string.Format("{0,-72}{1}{2,7}\n", line, SectionTypeChar(sectionType), lineNumber);
             return fullLine;
         }
 

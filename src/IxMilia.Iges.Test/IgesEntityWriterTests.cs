@@ -22,7 +22,7 @@ namespace IxMilia.Iges.Test
                 using (var reader = new StreamReader(ms))
                 {
                     var actual = reader.ReadToEnd();
-                    Assert.Contains(expectedText.Trim('\r', '\n'), actual);
+                    Assert.Contains(expectedText.Trim('\r', '\n').Replace("\r", ""), actual);
                 }
             }
         }
