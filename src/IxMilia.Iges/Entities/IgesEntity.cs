@@ -146,6 +146,10 @@ namespace IxMilia.Iges.Entities
             Levels = new HashSet<int>();
             AssociatedEntities = new List<IgesEntity>();
             Properties = new List<IgesEntity>();
+            if (!(this is IgesTransformationMatrix))
+            {
+                TransformationMatrix = IgesTransformationMatrix.Identity;
+            }
         }
 
         internal abstract int ReadParameters(List<string> parameters, IgesReaderBinder binder);
