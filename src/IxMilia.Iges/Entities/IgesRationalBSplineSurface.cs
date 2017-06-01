@@ -122,7 +122,7 @@ namespace IxMilia.Iges.Entities
             var a = FirstKnotValueSequence.Count - 1;
             var b = SecondKnotValueSequence.Count - 1;
             var m1 = a - 1 - k1;
-            var m2 = a - 1 - k2;
+            var m2 = b - 1 - k2;
 
             parameters.Add(k1);
             parameters.Add(k2);
