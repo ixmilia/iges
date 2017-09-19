@@ -1177,6 +1177,26 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteGeneralSymbolTest()
+        {
+            var symbol = new IgesGeneralSymbol(
+                new IgesGeneralNote(),
+                new IgesLeader[0], // leaders
+                new[] { new IgesLine() }); // geometries
+            VerifyEntity(symbol, @"
+     212       1       0       0       0                        00000100D      1
+     212       0       0       1       0                                D      2
+     110       2       0       0       0                        00000000D      3
+     110       0       0       1       0                                D      4
+     228       3       0       0       0                        00000100D      5
+     228       0       0       1       0                                D      6
+212,0;                                                                 1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+228,1,1,3,0;                                                           5P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteTextDisplayTemplateTest()
         {
             // regular case with font code

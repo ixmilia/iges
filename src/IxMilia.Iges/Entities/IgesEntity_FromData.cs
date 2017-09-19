@@ -85,6 +85,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.GeneralNote:
                     entity = new IgesGeneralNote();
                     break;
+                case IgesEntityType.GeneralSymbol:
+                    entity = new IgesGeneralSymbol();
+                    break;
                 case IgesEntityType.Leader:
                     entity = new IgesLeader();
                     break;

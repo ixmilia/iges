@@ -1482,6 +1482,25 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadGeneralSymbolTest()
+        {
+            var symbol = (IgesGeneralSymbol)ParseLastEntity(@"
+     212       1       0       0       0                        00000100D      1
+     212       0       0       1       0                                D      2
+     110       2       0       0       0                        00000000D      3
+     110       0       0       1       0                                D      4
+     228       3       0       0       0                        00000100D      5
+     228       0       0       1       0                                D      6
+212,0;                                                                 1P      1
+110,0.,0.,0.,0.,0.,0.;                                                 3P      2
+228,1,1,3,0;                                                           5P      3
+");
+            Assert.NotNull(symbol.Note);
+            Assert.Equal(IgesEntityType.Line, symbol.Geometries.Single().EntityType);
+            Assert.Empty(symbol.Leaders);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadTextDisplayTemplateTest()
         {
             // fully-specified values
