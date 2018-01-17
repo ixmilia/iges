@@ -22,8 +22,7 @@ namespace IxMilia.Iges.Entities
             var index = 0;
             binder.BindEntity(Integer(parameters, index++), generalNote => GeneralNote = generalNote as IgesGeneralNote);
             binder.BindEntity(Integer(parameters, index++), leader => FirstLeader = leader as IgesLeader);
-            ArcCenter.X = Double(parameters, index++);
-            ArcCenter.Y = Double(parameters, index++);
+            ArcCenter = Point2(parameters, ref index);
             if (FormNumber == 1)
             {
                 binder.BindEntity(Integer(parameters, index++), leader => SecondLeader = leader as IgesLeader);
@@ -41,8 +40,8 @@ namespace IxMilia.Iges.Entities
         {
             parameters.Add(binder.GetEntityId(GeneralNote));
             parameters.Add(binder.GetEntityId(FirstLeader));
-            parameters.Add(ArcCenter?.X ?? 0.0);
-            parameters.Add(ArcCenter?.Y ?? 0.0);
+            parameters.Add(ArcCenter.X);
+            parameters.Add(ArcCenter.Y);
             if (HasTwoLeaders)
             {
                 parameters.Add(binder.GetEntityId(SecondLeader));

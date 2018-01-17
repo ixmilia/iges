@@ -61,14 +61,12 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            this.PlaneDisplacement = Double(parameters, 0);
-            this.Center.X = Double(parameters, 1);
-            this.Center.Y = Double(parameters, 2);
-            this.StartPoint.X = Double(parameters, 3);
-            this.StartPoint.Y = Double(parameters, 4);
-            this.EndPoint.X = Double(parameters, 5);
-            this.EndPoint.Y = Double(parameters, 6);
-            return 7;
+            int index = 0;
+            this.PlaneDisplacement = Double(parameters, index++);
+            this.Center = Point2(parameters, ref index);
+            this.StartPoint = Point2(parameters, ref index);
+            this.EndPoint = Point2(parameters, ref index);
+            return index;
         }
 
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)

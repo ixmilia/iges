@@ -75,9 +75,9 @@ namespace IxMilia.Iges.Entities
             parameters.Add(FirstOffsetDistanceValue);
             parameters.Add(SecondOffsetDistance);
             parameters.Add(SecondOffsetDistanceValue);
-            parameters.Add(EntityNormal?.X ?? 0.0);
-            parameters.Add(EntityNormal?.Y ?? 0.0);
-            parameters.Add(EntityNormal?.Z ?? 0.0);
+            parameters.Add(EntityNormal.X);
+            parameters.Add(EntityNormal.Y);
+            parameters.Add(EntityNormal.Z);
             parameters.Add(StartingParameterValue);
             parameters.Add(EndingParameterValue);
         }

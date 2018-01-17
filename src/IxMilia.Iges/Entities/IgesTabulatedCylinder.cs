@@ -29,9 +29,9 @@ namespace IxMilia.Iges.Entities
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(binder.GetEntityId(Directrix));
-            parameters.Add(GeneratrixTerminatePoint?.X ?? 0.0);
-            parameters.Add(GeneratrixTerminatePoint?.Y ?? 0.0);
-            parameters.Add(GeneratrixTerminatePoint?.Z ?? 0.0);
+            parameters.Add(GeneratrixTerminatePoint.X);
+            parameters.Add(GeneratrixTerminatePoint.Y);
+            parameters.Add(GeneratrixTerminatePoint.Z);
         }
     }
 }

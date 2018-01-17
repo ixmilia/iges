@@ -21,15 +21,9 @@ namespace IxMilia.Iges.Entities
             XLength = Double(parameters, index++);
             YLength = Double(parameters, index++);
             ZLength = Double(parameters, index++);
-            Corner.X = Double(parameters, index++);
-            Corner.Y = Double(parameters, index++);
-            Corner.Z = Double(parameters, index++);
-            XAxis.X = DoubleOrDefault(parameters, index++, 1.0);
-            XAxis.Y = Double(parameters, index++);
-            XAxis.Z = Double(parameters, index++);
-            ZAxis.X = Double(parameters, index++);
-            ZAxis.Y = Double(parameters, index++);
-            ZAxis.Z = DoubleOrDefault(parameters, index++, 1.0);
+            Corner = Point3(parameters, ref index);
+            XAxis = VectorOrDefault(parameters, ref index, IgesVector.XAxis);
+            ZAxis = VectorOrDefault(parameters, ref index, IgesVector.ZAxis);
             return index;
         }
 
@@ -38,15 +32,15 @@ namespace IxMilia.Iges.Entities
             parameters.Add(XLength);
             parameters.Add(YLength);
             parameters.Add(ZLength);
-            parameters.Add(Corner?.X ?? 0.0);
-            parameters.Add(Corner?.Y ?? 0.0);
-            parameters.Add(Corner?.Z ?? 0.0);
-            parameters.Add(XAxis?.X ?? 1.0);
-            parameters.Add(XAxis?.Y ?? 0.0);
-            parameters.Add(XAxis?.Z ?? 0.0);
-            parameters.Add(ZAxis?.X ?? 0.0);
-            parameters.Add(ZAxis?.Y ?? 0.0);
-            parameters.Add(ZAxis?.Z ?? 1.0);
+            parameters.Add(Corner.X);
+            parameters.Add(Corner.Y);
+            parameters.Add(Corner.Z);
+            parameters.Add(XAxis.X);
+            parameters.Add(XAxis.Y);
+            parameters.Add(XAxis.Z);
+            parameters.Add(ZAxis.X);
+            parameters.Add(ZAxis.Y);
+            parameters.Add(ZAxis.Z);
         }
     }
 }

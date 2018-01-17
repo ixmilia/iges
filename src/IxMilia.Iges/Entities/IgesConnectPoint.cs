@@ -112,27 +112,26 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            Location.X = Double(parameters, 0);
-            Location.Y = Double(parameters, 1);
-            Location.Z = Double(parameters, 2);
-            binder.BindEntity(Integer(parameters, 3), e => DisplaySymbolGeometry = e);
-            RawConnectionType = Integer(parameters, 4);
+            int index = 0;
+            Location = Point3(parameters, ref index);
+            binder.BindEntity(Integer(parameters, index++), e => DisplaySymbolGeometry = e);
+            RawConnectionType = Integer(parameters, index++);
             ConnectionType = Enum.IsDefined(typeof(IgesConnectionType), RawConnectionType)
                 ? ConnectionType = (IgesConnectionType)RawConnectionType
                 : ConnectionType = IgesConnectionType.ImplementorDefined;
-            FunctionType = (IgesConnectionFunctionType)Integer(parameters, 5);
-            FunctionIdentifier = String(parameters, 6);
-            binder.BindEntity(Integer(parameters, 7), e => FunctionIdentifierTextDisplayTemplate = e);
-            FunctionName = String(parameters, 8);
-            binder.BindEntity(Integer(parameters, 9), e => FunctionNameTextDisplayTemplate = e);
-            UniqueIdentifier = Integer(parameters, 10);
-            RawFunctionCode = Integer(parameters, 11);
+            FunctionType = (IgesConnectionFunctionType)Integer(parameters, index++);
+            FunctionIdentifier = String(parameters, index++);
+            binder.BindEntity(Integer(parameters, index++), e => FunctionIdentifierTextDisplayTemplate = e);
+            FunctionName = String(parameters, index++);
+            binder.BindEntity(Integer(parameters, index++), e => FunctionNameTextDisplayTemplate = e);
+            UniqueIdentifier = Integer(parameters, index++);
+            RawFunctionCode = Integer(parameters, index++);
             FunctionCode = Enum.IsDefined(typeof(IgesConnectionFunctionCode), RawFunctionCode)
                 ? (IgesConnectionFunctionCode)RawFunctionCode
                 : IgesConnectionFunctionCode.ImplementorDefined;
-            ConnectPointMayBeSwapped = !Boolean(parameters, 12);
-            binder.BindEntity(Integer(parameters, 13), e => Owner = e);
-            return 14;
+            ConnectPointMayBeSwapped = !Boolean(parameters, index++);
+            binder.BindEntity(Integer(parameters, index++), e => Owner = e);
+            return index;
         }
 
         internal override IEnumerable<IgesEntity> GetReferencedEntities()
@@ -145,9 +144,9 @@ namespace IxMilia.Iges.Entities
 
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            parameters.Add(Location?.X ?? 0.0);
-            parameters.Add(Location?.Y ?? 0.0);
-            parameters.Add(Location?.Z ?? 0.0);
+            parameters.Add(Location.X);
+            parameters.Add(Location.Y);
+            parameters.Add(Location.Z);
             parameters.Add(binder.GetEntityId(DisplaySymbolGeometry));
             parameters.Add(ConnectionType == IgesConnectionType.ImplementorDefined ? RawConnectionType : (int)ConnectionType);
             parameters.Add((int)FunctionType);

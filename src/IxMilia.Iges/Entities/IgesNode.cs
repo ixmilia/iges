@@ -33,11 +33,10 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            this.Offset.X = Double(parameters, 0);
-            this.Offset.Y = Double(parameters, 1);
-            this.Offset.Z = Double(parameters, 2);
-            binder.BindEntity(Integer(parameters, 3), e => DisplacementCoordinateSystem = e as IgesTransformationMatrix);
-            return 4;
+            int index = 0;
+            this.Offset = Point3(parameters, ref index);
+            binder.BindEntity(Integer(parameters, index++), e => DisplacementCoordinateSystem = e as IgesTransformationMatrix);
+            return index;
         }
 
         internal override IEnumerable<IgesEntity> GetReferencedEntities()

@@ -27,11 +27,10 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            this.Radius = Double(parameters, 0);
-            this.Center.X = Double(parameters, 1);
-            this.Center.Y = Double(parameters, 2);
-            this.Center.Z = Double(parameters, 3);
-            return 4;
+            int index = 0;
+            this.Radius = Double(parameters, index++);
+            this.Center = Point3(parameters, ref index);
+            return index;
         }
 
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)

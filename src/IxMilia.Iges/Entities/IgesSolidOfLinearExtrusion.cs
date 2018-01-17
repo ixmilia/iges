@@ -14,12 +14,11 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            binder.BindEntity(Integer(parameters, 0), e => Curve = e);
-            ExtrusionLength = Double(parameters, 1);
-            ExtrusionDirection.X = Double(parameters, 2);
-            ExtrusionDirection.Y = Double(parameters, 3);
-            ExtrusionDirection.Z = Double(parameters, 4);
-            return 5;
+            int index = 0;
+            binder.BindEntity(Integer(parameters, index++), e => Curve = e);
+            ExtrusionLength = Double(parameters, index++);
+            ExtrusionDirection = Vector(parameters, ref index);
+            return index;
         }
 
         internal override IEnumerable<IgesEntity> GetReferencedEntities()
@@ -31,9 +30,9 @@ namespace IxMilia.Iges.Entities
         {
             parameters.Add(binder.GetEntityId(Curve));
             parameters.Add(ExtrusionLength);
-            parameters.Add(ExtrusionDirection?.X ?? 0.0);
-            parameters.Add(ExtrusionDirection?.Y ?? 0.0);
-            parameters.Add(ExtrusionDirection?.Z ?? 1.0);
+            parameters.Add(ExtrusionDirection.X);
+            parameters.Add(ExtrusionDirection.Y);
+            parameters.Add(ExtrusionDirection.Z);
         }
     }
 }

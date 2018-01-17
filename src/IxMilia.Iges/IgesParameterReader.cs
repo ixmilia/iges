@@ -95,5 +95,43 @@ namespace IxMilia.Iges
                 return defaultValue;
             }
         }
+
+        public static IgesPoint Point3(List<string> values, ref int index)
+        {
+            return PointOrDefault(values, ref index, IgesPoint.Origin);
+        }
+
+        public static IgesPoint Point2(List<string> values, ref int index)
+        {
+            return Point2DOrDefault(values, ref index, IgesPoint.Origin);
+        }
+
+        public static IgesPoint PointOrDefault(List<string> values, ref int index, IgesPoint defaultValue)
+        {
+            var x = DoubleOrDefault(values, index++, defaultValue.X);
+            var y = DoubleOrDefault(values, index++, defaultValue.Y);
+            var z = DoubleOrDefault(values, index++, defaultValue.Z);
+            return new IgesPoint(x, y, z);
+        }
+
+        public static IgesPoint Point2DOrDefault(List<string> values, ref int index, IgesPoint defaultValue)
+        {
+            var x = DoubleOrDefault(values, index++, defaultValue.X);
+            var y = DoubleOrDefault(values, index++, defaultValue.Y);
+            return new IgesPoint(x, y, 0.0);
+        }
+
+        public static IgesVector Vector(List<string> values, ref int index)
+        {
+            return VectorOrDefault(values, ref index, IgesVector.Zero);
+        }
+
+        public static IgesVector VectorOrDefault(List<string> values, ref int index, IgesVector defaultValue)
+        {
+            var x = DoubleOrDefault(values, index++, defaultValue.X);
+            var y = DoubleOrDefault(values, index++, defaultValue.Y);
+            var z = DoubleOrDefault(values, index++, defaultValue.Z);
+            return new IgesVector(x, y, z);
+        }
     }
 }

@@ -112,13 +112,9 @@ namespace IxMilia.Iges.Entities
             TextContainmentAreaWidth = Double(parameters, index++);
             TextContainmentAreaHeight = Double(parameters, index++);
             TextJustification = (IgesTextJustification)Integer(parameters, index++);
-            TextContainmentAreaLocation.X = Double(parameters, index++);
-            TextContainmentAreaLocation.Y = Double(parameters, index++);
-            TextContainmentAreaLocation.Z = Double(parameters, index++);
+            TextContainmentAreaLocation = Point3(parameters, ref index);
             TextContainmentAreaRotation = Double(parameters, index++);
-            FirstBaseLineLocation.X = Double(parameters, index++);
-            FirstBaseLineLocation.Y = Double(parameters, index++);
-            FirstBaseLineLocation.Z = Double(parameters, index++);
+            FirstBaseLineLocation = Point3(parameters, ref index);
             NormalInterLineSpacing = Double(parameters, index++);
             var stringCount = Integer(parameters, index++);
             for (int i = 0; i < stringCount; i++)
@@ -139,13 +135,13 @@ namespace IxMilia.Iges.Entities
             parameters.Add(TextContainmentAreaWidth);
             parameters.Add(TextContainmentAreaHeight);
             parameters.Add((int)TextJustification);
-            parameters.Add(TextContainmentAreaLocation?.X ?? 0.0);
-            parameters.Add(TextContainmentAreaLocation?.Y ?? 0.0);
-            parameters.Add(TextContainmentAreaLocation?.Z ?? 0.0);
+            parameters.Add(TextContainmentAreaLocation.X);
+            parameters.Add(TextContainmentAreaLocation.Y);
+            parameters.Add(TextContainmentAreaLocation.Z);
             parameters.Add(TextContainmentAreaRotation);
-            parameters.Add(FirstBaseLineLocation?.X ?? 0.0);
-            parameters.Add(FirstBaseLineLocation?.Y ?? 0.0);
-            parameters.Add(FirstBaseLineLocation?.Z ?? 0.0);
+            parameters.Add(FirstBaseLineLocation.X);
+            parameters.Add(FirstBaseLineLocation.Y);
+            parameters.Add(FirstBaseLineLocation.Z);
             parameters.Add(NormalInterLineSpacing);
             parameters.Add(Strings.Count);
             foreach (var str in Strings)

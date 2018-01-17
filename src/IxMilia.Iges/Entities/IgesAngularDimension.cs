@@ -45,8 +45,8 @@ namespace IxMilia.Iges.Entities
             parameters.Add(binder.GetEntityId(GeneralNote));
             parameters.Add(binder.GetEntityId(FirstWitnessLine));
             parameters.Add(binder.GetEntityId(SecondWitnessLine));
-            parameters.Add(Vertex?.X ?? 0.0);
-            parameters.Add(Vertex?.Y ?? 0.0);
+            parameters.Add(Vertex.X);
+            parameters.Add(Vertex.Y);
             parameters.Add(LeaderArcRadius);
             parameters.Add(binder.GetEntityId(FirstLeader));
             parameters.Add(binder.GetEntityId(SecondLeader));

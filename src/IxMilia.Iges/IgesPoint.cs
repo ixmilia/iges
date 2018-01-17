@@ -2,25 +2,73 @@
 
 namespace IxMilia.Iges
 {
-    public class IgesPoint
+    public struct IgesPoint
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Z { get; set; }
+        public double X { get; }
+        public double Y { get; }
+        public double Z { get; }
 
         public IgesPoint(double x, double y, double z)
+            : this()
         {
-            X = x;
-            Y = y;
-            Z = z;
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
         }
 
-        public static IgesPoint Origin
+        public static implicit operator IgesVector(IgesPoint point)
         {
-            get
+            return new IgesVector(point.X, point.Y, point.Z);
+        }
+
+        public static bool operator ==(IgesPoint p1, IgesPoint p2)
+        {
+            if (object.ReferenceEquals(p1, p2))
+                return true;
+            if (((object)p1 == null) || ((object)p2 == null))
+                return false;
+            return p1.X == p2.X && p1.Y == p2.Y && p1.Z == p2.Z;
+        }
+
+        public static bool operator !=(IgesPoint p1, IgesPoint p2)
+        {
+            return !(p1 == p2);
+        }
+
+        public static IgesPoint operator +(IgesPoint p1, IgesVector p2)
+        {
+            return new IgesPoint(p1.X + p2.X, p1.Y + p2.Y, p1.Z + p2.Z);
+        }
+
+        public static IgesVector operator -(IgesPoint p1, IgesVector p2)
+        {
+            return new IgesVector(p1.X - p2.X, p1.Y - p2.Y, p1.Z - p2.Z);
+        }
+
+        public static IgesPoint operator *(IgesPoint p, double scalar)
+        {
+            return new IgesPoint(p.X * scalar, p.Y * scalar, p.Z * scalar);
+        }
+
+        public static IgesPoint operator /(IgesPoint p, double scalar)
+        {
+            return new IgesPoint(p.X / scalar, p.Y / scalar, p.Z / scalar);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+            if (obj is IgesPoint)
             {
-                return new IgesPoint(0.0, 0.0, 0.0);
+                return this == (IgesPoint)obj;
             }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
         }
 
         public override string ToString()
@@ -28,53 +76,9 @@ namespace IxMilia.Iges
             return string.Format("({0},{1},{2})", X, Y, Z);
         }
 
-        public static bool operator ==(IgesPoint a, IgesPoint b)
+        public static IgesPoint Origin
         {
-            if (ReferenceEquals(a, b))
-                return true;
-            if (((object)a) == null || ((object)b) == null)
-                return false;
-            return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
-        }
-
-        public static bool operator !=(IgesPoint a, IgesPoint b)
-        {
-            return !(a == b);
-        }
-
-        public override int GetHashCode()
-        {
-            return X.GetHashCode() ^ Y.GetHashCode() & Z.GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is IgesPoint)
-                return this == (IgesPoint)obj;
-            return false;
-        }
-    }
-
-    public class IgesVector : IgesPoint
-    {
-        public IgesVector(double x, double y, double z)
-            : base(x, y, z)
-        {
-        }
-
-        public static IgesVector Zero
-        {
-            get { return new IgesVector(0.0, 0.0, 0.0); }
-        }
-
-        public static IgesVector XAxis
-        {
-            get { return new IgesVector(1.0, 0.0, 0.0); }
-        }
-
-        public static IgesVector ZAxis
-        {
-            get { return new IgesVector(0.0, 0.0, 1.0); }
+            get { return new IgesPoint(0, 0, 0); }
         }
     }
 }

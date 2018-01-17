@@ -27,12 +27,11 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            Direction.X = Double(parameters, 0);
-            Direction.Y = Double(parameters, 1);
-            Direction.Z = Double(parameters, 2);
-            Distance = Double(parameters, 3);
-            binder.BindEntity(Integer(parameters, 4), e => Surface = e);
-            return 5;
+            int index = 0;
+            Direction = Vector(parameters, ref index);
+            Distance = Double(parameters, index++);
+            binder.BindEntity(Integer(parameters, index++), e => Surface = e);
+            return index;
         }
 
         internal override IEnumerable<IgesEntity> GetReferencedEntities()

@@ -42,9 +42,10 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            this.CharacterBoxWidth = Double(parameters, 0);
-            this.CharacterBoxHeight = Double(parameters, 1);
-            var fontCode = Integer(parameters, 2);
+            int index = 0;
+            this.CharacterBoxWidth = Double(parameters, index++);
+            this.CharacterBoxHeight = Double(parameters, index++);
+            var fontCode = Integer(parameters, index++);
             if (fontCode < 0)
             {
                 binder.BindEntity(-fontCode, e => TextFontDefinition = e as IgesTextFontDefinition);
@@ -55,14 +56,12 @@ namespace IxMilia.Iges.Entities
                 this.FontCode = fontCode;
             }
 
-            this.SlantAngle = Double(parameters, 3);
-            this.RotationAngle = Double(parameters, 4);
-            this.MirroringAxis = (IgesTextMirroringAxis)Integer(parameters, 5);
-            this.RotationType = (IgesTextRotationType)Integer(parameters, 6);
-            this.LocationOrOffset.X = Double(parameters, 7);
-            this.LocationOrOffset.Y = Double(parameters, 8);
-            this.LocationOrOffset.Z = Double(parameters, 9);
-            return 10;
+            this.SlantAngle = Double(parameters, index++);
+            this.RotationAngle = Double(parameters, index++);
+            this.MirroringAxis = (IgesTextMirroringAxis)Integer(parameters, index++);
+            this.RotationType = (IgesTextRotationType)Integer(parameters, index++);
+            this.LocationOrOffset = Vector(parameters, ref index);
+            return index;
         }
 
         internal override IEnumerable<IgesEntity> GetReferencedEntities()

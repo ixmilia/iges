@@ -34,15 +34,12 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            this.RingRadius = Double(parameters, 0);
-            this.DiscRadius = Double(parameters, 1);
-            this.Center.X = Double(parameters, 2);
-            this.Center.Y = Double(parameters, 3);
-            this.Center.Z = Double(parameters, 4);
-            this.Normal.X = Double(parameters, 5);
-            this.Normal.Y = Double(parameters, 6);
-            this.Normal.Z = DoubleOrDefault(parameters, 7, 1.0);
-            return 8;
+            int index = 0;
+            this.RingRadius = Double(parameters, index++);
+            this.DiscRadius = Double(parameters, index++);
+            this.Center = Point3(parameters, ref index);
+            this.Normal = VectorOrDefault(parameters, ref index, IgesVector.ZAxis);
+            return index;
         }
 
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)

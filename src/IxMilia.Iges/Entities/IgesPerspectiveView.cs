@@ -69,27 +69,19 @@ namespace IxMilia.Iges.Entities
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             var nextIndex = base.ReadParameters(parameters, binder);
-            this.ViewPlaneNormal.X = Double(parameters, nextIndex);
-            this.ViewPlaneNormal.Y = Double(parameters, nextIndex + 1);
-            this.ViewPlaneNormal.Z = Double(parameters, nextIndex + 2);
-            this.ViewReferencePoint.X = Double(parameters, nextIndex + 3);
-            this.ViewReferencePoint.Y = Double(parameters, nextIndex + 4);
-            this.ViewReferencePoint.Z = Double(parameters, nextIndex + 5);
-            this.CenterOfProjection.X = Double(parameters, nextIndex + 6);
-            this.CenterOfProjection.Y = Double(parameters, nextIndex + 7);
-            this.CenterOfProjection.Z = Double(parameters, nextIndex + 8);
-            this.ViewUpVector.X = Double(parameters, nextIndex + 9);
-            this.ViewUpVector.Y = Double(parameters, nextIndex + 10);
-            this.ViewUpVector.Z = Double(parameters, nextIndex + 11);
-            this.ViewPlaneDistance = Double(parameters, nextIndex + 12);
-            this.ClippingWindowLeftCoordinate = Double(parameters, nextIndex + 13);
-            this.ClippingWindowRightCoordinate = Double(parameters, nextIndex + 14);
-            this.ClippingWindowBottomCoordinate = Double(parameters, nextIndex + 15);
-            this.ClippingWindowTopCoordinate = Double(parameters, nextIndex + 16);
-            this.DepthClipping = (IgesDepthClipping)Integer(parameters, nextIndex + 17);
-            this.ClippingWindowBackCoordinate = Double(parameters, nextIndex + 18);
-            this.ClippingWindowFrontCoordinate = Double(parameters, nextIndex + 19);
-            return nextIndex + 20;
+            this.ViewPlaneNormal = VectorOrDefault(parameters, ref nextIndex, IgesVector.Zero);
+            this.ViewReferencePoint = Point3(parameters, ref nextIndex);
+            this.CenterOfProjection = Point3(parameters, ref nextIndex);
+            this.ViewUpVector = VectorOrDefault(parameters, ref nextIndex, IgesVector.Zero);
+            this.ViewPlaneDistance = Double(parameters, nextIndex++);
+            this.ClippingWindowLeftCoordinate = Double(parameters, nextIndex++);
+            this.ClippingWindowRightCoordinate = Double(parameters, nextIndex++);
+            this.ClippingWindowBottomCoordinate = Double(parameters, nextIndex++);
+            this.ClippingWindowTopCoordinate = Double(parameters, nextIndex++);
+            this.DepthClipping = (IgesDepthClipping)Integer(parameters, nextIndex++);
+            this.ClippingWindowBackCoordinate = Double(parameters, nextIndex++);
+            this.ClippingWindowFrontCoordinate = Double(parameters, nextIndex++);
+            return nextIndex;
         }
 
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)

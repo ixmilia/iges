@@ -25,18 +25,13 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            XAxisLength = Double(parameters, 0);
-            YAxisLength = Double(parameters, 1);
-            ZAxisLength = Double(parameters, 2);
-            Center.X = Double(parameters, 3);
-            Center.Y = Double(parameters, 4);
-            Center.Z = Double(parameters, 5);
-            XAxis.X = Double(parameters, 6);
-            XAxis.Y = Double(parameters, 7);
-            XAxis.Z = Double(parameters, 8);
-            ZAxis.X = Double(parameters, 9);
-            ZAxis.Y = Double(parameters, 10);
-            ZAxis.Z = Double(parameters, 11);
+            int index = 0;
+            XAxisLength = Double(parameters, index++);
+            YAxisLength = Double(parameters, index++);
+            ZAxisLength = Double(parameters, index++);
+            Center = Point3(parameters, ref index);
+            XAxis = VectorOrDefault(parameters, ref index, IgesVector.XAxis);
+            ZAxis = VectorOrDefault(parameters, ref index, IgesVector.ZAxis);
             return 12;
         }
 
@@ -45,15 +40,15 @@ namespace IxMilia.Iges.Entities
             parameters.Add(XAxisLength);
             parameters.Add(YAxisLength);
             parameters.Add(ZAxisLength);
-            parameters.Add(Center?.X ?? 0.0);
-            parameters.Add(Center?.Y ?? 0.0);
-            parameters.Add(Center?.Z ?? 0.0);
-            parameters.Add(XAxis?.X ?? 1.0);
-            parameters.Add(XAxis?.Y ?? 0.0);
-            parameters.Add(XAxis?.Z ?? 0.0);
-            parameters.Add(ZAxis?.X ?? 0.0);
-            parameters.Add(ZAxis?.Y ?? 0.0);
-            parameters.Add(ZAxis?.Z ?? 1.0);
+            parameters.Add(Center.X);
+            parameters.Add(Center.Y);
+            parameters.Add(Center.Z);
+            parameters.Add(XAxis.X);
+            parameters.Add(XAxis.Y);
+            parameters.Add(XAxis.Z);
+            parameters.Add(ZAxis.X);
+            parameters.Add(ZAxis.Y);
+            parameters.Add(ZAxis.Z);
         }
     }
 }

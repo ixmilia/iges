@@ -513,5 +513,30 @@ namespace IxMilia.Iges.Entities
         {
             return IgesParameterReader.DateTimeOrDefault(values, index, defaultValue);
         }
+
+        protected IgesPoint Point3(List<string> values, ref int index)
+        {
+            return IgesParameterReader.Point3(values, ref index);
+        }
+
+        protected IgesPoint Point2(List<string> values, ref int index)
+        {
+            return IgesParameterReader.Point2(values, ref index);
+        }
+
+        protected IgesPoint PointOrDefault(List<string> values, ref int index, IgesPoint defaultValue)
+        {
+            return IgesParameterReader.PointOrDefault(values, ref index, defaultValue);
+        }
+
+        protected IgesVector Vector(List<string> values, ref int index)
+        {
+            return IgesParameterReader.Vector(values, ref index);
+        }
+
+        protected IgesVector VectorOrDefault(List<string> values, ref int index, IgesVector defaultValue)
+        {
+            return IgesParameterReader.VectorOrDefault(values, ref index, defaultValue);
+        }
     }
 }

@@ -57,9 +57,7 @@ namespace IxMilia.Iges.Entities
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
             var index = 0;
-            Location.X = Double(parameters, index++);
-            Location.Y = Double(parameters, index++);
-            Location.Z = Double(parameters, index++);
+            Location = Point3(parameters, ref index);
             RotationAngle = Double(parameters, index++);
             binder.BindEntity(Integer(parameters, index++), note => GeneralNote = note as IgesGeneralNote);
             var leaderCount = Integer(parameters, index++);
@@ -84,9 +82,9 @@ namespace IxMilia.Iges.Entities
 
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
-            parameters.Add(Location?.X ?? 0.0);
-            parameters.Add(Location?.Y ?? 0.0);
-            parameters.Add(Location?.Z ?? 0.0);
+            parameters.Add(Location.X);
+            parameters.Add(Location.Y);
+            parameters.Add(Location.Z);
             parameters.Add(RotationAngle);
             parameters.Add(binder.GetEntityId(GeneralNote));
             parameters.Add(Leaders.Count);

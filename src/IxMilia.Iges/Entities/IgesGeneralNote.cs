@@ -62,9 +62,7 @@ namespace IxMilia.Iges.Entities
             RotationAngle = IgesParameterReader.Double(parameters, index++);
             MirroringAxis = (IgesTextMirroringAxis)IgesParameterReader.Integer(parameters, index++);
             RotationType = (IgesTextRotationType)IgesParameterReader.Integer(parameters, index++);
-            Location.X = IgesParameterReader.Double(parameters, index++);
-            Location.Y = IgesParameterReader.Double(parameters, index++);
-            Location.Z = IgesParameterReader.Double(parameters, index++);
+            Location = IgesParameterReader.Point3(parameters, ref index);
             Value = IgesParameterReader.String(parameters, index++);
         }
 
@@ -87,9 +85,9 @@ namespace IxMilia.Iges.Entities
             parameters.Add(RotationAngle);
             parameters.Add((int)MirroringAxis);
             parameters.Add((int)RotationType);
-            parameters.Add(Location?.X ?? 0.0);
-            parameters.Add(Location?.Y ?? 0.0);
-            parameters.Add(Location?.Z ?? 0.0);
+            parameters.Add(Location.X);
+            parameters.Add(Location.Y);
+            parameters.Add(Location.Z);
             parameters.Add(Value);
         }
     }

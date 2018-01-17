@@ -25,11 +25,10 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            binder.BindEntity(Integer(parameters, 0), e => BooleanTree = e as IgesBooleanTree);
-            SelectionPoint.X = Double(parameters, 1);
-            SelectionPoint.Y = Double(parameters, 2);
-            SelectionPoint.Z = Double(parameters, 3);
-            return 4;
+            int index = 0;
+            binder.BindEntity(Integer(parameters, index++), e => BooleanTree = e as IgesBooleanTree);
+            SelectionPoint = Point3(parameters, ref index);
+            return index;
         }
 
         internal override IEnumerable<IgesEntity> GetReferencedEntities()
@@ -40,9 +39,9 @@ namespace IxMilia.Iges.Entities
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(binder.GetEntityId(BooleanTree));
-            parameters.Add(SelectionPoint?.X ?? 0.0);
-            parameters.Add(SelectionPoint?.Y ?? 0.0);
-            parameters.Add(SelectionPoint?.Z ?? 0.0);
+            parameters.Add(SelectionPoint.X);
+            parameters.Add(SelectionPoint.Y);
+            parameters.Add(SelectionPoint.Z);
         }
     }
 }

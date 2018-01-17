@@ -16,16 +16,13 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            Height = Double(parameters, 0);
-            LargeFaceRadius = Double(parameters, 1);
-            SmallFaceRadius = Double(parameters, 2);
-            LargeFaceCenter.X = Double(parameters, 3);
-            LargeFaceCenter.Y = Double(parameters, 4);
-            LargeFaceCenter.Z = Double(parameters, 5);
-            AxisDirection.X = Double(parameters, 6);
-            AxisDirection.Y = Double(parameters, 7);
-            AxisDirection.Z = Double(parameters, 8);
-            return 9;
+            int index = 0;
+            Height = Double(parameters, index++);
+            LargeFaceRadius = Double(parameters, index++);
+            SmallFaceRadius = Double(parameters, index++);
+            LargeFaceCenter = Point3(parameters, ref index);
+            AxisDirection = Vector(parameters, ref index);
+            return index;
         }
 
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
@@ -33,12 +30,12 @@ namespace IxMilia.Iges.Entities
             parameters.Add(Height);
             parameters.Add(LargeFaceRadius);
             parameters.Add(SmallFaceRadius);
-            parameters.Add(LargeFaceCenter?.X ?? 0.0);
-            parameters.Add(LargeFaceCenter?.Y ?? 0.0);
-            parameters.Add(LargeFaceCenter?.Z ?? 0.0);
-            parameters.Add(AxisDirection?.X ?? 0.0);
-            parameters.Add(AxisDirection?.Y ?? 0.0);
-            parameters.Add(AxisDirection?.Z ?? 1.0);
+            parameters.Add(LargeFaceCenter.X);
+            parameters.Add(LargeFaceCenter.Y);
+            parameters.Add(LargeFaceCenter.Z);
+            parameters.Add(AxisDirection.X);
+            parameters.Add(AxisDirection.Y);
+            parameters.Add(AxisDirection.Z);
         }
     }
 }

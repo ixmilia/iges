@@ -52,25 +52,22 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            this.PlaneCoefficientA = Double(parameters, 0);
-            this.PlaneCoefficientB = Double(parameters, 1);
-            this.PlaneCoefficientC = Double(parameters, 2);
-            this.PlaneCoefficientD = Double(parameters, 3);
+            int index = 0;
+            this.PlaneCoefficientA = Double(parameters, index++);
+            this.PlaneCoefficientB = Double(parameters, index++);
+            this.PlaneCoefficientC = Double(parameters, index++);
+            this.PlaneCoefficientD = Double(parameters, index++);
 
-            var closedCurvePointer = Integer(parameters, 4);
-            closedCurvePointer = Integer(parameters, 4);
+            var closedCurvePointer = Integer(parameters, index++);
             Debug.Assert((FormNumber == 0 && closedCurvePointer == 0) || (FormNumber != 0 && closedCurvePointer != 0), "Form 0 should have no pointer, form (+/-)1 should");
             if (closedCurvePointer != 0)
             {
                 binder.BindEntity(closedCurvePointer, e => ClosedCurveBoundingEntity = e);
             }
 
-            this.DisplaySymbolLocation.X = Double(parameters, 5);
-            this.DisplaySymbolLocation.Y = Double(parameters, 6);
-            this.DisplaySymbolLocation.Z = Double(parameters, 7);
-            this.DisplaySymbolSize = Double(parameters, 8);
-
-            return 9;
+            this.DisplaySymbolLocation = Point3(parameters, ref index);
+            this.DisplaySymbolSize = Double(parameters, index++);
+            return index;
         }
 
         internal override IEnumerable<IgesEntity> GetReferencedEntities()

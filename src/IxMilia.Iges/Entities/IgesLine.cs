@@ -46,13 +46,10 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            this.P1.X = Double(parameters, 0);
-            this.P1.Y = Double(parameters, 1);
-            this.P1.Z = Double(parameters, 2);
-            this.P2.X = Double(parameters, 3);
-            this.P2.Y = Double(parameters, 4);
-            this.P2.Z = Double(parameters, 5);
-            return 6;
+            int index = 0;
+            this.P1 = Point3(parameters, ref index);
+            this.P2 = Point3(parameters, ref index);
+            return index;
         }
 
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)

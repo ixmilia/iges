@@ -1060,9 +1060,7 @@ namespace IxMilia.Iges.Test
             str.RotationAngle = 5.0;
             str.MirroringAxis = IgesTextMirroringAxis.PerpendicularToTextBase;
             str.RotationType = IgesTextRotationType.Vertical;
-            str.Location.X = 6.0;
-            str.Location.Y = 7.0;
-            str.Location.Z = 8.0;
+            str.Location = new IgesPoint(6.0, 7.0, 8.0);
             str.Value = "test string";
             note.Strings.Add(str);
             VerifyEntity(note, @"
@@ -1099,7 +1097,7 @@ namespace IxMilia.Iges.Test
                 TextContainmentAreaWidth = 1.0,
                 TextContainmentAreaHeight = 2.0,
                 TextJustification = IgesTextJustification.Center,
-                TextContainmentAreaLocation = null,
+                TextContainmentAreaLocation = default(IgesPoint),
                 TextContainmentAreaRotation = 3.0,
                 FirstBaseLineLocation = new IgesPoint(4.0, 5.0, 6.0),
                 NormalInterLineSpacing = 7.0

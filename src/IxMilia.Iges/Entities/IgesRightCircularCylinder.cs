@@ -15,27 +15,24 @@ namespace IxMilia.Iges.Entities
 
         internal override int ReadParameters(List<string> parameters, IgesReaderBinder binder)
         {
-            Height = Double(parameters, 0);
-            Radius = Double(parameters, 1);
-            FirstFaceCenter.X = Double(parameters, 2);
-            FirstFaceCenter.Y = Double(parameters, 3);
-            FirstFaceCenter.Z = Double(parameters, 4);
-            AxisDirection.X = Double(parameters, 5);
-            AxisDirection.Y = Double(parameters, 6);
-            AxisDirection.Z = Double(parameters, 7);
-            return 8;
+            int index = 0;
+            Height = Double(parameters, index++);
+            Radius = Double(parameters, index++);
+            FirstFaceCenter = Point3(parameters, ref index);
+            AxisDirection = Vector(parameters, ref index);
+            return index;
         }
 
         internal override void WriteParameters(List<object> parameters, IgesWriterBinder binder)
         {
             parameters.Add(Height);
             parameters.Add(Radius);
-            parameters.Add(FirstFaceCenter?.X ?? 0.0);
-            parameters.Add(FirstFaceCenter?.Y ?? 0.0);
-            parameters.Add(FirstFaceCenter?.Z ?? 0.0);
-            parameters.Add(AxisDirection?.X ?? 0.0);
-            parameters.Add(AxisDirection?.Y ?? 0.0);
-            parameters.Add(AxisDirection?.Z ?? 1.0);
+            parameters.Add(FirstFaceCenter.X);
+            parameters.Add(FirstFaceCenter.Y);
+            parameters.Add(FirstFaceCenter.Z);
+            parameters.Add(AxisDirection.X);
+            parameters.Add(AxisDirection.Y);
+            parameters.Add(AxisDirection.Z);
         }
     }
 }

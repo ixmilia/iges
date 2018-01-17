@@ -28,8 +28,8 @@ namespace IxMilia.Iges.Entities
             parameters.Add(binder.GetEntityId(GeneralNote));
             parameters.Add(binder.GetEntityId(FirstLeader));
             parameters.Add(binder.GetEntityId(SecondLeader));
-            parameters.Add(ArcCenter?.X ?? 0.0);
-            parameters.Add(ArcCenter?.Y ?? 0.0);
+            parameters.Add(ArcCenter.X);
+            parameters.Add(ArcCenter.Y);
         }
     }
 }
