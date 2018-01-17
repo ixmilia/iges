@@ -4,7 +4,7 @@ using System;
 
 namespace IxMilia.Iges
 {
-    public struct IgesVector
+    public struct IgesVector : IEquatable<IgesVector>
     {
         public double X { get; }
         public double Y { get; }
@@ -80,10 +80,6 @@ namespace IxMilia.Iges
 
         public static bool operator ==(IgesVector p1, IgesVector p2)
         {
-            if (object.ReferenceEquals(p1, p2))
-                return true;
-            if (((object)p1 == null) || ((object)p2 == null))
-                return false;
             return p1.X == p2.X && p1.Y == p2.Y && p1.Z == p2.Z;
         }
 
@@ -92,20 +88,14 @@ namespace IxMilia.Iges
             return !(p1 == p2);
         }
 
-        public bool Equals(IgesVector p)
+        public bool Equals(IgesVector other)
         {
-            return this == p;
+            return this == other;
         }
 
         public override bool Equals(object obj)
         {
-            if (obj == null)
-                return false;
-            if (obj is IgesVector)
-            {
-                return this == (IgesVector)obj;
-            }
-            return false;
+            return obj is IgesVector && this == (IgesVector)obj;
         }
 
         public override int GetHashCode()
