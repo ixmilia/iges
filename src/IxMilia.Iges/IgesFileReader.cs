@@ -243,7 +243,7 @@ namespace IxMilia.Iges
 
             int index = 0;
             ParseDelimiterCharacter(file, fullString, ref index, true); // 1
-            ParseDelimiterCharacter(file, fullString, ref index, false); // 2
+            ParseString(file, fullString, ref index); // 2
             file.Identification = ParseString(file, fullString, ref index); // 3
             file.FullFileName = ParseString(file, fullString, ref index); // 4
             file.SystemIdentifier = ParseString(file, fullString, ref index); // 5
