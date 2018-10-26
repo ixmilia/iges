@@ -177,6 +177,16 @@ S      1G      3D      0P      0                                        T      1
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void FileWithEmptyDelimitersTest()
+        {
+            var file = CreateFile(@"
+,,;                                                                     G      1
+");
+            Assert.Equal(',', file.FieldDelimiter);
+            Assert.Equal(';', file.RecordDelimiter);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void StringContainingDelimiterValuesTest()
         {
             var file = CreateFile(@"

@@ -277,11 +277,21 @@ namespace IxMilia.Iges
                 throw new IgesException("Unexpected end of input");
 
             // could be empty
-            if ((readFieldSeparator && str[index] == IgesFile.DefaultFieldDelimiter) ||
-                (str[index] == IgesFile.DefaultRecordDelimiter))
+            if (readFieldSeparator)
             {
-                index++;
-                return;
+                if (str[index] == IgesFile.DefaultFieldDelimiter)
+                {
+                    index++;
+                    return;
+                }
+            }
+            else
+            {
+                if (str[index] == file.FieldDelimiter || str[index] == IgesFile.DefaultRecordDelimiter)
+                {
+                    index++;
+                    return;
+                }
             }
 
             if (str[index] != '1')
