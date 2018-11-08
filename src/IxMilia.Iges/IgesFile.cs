@@ -68,10 +68,30 @@ namespace IxMilia.Iges
             Entities = new List<IgesEntity>();
         }
 
+#if HAS_FILESYSTEM_ACCESS
+        public void Save(string path)
+        {
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                Save(stream);
+            }
+        }
+#endif
+
         public void Save(Stream stream)
         {
             new IgesFileWriter().Write(this, stream);
         }
+
+#if HAS_FILESYSTEM_ACCESS
+        public static IgesFile Load(string path)
+        {
+            using (var stream = new FileStream(path, FileMode.Open))
+            {
+                return Load(stream);
+            }
+        }
+#endif
 
         public static IgesFile Load(Stream stream)
         {

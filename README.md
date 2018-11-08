@@ -21,6 +21,9 @@ using (FileStream fs = new FileStream(@"C:\Path\To\File.iges", FileMode.Open))
     igesFile = IgesFile.Load(fs);
 }
 
+// if on >= NETStandard1.3 you can use:
+// IgesFile igesFile = IgesFile.Load(@"C:\Path\To\File.iges");
+
 foreach (IgesEntity entity in igesFile.Entities)
 {
     switch (entity.EntityType)
@@ -46,10 +49,13 @@ IgesFile igesFile = new IgesFile();
 igesFile.Entities.Add(new IgesLine() { P1 = new IgesPoint(0, 0, 0), P2 = new IgesPoint(50, 50, 0) });
 // ...
 
-using (FileStream fs = new FileStream(@"C:\Path\To\File.iges", FileMode.Open))
+using (FileStream fs = new FileStream(@"C:\Path\To\File.iges", FileMode.Create))
 {
     igesFile.Save(fs);
 }
+
+// if on >= .NETStandard1.3 you can use:
+// igesFile.Save(@"C:\Path\To\File.iges");
 ```
 
 ## Building locally
