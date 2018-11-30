@@ -1,6 +1,15 @@
 @echo off
 
-set PROJECT=%~dp0IxMilia.Iges\IxMilia.Iges.csproj
-dotnet restore %PROJECT%
+set PROJECT_NAME=IxMilia.Iges
+set CONFIGURATION=Release
+set PROJECT=%~dp0\%PROJECT_NAME%\%PROJECT_NAME%.csproj
+set OUTPUT_PATH=%~dp0..\Artifacts\NuGet
+
+dotnet restore "%PROJECT%"
 if errorlevel 1 exit /b 1
-dotnet pack --configuration Release %PROJECT%
+
+dotnet build "%PROJECT%" --configuration %CONFIGURATION%
+if errorlevel 1 exit /b 1
+
+dotnet pack --no-restore --no-build --configuration %CONFIGURATION% --output "%OUTPUT_PATH%" "%PROJECT%"
+if errorlevel 1 exit /b 1
