@@ -4,4 +4,4 @@
 .vs/
 
 # ignore artifacts
-Artifacts/
+artifacts/
