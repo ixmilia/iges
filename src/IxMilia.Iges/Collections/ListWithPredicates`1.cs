@@ -14,6 +14,14 @@ namespace IxMilia.Iges.Collections
         }
     }
 
+    internal class ListNonNullWithPredicate<T> : ListWithPredicates<T>
+    {
+        public ListNonNullWithPredicate(Func<T, bool> itemPredicate, params T[] initialItems)
+            : base(item => item != null && itemPredicate(item), 0, initialItems)
+        {
+        }
+    }
+
     internal class ListNonNullWithMinimum<T> : ListWithPredicates<T>
     {
         public ListNonNullWithMinimum(int minimum)

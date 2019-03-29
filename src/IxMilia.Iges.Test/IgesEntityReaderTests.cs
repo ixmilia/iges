@@ -1501,6 +1501,29 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadSectionedAreaTest()
+        {
+            var sectioned = (IgesSectionedArea)ParseLastEntity(@"
+     100       1       0       0       0                        00000000D      1
+     100       0       0       1       0                                D      2
+     100       2       0       0       0                        00000000D      3
+     100       0       0       1       0                                D      4
+     230       3       0       0       0                        00000000D      5
+     230       0       0       1       0                                D      6
+100,0.,0.,0.,0.,0.,0.,0.;                                              1P      1
+100,0.,0.,0.,0.,0.,0.,0.;                                              3P      2
+230,1,2,3.,4.,5.,6.,7.,1,3;                                            5P      3
+");
+            Assert.IsType<IgesCircularArc>(sectioned.ExteriorDefinitionCurve);
+            Assert.Equal(2, sectioned.FillPattern);
+            Assert.Equal(new IgesPoint(3.0, 4.0, 0.0), sectioned.ReferenceLocation);
+            Assert.Equal(5.0, sectioned.PatternZDepth);
+            Assert.Equal(6.0, sectioned.NormalDistance);
+            Assert.Equal(7.0, sectioned.RotationAngle);
+            Assert.IsType<IgesCircularArc>(sectioned.InteriorDefinitionCurves.Single());
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadTextDisplayTemplateTest()
         {
             // fully-specified values

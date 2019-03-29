@@ -1195,6 +1195,23 @@ namespace IxMilia.Iges.Test
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteSeciontedAreaTest()
+        {
+            var sectioned = new IgesSectionedArea(new IgesCircularArc(), 2, new IgesPoint(3.0, 4.0, 0.0), 5.0, 6.0, 7.0, new IgesCircularArc());
+            VerifyEntity(sectioned, @"
+     100       1       0       0       0                        00000000D      1
+     100       0       0       1       0                                D      2
+     100       2       0       0       0                        00000000D      3
+     100       0       0       1       0                                D      4
+     230       3       0       0       0                        00000000D      5
+     230       0       0       1       0                                D      6
+100,0.,0.,0.,0.,0.,0.,0.;                                              1P      1
+100,0.,0.,0.,0.,0.,0.,0.;                                              3P      2
+230,1,2,3.,4.,5.,6.,7.,1,3;                                            5P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteTextDisplayTemplateTest()
         {
             // regular case with font code

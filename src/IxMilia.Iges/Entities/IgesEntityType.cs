@@ -65,6 +65,7 @@ namespace IxMilia.Iges.Entities
         PointDimension = 220,
         RadiusDimension = 222,
         GeneralSymbol = 228,
+        SectionedArea = 230,
         LineFontDefinition = 304,
         SubfigureDefinition = 308,
         TextFontDefinition = 310,

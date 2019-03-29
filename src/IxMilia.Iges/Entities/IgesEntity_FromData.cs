@@ -188,6 +188,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.RuledSurface:
                     entity = new IgesRuledSurface();
                     break;
+                case IgesEntityType.SectionedArea:
+                    entity = new IgesSectionedArea();
+                    break;
                 case IgesEntityType.SelectedComponent:
                     entity = new IgesSelectedComponent();
                     break;
