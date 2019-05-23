@@ -9,7 +9,7 @@
     <AssemblyName>IxMilia.Iges</AssemblyName>
     <PackageId>IxMilia.Iges</PackageId>
     <PackageTags>CAD;IGES;IGS</PackageTags>
-    <PackageProjectUrl>https://github.com/IxMilia/Iges</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/ixmilia/iges</PackageProjectUrl>
 
     <!-- SourceLink settings -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
