@@ -1449,6 +1449,25 @@ s because it is so huge,2,3,5;                                         7P      5
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteSingularSubfigureInstanceTest()
+        {
+            var sfd = new IgesSubfigureDefinition();
+            sfd.Entities.Add(new IgesNull());
+            var sub = new IgesSingularSubfigureInstance(sfd, new IgesVector(1.0, 2.0, 3.0), 4.0);
+            VerifyEntity(sub, @"
+       0       1       0       0       0                        00000000D      1
+       0       0       0       1       0                                D      2
+     308       2       0       0       0                        00000200D      3
+     308       0       0       1       0                                D      4
+     408       3       0       0       0                        00000000D      5
+     408       0       0       1       0                                D      6
+0;                                                                     1P      1
+308,0,,1,1;                                                            3P      2
+408,3,1.,2.,3.,4.;                                                     5P      3
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteLabelDisplayAssociativityTest()
         {
             // regular values
