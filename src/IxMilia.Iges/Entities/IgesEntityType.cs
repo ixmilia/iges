@@ -73,6 +73,7 @@ namespace IxMilia.Iges.Entities
         ColorDefinition = 314,
         AssociativityInstance = 402,
         Property = 406,
+        SingularSubfigureInstance = 408,
         View = 410
     }
 }

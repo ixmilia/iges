@@ -194,6 +194,9 @@ namespace IxMilia.Iges.Entities
                 case IgesEntityType.SelectedComponent:
                     entity = new IgesSelectedComponent();
                     break;
+                case IgesEntityType.SingularSubfigureInstance:
+                    entity = new IgesSingularSubfigureInstance();
+                    break;
                 case IgesEntityType.SolidAssembly:
                     entity = new IgesSolidAssembly();
                     break;
