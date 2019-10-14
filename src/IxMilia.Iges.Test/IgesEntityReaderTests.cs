@@ -1802,7 +1802,26 @@ subfigureH,2,1,5;                                                       P      3
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
-        public void WriteLabelDisplayAssociativityTest()
+        public void ReadSingularSubfigureInstanceTest()
+        {
+            var sub = (IgesSingularSubfigureInstance)ParseLastEntity(@"
+       0       1       0       0       0                        00000000D      1
+       0       0       0       1       0                                D      2
+     308       2       0       0       0                        00000200D      3
+     308       0       0       1       0                                D      4
+     408       3       0       0       0                        00000000D      5
+     408       0       0       1       0                                D      6
+0;                                                                     1P      1
+308,0,,1,1;                                                            3P      2
+408,3,1.,2.,3.,4.;                                                     5P      3
+");
+            Assert.NotNull(sub.SubfigureDefinition);
+            Assert.Equal(new IgesVector(1.0, 2.0, 3.0), sub.Translation);
+            Assert.Equal(4.0, sub.Scale);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadLabelDisplayAssociativityTest()
         {
 //            // fully-specified values
 //            var file = IgesReaderTests.CreateFile(@"
