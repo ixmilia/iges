@@ -159,6 +159,9 @@ namespace IxMilia.Iges.Entities
                         case 1:
                             entity = new IgesDefinitionLevelsProperty();
                             break;
+                        case 15:
+                            entity = new IgesNameProperty();
+                            break;
                     }
                     break;
                 case IgesEntityType.RadiusDimension:
