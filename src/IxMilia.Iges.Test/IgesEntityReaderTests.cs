@@ -1862,6 +1862,17 @@ subfigureH,2,1,5;                                                       P      3
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ReadNamePropertyTest()
+        {
+            var np = (IgesNameProperty)ParseLastEntity(@"
+     406       1       0       0       0                        00000000D      1
+     406       0       0       1      15                                D      2
+406,1,4Htest;                                                          1P      1
+");
+            Assert.Equal("test", np.Name);
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
         public void ReadViewTest()
         {
             // fully-specified values

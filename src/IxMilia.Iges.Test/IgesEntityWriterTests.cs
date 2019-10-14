@@ -1499,6 +1499,17 @@ s because it is so huge,2,3,5;                                         7P      5
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteNamePropertyTest()
+        {
+            var np = new IgesNameProperty("test");
+            VerifyEntity(np, @"
+     406       1       0       0       0                        00000000D      1
+     406       0       0       1      15                                D      2
+406,1,4Htest;                                                          1P      1
+");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
         public void WriteViewTest()
         {
             // regular values
