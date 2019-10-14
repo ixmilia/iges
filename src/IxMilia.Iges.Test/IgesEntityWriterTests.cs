@@ -12,7 +12,7 @@ namespace IxMilia.Iges.Test
 
         #region Private methods
 
-        public static void VerifyFileContains(IgesFile file, string expectedText)
+        protected static void VerifyFileContains(IgesFile file, string expectedText)
         {
             using (var ms = new MemoryStream())
             {

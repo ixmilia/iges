@@ -40,7 +40,7 @@ namespace IxMilia.Iges.Test
      888       0       0       1       0                               0D      2
 888,11,22,33,44,55,66;                                                 1P      1
 ".Trim('\r', '\n'));
-            Assert.Equal(0, file.Entities.Count);
+            Assert.Empty(file.Entities);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
@@ -143,7 +143,7 @@ namespace IxMilia.Iges.Test
      102       0       0       1       0                               0D      2
 102;                                                                    P      1
 ");
-            Assert.Equal(0, compositeCurve.Entities.Count);
+            Assert.Empty(compositeCurve.Entities);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
@@ -213,7 +213,7 @@ namespace IxMilia.Iges.Test
 106,1,3,3.,1.,2.,4.,5.,6.,7.;                                          1P      1
 ");
             Assert.Equal(IgesCopiousDataType.WitnessLine, cd.DataType);
-            Assert.Equal(0, cd.DataVectors.Count);
+            Assert.Empty(cd.DataVectors);
             Assert.Equal(3, cd.DataPoints.Count);
             Assert.Equal(new IgesPoint(1, 2, 3), cd.DataPoints[0]);
             Assert.Equal(new IgesPoint(4, 5, 3), cd.DataPoints[1]);
@@ -852,8 +852,8 @@ namespace IxMilia.Iges.Test
 136,1,2,3,5,;                                                          7P      4
 138,1,1,1,42,7,2.,3.,4.,5.,6.,7.;                                      9P      5
 ");
-            Assert.Equal(1, file.Entities.OfType<IgesBeam>().Count());
-            Assert.Equal(1, file.Entities.OfType<IgesNodalDisplacementAndRotation>().Count());
+            Assert.Single(file.Entities.OfType<IgesBeam>());
+            Assert.Single(file.Entities.OfType<IgesNodalDisplacementAndRotation>());
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
@@ -1171,7 +1171,7 @@ namespace IxMilia.Iges.Test
 ");
             Assert.IsType<IgesLine>(solid.Shell);
             Assert.True(solid.IsOriented);
-            Assert.Equal(1, solid.Voids.Count);
+            Assert.Single(solid.Voids);
             Assert.IsType<IgesCircularArc>(solid.Voids[0].Shell);
             Assert.True(solid.Voids[0].IsOriented);
         }
@@ -1602,7 +1602,7 @@ namespace IxMilia.Iges.Test
             Assert.Equal(0.0, leader.ArrowHeight);
             Assert.Equal(0.0, leader.ArrowWidth);
             Assert.Equal(IgesPoint.Origin, leader.ArrowheadCoordinates);
-            Assert.Equal(0, leader.LineSegments.Count);
+            Assert.Empty(leader.LineSegments);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
@@ -1644,7 +1644,7 @@ namespace IxMilia.Iges.Test
      304       0       0       1       2                                D      2
 304;                                                                   1P      1
 ");
-            Assert.Equal(0, lfd.SegmentLengths.Count);
+            Assert.Empty(lfd.SegmentLengths);
             Assert.Equal(0x00, lfd.DisplayMask);
         }
 
@@ -1693,8 +1693,8 @@ subfigureH,2,1,5;                                                       P      3
 308;                                                                    P      1
 ");
             Assert.Equal(0, subfigure.Depth);
-            Assert.Equal(null, subfigure.Name);
-            Assert.Equal(0, subfigure.Entities.Count);
+            Assert.Null(subfigure.Name);
+            Assert.Empty(subfigure.Entities);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
@@ -1757,7 +1757,7 @@ subfigureH,2,1,5;                                                       P      3
             Assert.Null(tfd.Name);
             Assert.Equal(0, tfd.SupercedesCode);
             Assert.Equal(0, tfd.Scale);
-            Assert.Equal(0, tfd.Characters.Count);
+            Assert.Empty(tfd.Characters);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
@@ -1858,7 +1858,7 @@ subfigureH,2,1,5;                                                       P      3
      402       0       0       1       5                                D      2
 402;                                                                   1P      1
 ");
-            Assert.Equal(0, disp.LabelPlacements.Count);
+            Assert.Empty(disp.LabelPlacements);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]

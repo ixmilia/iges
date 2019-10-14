@@ -99,7 +99,7 @@ S      1G      3D      0P      0                                        T      1
 ,7HIxMilia,8,4,13H870508.123456,;                                       G      3
 S      1G      3D      0P      0                                        T      1
 ");
-            Assert.Equal(null, file.ApplicationProtocol);
+            Assert.Null(file.ApplicationProtocol);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
@@ -346,7 +346,7 @@ S      0G      0D      0P      0                                        T      1
 402,1,1,1.,2.,3.,3,7,5;                                                7P      5
 110,0.,0.,0.,0.,0.,0.;                                                 9P      6
 ");
-            Assert.Equal(1, line.LabelDisplay.LabelPlacements.Count);
+            Assert.Single(line.LabelDisplay.LabelPlacements);
             var placement = line.LabelDisplay.LabelPlacements.Single();
             Assert.IsType<IgesPerspectiveView>(placement.View);
             Assert.Equal(new IgesPoint(1, 2, 3), placement.Location);
@@ -509,7 +509,7 @@ also contains things that look like 7Hstrings and records;             1P      3
                         ms2.Seek(0, SeekOrigin.Begin);
                         lengthLF = ms2.Length;
                         var fileLF = IgesFile.Load(ms2);
-                        Assert.Equal(1, fileLF.Entities.Count);
+                        Assert.Single(fileLF.Entities);
                     }
 
                     // verify file reading with CRLF
@@ -525,7 +525,7 @@ also contains things that look like 7Hstrings and records;             1P      3
                         ms2.Seek(0, SeekOrigin.Begin);
                         lengthCRLF = ms2.Length;
                         var fileLF = IgesFile.Load(ms2);
-                        Assert.Equal(1, fileLF.Entities.Count);
+                        Assert.Single(fileLF.Entities);
                     }
 
                     // verify that the file lengths were non-zero and not equal
