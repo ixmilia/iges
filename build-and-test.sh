@@ -2,13 +2,32 @@
 
 _SCRIPT_DIR="$( cd -P -- "$(dirname -- "$(command -v -- "$0")")" && pwd -P )"
 
-# build library
-LIBRARY_PROJECT=$_SCRIPT_DIR/src/IxMilia.Iges/IxMilia.Iges.csproj
-dotnet restore "$LIBRARY_PROJECT"
-dotnet build "$LIBRARY_PROJECT"
+CONFIGURATION=Debug
+RUNTESTS=true
 
-# build and run tests
-TEST_PROJECT=$_SCRIPT_DIR/src/IxMilia.Iges.Test/IxMilia.Iges.Test.csproj
-dotnet restore "$TEST_PROJECT"
-dotnet build "$TEST_PROJECT"
-dotnet test "$TEST_PROJECT"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --configuration|-c)
+      CONFIGURATION=$2
+      shift
+      ;;
+    --notest)
+      RUNTESTS=false
+      ;;
+    *)
+      echo "Invalid argument: $1"
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+# build
+SOLUTION=$_SCRIPT_DIR/src/IxMilia.Iges.sln
+dotnet restore $SOLUTION
+dotnet build $SOLUTION -c $CONFIGURATION
+
+# test
+if [ "$RUNTESTS" = "true" ]; then
+    dotnet test $SOLUTION -c $CONFIGURATION --no-restore --no-build
+fi

@@ -1,22 +1,38 @@
 @echo off
+setlocal
 
-:: build library
-set LIBRARY_PROJECT=%~dp0src\IxMilia.Iges\IxMilia.Iges.csproj
-dotnet restore "%LIBRARY_PROJECT%"
-if errorlevel 1 goto error
-dotnet build "%LIBRARY_PROJECT%"
-if errorlevel 1 goto error
+set thisdir=%~dp0
+set configuration=Debug
+set runtests=true
 
-:: build and run tests
-set TEST_PROJECT=%~dp0src\IxMilia.Iges.Test\IxMilia.Iges.Test.csproj
-dotnet restore "%TEST_PROJECT%"
-if errorlevel 1 goto error
-dotnet build "%TEST_PROJECT%"
-if errorlevel 1 goto error
-dotnet test "%TEST_PROJECT%"
-if errorlevel 1 goto error
-goto :eof
+:parseargs
+if "%1" == "" goto argsdone
+if /i "%1" == "-c" (
+    set configuration=%2
+    shift
+    shift
+    goto parseargs
+)
+if /i "%1" == "-notest" (
+    set runtests=false
+    shift
+    goto parseargs
+)
 
-:error
-echo Error building project.
-exit /b 1
+echo Unsupported argument: %1
+goto error
+
+:argsdone
+
+:: build
+set SOLUTION=%~dp0src\IxMilia.Iges.sln
+dotnet restore %SOLUTION%
+if errorlevel 1 exit /b 1
+dotnet build %SOLUTION% -c %configuration%
+if errorlevel 1 exit /b 1
+
+:: test
+if /i "%runtests%" == "true" (
+    dotnet test "%TEST_PROJECT%" -c %configuration% --no-restore --no-build
+    if errorlevel 1 goto error
+)
