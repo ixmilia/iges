@@ -33,6 +33,6 @@ if errorlevel 1 exit /b 1
 
 :: test
 if /i "%runtests%" == "true" (
-    dotnet test "%TEST_PROJECT%" -c %configuration% --no-restore --no-build
+    dotnet test "%SOLUTION%" -c %configuration% --no-restore --no-build
     if errorlevel 1 goto error
 )
