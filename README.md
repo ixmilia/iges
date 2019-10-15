@@ -3,8 +3,6 @@
 
 A portable .NET library for reading and writing IGES files.
 
-[![Build Status](https://dev.azure.com/ixmilia/public/_apis/build/status/Iges?branchName=master)](https://dev.azure.com/ixmilia/public/_build/latest?definitionId=19)
-
 ## Usage
 
 Open an IGES file:
