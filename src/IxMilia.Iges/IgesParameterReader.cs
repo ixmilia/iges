@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 namespace IxMilia.Iges
 {
+    using System.Globalization;
+
     internal static class IgesParameterReader
     {
         public static double Double(List<string> values, int index)
@@ -17,7 +19,7 @@ namespace IxMilia.Iges
             if (index < values.Count)
             {
                 var result = 0.0;
-                double.TryParse(values[index], out result);
+                double.TryParse(values[index], NumberStyles.Any,CultureInfo.InvariantCulture, out result);
                 return result;
             }
             else
@@ -36,7 +38,7 @@ namespace IxMilia.Iges
             if (index < values.Count)
             {
                 var result = 0;
-                int.TryParse(values[index], out result);
+                int.TryParse(values[index], NumberStyles.Any, CultureInfo.InvariantCulture, out result);
                 return result;
             }
             else
