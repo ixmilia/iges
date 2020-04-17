@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.22725.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IxMilia.Iges", "IxMilia.Iges\IxMilia.Iges.csproj", "{EDB8FB15-5411-47F8-804A-EC0F696CD4E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IxMilia.Iges", "src\IxMilia.Iges\IxMilia.Iges.csproj", "{EDB8FB15-5411-47F8-804A-EC0F696CD4E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IxMilia.Iges.Test", "IxMilia.Iges.Test\IxMilia.Iges.Test.csproj", "{1BD2EC84-3B5A-4EE5-8436-DB17E66F1637}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IxMilia.Iges.Test", "src\IxMilia.Iges.Test\IxMilia.Iges.Test.csproj", "{1BD2EC84-3B5A-4EE5-8436-DB17E66F1637}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

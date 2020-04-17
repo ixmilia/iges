@@ -29,7 +29,7 @@ goto parseargs
 :argsdone
 
 :: build
-set SOLUTION=%~dp0src\IxMilia.Iges.sln
+set SOLUTION=%~dp0IxMilia.Iges.sln
 dotnet restore %SOLUTION%
 if errorlevel 1 exit /b 1
 dotnet build %SOLUTION% -c %configuration%
