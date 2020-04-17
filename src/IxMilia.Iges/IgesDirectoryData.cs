@@ -80,23 +80,23 @@ namespace IxMilia.Iges
         public static IgesDirectoryData FromRawLines(string line1, string line2)
         {
             var dir = new IgesDirectoryData();
-            var entityTypeNumber = int.Parse(GetField(line1, 1));
+            var entityTypeNumber = IgesParser.ParseIntStrict(GetField(line1, 1));
             dir.EntityType = (IgesEntityType)entityTypeNumber;
-            dir.ParameterPointer = int.Parse(GetField(line1, 2));
-            dir.Structure = int.Parse(GetField(line1, 3));
-            dir.LineFontPattern = int.Parse(GetField(line1, 4));
-            dir.Level = int.Parse(GetField(line1, 5));
-            dir.View = int.Parse(GetField(line1, 6));
-            dir.TransformationMatrixPointer = int.Parse(GetField(line1, 7));
-            dir.LableDisplay = int.Parse(GetField(line1, 8));
+            dir.ParameterPointer = IgesParser.ParseIntStrict(GetField(line1, 2));
+            dir.Structure = IgesParser.ParseIntStrict(GetField(line1, 3));
+            dir.LineFontPattern = IgesParser.ParseIntStrict(GetField(line1, 4));
+            dir.Level = IgesParser.ParseIntStrict(GetField(line1, 5));
+            dir.View = IgesParser.ParseIntStrict(GetField(line1, 6));
+            dir.TransformationMatrixPointer = IgesParser.ParseIntStrict(GetField(line1, 7));
+            dir.LableDisplay = IgesParser.ParseIntStrict(GetField(line1, 8));
             dir.StatusNumber = GetField(line1, 9);
 
-            dir.LineWeight = int.Parse(GetField(line2, 2));
-            dir.Color = int.Parse(GetField(line2, 3));
-            dir.LineCount = int.Parse(GetField(line2, 4));
-            dir.FormNumber = int.Parse(GetField(line2, 5));
+            dir.LineWeight = IgesParser.ParseIntStrict(GetField(line2, 2));
+            dir.Color = IgesParser.ParseIntStrict(GetField(line2, 3));
+            dir.LineCount = IgesParser.ParseIntStrict(GetField(line2, 4));
+            dir.FormNumber = IgesParser.ParseIntStrict(GetField(line2, 5));
             dir.EntityLabel = GetField(line2, 8, null);
-            dir.EntitySubscript = uint.Parse(GetField(line2, 9));
+            dir.EntitySubscript = IgesParser.ParseUIntStrict(GetField(line2, 9));
             return dir;
         }
 

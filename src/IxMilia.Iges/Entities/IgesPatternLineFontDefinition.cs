@@ -26,7 +26,7 @@ namespace IxMilia.Iges.Entities
                 SegmentLengths.Add(Double(parameters, i + 1));
             }
 
-            DisplayMask = int.Parse(StringOrDefault(parameters, segmentCount + 1, "0"), NumberStyles.HexNumber);
+            DisplayMask = IgesParser.ParseIntStrict(StringOrDefault(parameters, segmentCount + 1, "0"), NumberStyles.HexNumber);
             return segmentCount + 2;
         }
 

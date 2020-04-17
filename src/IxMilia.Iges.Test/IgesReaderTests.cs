@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -533,6 +534,27 @@ also contains things that look like 7Hstrings and records;             1P      3
                     Assert.NotEqual(0L, lengthCRLF);
                     Assert.NotEqual(lengthLF, lengthCRLF);
                 }
+            }
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Reading)]
+        public void ParseNumbersAsInvariantCultureTest()
+        {
+            var existingCulture = CultureInfo.CurrentCulture;
+            try
+            {
+                CultureInfo.CurrentCulture = new CultureInfo("de-DE");
+                var line = (IgesLine)ParseLastEntity(@"
+     110       1       0       0       0                               0D      1
+     110       0       3       1       0                               0D      2
+110,1.5,2.5,3.5,4.5,5.5,6.5;                                           1P      1
+");
+                Assert.Equal(new IgesPoint(1.5, 2.5, 3.5), line.P1);
+                Assert.Equal(new IgesPoint(4.5, 5.5, 6.5), line.P2);
+            }
+            finally
+            {
+                CultureInfo.CurrentCulture = existingCulture;
             }
         }
     }

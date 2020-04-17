@@ -296,10 +296,10 @@ namespace IxMilia.Iges.Entities
                 value = value.Substring(0, 8);
             }
 
-            BlankStatus = (IgesBlankStatus)int.Parse(value.Substring(0, 2));
-            SubordinateEntitySwitchType = (IgesSubordinateEntitySwitchType)int.Parse(value.Substring(2, 2));
-            EntityUseFlag = (IgesEntityUseFlag)int.Parse(value.Substring(4, 2));
-            Hierarchy = (IgesHierarchy)int.Parse(value.Substring(6, 2));
+            BlankStatus = (IgesBlankStatus)IgesParser.ParseIntStrict(value.Substring(0, 2));
+            SubordinateEntitySwitchType = (IgesSubordinateEntitySwitchType)IgesParser.ParseIntStrict(value.Substring(2, 2));
+            EntityUseFlag = (IgesEntityUseFlag)IgesParser.ParseIntStrict(value.Substring(4, 2));
+            Hierarchy = (IgesHierarchy)IgesParser.ParseIntStrict(value.Substring(6, 2));
         }
 
         private void PopulateDirectoryData(IgesDirectoryData directoryData)
