@@ -1,6 +1,7 @@
 ﻿// Copyright (c) IxMilia.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using IxMilia.Iges.Entities;
@@ -77,6 +78,32 @@ S      1G      2D      0P      0                                        T      1
 be ignored.\nIt also contains things that look like fields, and        1P      2
 also contains things that look like 7Hstrings and records;             1P      3
 ");
+        }
+
+        [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
+        public void WriteFileWithInvariantCultureTest()
+        {
+            var existingCulture = CultureInfo.CurrentCulture;
+            try
+            {
+                CultureInfo.CurrentCulture = new CultureInfo("de-DE");
+                var date = new DateTime(2000, 12, 25, 13, 8, 5);
+                var file = new IgesFile()
+                {
+                    ModifiedTime = date,
+                    TimeStamp = date
+                };
+                VerifyFileExactly(file, @"
+                                                                        S      1
+1H,,1H;,,,,,32,8,23,11,52,,1.,1,,0,1.,15H20001225.130805,1E-10,0.,,,11, G      1
+0,15H20001225.130805,;                                                  G      2
+S      1G      2D      0P      0                                        T      1
+");
+            }
+            finally
+            {
+                CultureInfo.CurrentCulture = existingCulture;
+            }
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Writing)]
