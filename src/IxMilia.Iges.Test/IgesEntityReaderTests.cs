@@ -1336,7 +1336,7 @@ namespace IxMilia.Iges.Test
 ");
             Assert.Equal(new IgesPoint(1.0, 2.0, 3.0), flag.Location);
             Assert.Equal(0.1, flag.RotationAngle);
-            Assert.Equal(1, flag.Leaders.Count);
+            Assert.Single(flag.Leaders);
         }
 
         [Fact, Trait(Traits.Feature, Traits.Features.Reading)]

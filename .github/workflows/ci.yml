@@ -2,9 +2,6 @@ name: CI
 
 on: [push, pull_request]
 
-env:
-  DOTNET_SDK_VERSION: '3.1.403'
-
 jobs:
 
   build:
@@ -14,10 +11,8 @@ jobs:
         os: [ubuntu-latest, windows-latest]
         configuration: [Debug, Release]
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+    - uses: actions/checkout@v4
+    - uses: actions/setup-dotnet@v4
     - name: Build and test
       shell: pwsh
       run: ./build-and-test.ps1 -configuration ${{ matrix.configuration }}
@@ -27,9 +22,7 @@ jobs:
     needs: [build]
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+    - uses: actions/checkout@v4
+    - uses: actions/setup-dotnet@v4
     - run: .\build-and-test.ps1 -configuration Release -notest
     - run: dotnet nuget push .\artifacts\packages\Release\*.nupkg -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }}
